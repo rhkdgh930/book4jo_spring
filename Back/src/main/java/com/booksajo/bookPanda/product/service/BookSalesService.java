@@ -100,20 +100,22 @@ public class BookSalesService {
         redisTemplate.opsForValue().increment(redisKey, 1);
     }
 
-    @Scheduled(fixedDelay = 60000) // 1분마다 실행
+    @Scheduled(fixedRate = 5000) // 30초 마다 실행
     @Transactional
     public void syncViewCountToDatabase() {
-//        List<BookSales> bookSalesList = bookSalesRepository.findAll();
-//        for (BookSales bookSales : bookSalesList) {
-//            String redisKey = BOOKSALES_VISITCOUNT_KEY + bookSales.getId();
-//            Integer redisViews = (Integer) redisTemplate.opsForValue().get(redisKey);
-//            if (redisViews != null && redisViews > 0) {
-//                System.out.println("카운트!!" + bookSales.getVisitCount() + redisViews);
-//                bookSales.setVisitCount(bookSales.getVisitCount() + redisViews);
-//                bookSalesRepository.save(bookSales);
-//                redisTemplate.delete(redisKey);
-//            }
-//        }
-        System.out.println("sfoijewofijweofiwjeowiojweiojfeoofjiew");
+        List<BookSales> bookSalesList = bookSalesRepository.findAll();
+        for (BookSales bookSales : bookSalesList) {
+            String redisKey = BOOKSALES_VISITCOUNT_KEY + bookSales.getId();
+            if (redisTemplate.opsForValue().get(redisKey) != null ) {
+                Integer newCount = Integer.parseInt(redisTemplate.opsForValue().get(redisKey).toString());
+                if(newCount > 0)
+                {
+                    System.out.println("BookSales id :" + bookSales.getId() + " / 기존 방문 수 : " + bookSales.getVisitCount() + " / 새로운 조회수 : " + newCount);
+                    bookSales.setVisitCount(bookSales.getVisitCount() + newCount);
+                    bookSalesRepository.save(bookSales);
+                    redisTemplate.delete(redisKey);
+                }
+            }
+        }
     }
 }

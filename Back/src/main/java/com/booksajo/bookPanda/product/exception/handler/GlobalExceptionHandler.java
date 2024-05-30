@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
         return handleExceptionInternal(errorCode);
     }
 
+    // 예외처리에 관한 http를 보내는 코드
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(makeErrorResponse(errorCode, errorCode.getMessage()));

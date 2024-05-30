@@ -31,6 +31,11 @@ public class BookInfoController {
         return ResponseEntity.ok(bookSalesService.getBookSales(bookSalesId));
     }
 
+    @GetMapping("bookSaless")
+    public ResponseEntity<List<BookSales>> getBookSaless()
+    {
+        return ResponseEntity.ok(bookSalesService.getBookSalesList());
+    }
 
     @PatchMapping("/bookSales")
     public ResponseEntity<BookSales> getBookSales(@RequestParam("id") Long bookSalesId, @RequestBody BookSalesRequest bookSalesRequest)
