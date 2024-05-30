@@ -3,6 +3,7 @@ package com.booksajo.bookPanda.User;
 import com.booksajo.bookPanda.JWT.JwtToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +24,11 @@ public class UserController {
         log.info("request userEmail = {}, password = {}", userEmail, userPassword);
         log.info("JwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
         return jwtToken;
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<UserDto> signUp(@RequestBody SignUpDto signUpDto) {
+        UserDto savedUserDto = userService.signUp(signUpDto);
+        return ResponseEntity.ok(savedUserDto);
     }
 }

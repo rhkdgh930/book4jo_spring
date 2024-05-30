@@ -29,6 +29,7 @@ public class SecurityConfig {
             .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                .requestMatchers("/users/sign-up").permitAll()
                 .requestMatchers("/users/sign-in").permitAll()
                 .requestMatchers("/users/test").hasRole("USER")
                 .anyRequest().permitAll()
