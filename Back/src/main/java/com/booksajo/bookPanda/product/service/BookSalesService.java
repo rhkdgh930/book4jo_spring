@@ -1,13 +1,12 @@
 package com.booksajo.bookPanda.product.service;
 
-import com.booksajo.bookPanda.product.dto.BookInfo;
-import com.booksajo.bookPanda.product.dto.BookSalesDto;
-import com.booksajo.bookPanda.product.dto.BookSalesRequest;
-import com.booksajo.bookPanda.product.dto.SalesInfoDto;
+import com.booksajo.bookPanda.product.dto.*;
 import com.booksajo.bookPanda.product.entity.BookSales;
 import com.booksajo.bookPanda.product.exception.errorCode.BookSalesErrorCode;
 import com.booksajo.bookPanda.product.exception.exception.BookSalesException;
 import com.booksajo.bookPanda.product.repository.BookSalesRepository;
+import com.booksajo.bookPanda.review.entity.Review;
+import com.booksajo.bookPanda.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,17 +21,26 @@ import java.util.List;
 public class BookSalesService {
     private final BookSalesRepository bookSalesRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ReviewRepository reviewRepository;
 
     private static final String BOOKSALES_VISITCOUNT_KEY = "visitcount";
 
 
 
-    public BookSales getBookSales(Long id)
+    public ResponseBookSales getBookSales(Long id)
     {
         incrementViewCount(id);
 
-        return bookSalesRepository.findById(id).orElseThrow(() ->
+        List<Review> reviewList = reviewRepository.findByBookSalesId(id);
+
+        BookSales bookSales = bookSalesRepository.findById(id).orElseThrow(() ->
                 new BookSalesException(BookSalesErrorCode.BOOK_SALES_NOT_FOUND));
+
+        ResponseBookSales res = new ResponseBookSales();
+        res.setBookSales(bookSales);
+        res.setReviewList(reviewList);
+
+        return res;
     }
 
     public List<BookSales> getBookSalesList()

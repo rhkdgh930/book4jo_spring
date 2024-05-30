@@ -36,7 +36,8 @@ public class BookSales {
     @Column(name = "book_info", nullable = false)
     private BookInfo bookInfo;
 
-    @OneToMany(mappedBy = "bookSales", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "book_sales_id")  // 단방향 관계를 위해 JoinColumn 사용
+    @Transient
     private List<Review> reviewList;
-
 }

@@ -5,6 +5,7 @@ import com.booksajo.bookPanda.product.exception.dto.ErrorResponse;
 import com.booksajo.bookPanda.product.exception.errorCode.NaverAPIErrorCode;
 import com.booksajo.bookPanda.product.exception.exception.BookSalesException;
 import com.booksajo.bookPanda.product.exception.exception.NaverAPIException;
+import com.booksajo.bookPanda.product.exception.exception.ReviewException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }
+
+    @ExceptionHandler(ReviewException.class) // ①
+    public ResponseEntity<Object> handleReviewException(ReviewException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
 
     // 예외처리에 관한 http를 보내는 코드
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {

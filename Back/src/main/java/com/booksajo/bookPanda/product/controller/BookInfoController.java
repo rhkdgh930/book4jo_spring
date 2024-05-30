@@ -26,7 +26,7 @@ public class BookInfoController {
     }
 
     @GetMapping("/bookSales")
-    public ResponseEntity<BookSales> getBookSales(@RequestParam("id") Long bookSalesId)
+    public ResponseEntity<ResponseBookSales> getBookSales(@RequestParam("id") Long bookSalesId)
     {
         return ResponseEntity.ok(bookSalesService.getBookSales(bookSalesId));
     }
