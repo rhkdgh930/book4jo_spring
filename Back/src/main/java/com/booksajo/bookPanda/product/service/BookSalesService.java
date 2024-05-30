@@ -89,9 +89,9 @@ public class BookSalesService {
 
     public void deleteBookSales(Long id)
     {
-        BookSales bookSales = bookSalesRepository.findById(id).orElseThrow(() ->
+        bookSalesRepository.findById(id).orElseThrow(() ->
                 new BookSalesException(BookSalesErrorCode.BOOK_SALES_NOT_FOUND));
-        bookSalesRepository.delete(bookSales);
+        bookSalesRepository.deleteById(id);
     }
 
     public void incrementViewCount(Long postId) {

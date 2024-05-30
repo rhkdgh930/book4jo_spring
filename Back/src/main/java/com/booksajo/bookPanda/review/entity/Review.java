@@ -3,6 +3,8 @@ package com.booksajo.bookPanda.review.entity;
 import com.booksajo.bookPanda.product.entity.BookSales;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Builder

@@ -50,9 +50,9 @@ public class ReviewService {
 
     public void deleteReview(Long id)
     {
-        Review review = reviewRepository.findById(id).orElseThrow(()->
+        reviewRepository.findById(id).orElseThrow(()->
                 new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
-        reviewRepository.delete(review);
+        reviewRepository.deleteById(id);
     }
 }

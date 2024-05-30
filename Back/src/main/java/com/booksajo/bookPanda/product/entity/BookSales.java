@@ -2,8 +2,11 @@ package com.booksajo.bookPanda.product.entity;
 
 
 import com.booksajo.bookPanda.product.dto.BookInfo;
+import com.booksajo.bookPanda.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,4 +35,8 @@ public class BookSales {
     })
     @Column(name = "book_info", nullable = false)
     private BookInfo bookInfo;
+
+    @OneToMany(mappedBy = "bookSales", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Review> reviewList;
+
 }
