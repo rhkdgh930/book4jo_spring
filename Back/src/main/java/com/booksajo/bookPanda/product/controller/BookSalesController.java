@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class BookInfoController {
+public class BookSalesController {
 
     private final BookInfoService bookInfoService;
     private final BookSalesService bookSalesService;

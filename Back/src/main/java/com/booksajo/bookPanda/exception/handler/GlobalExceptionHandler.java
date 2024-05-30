@@ -1,11 +1,11 @@
-package com.booksajo.bookPanda.product.exception.handler;
+package com.booksajo.bookPanda.exception.handler;
 
-import com.booksajo.bookPanda.product.exception.ErrorCode;
-import com.booksajo.bookPanda.product.exception.dto.ErrorResponse;
-import com.booksajo.bookPanda.product.exception.errorCode.NaverAPIErrorCode;
-import com.booksajo.bookPanda.product.exception.exception.BookSalesException;
-import com.booksajo.bookPanda.product.exception.exception.NaverAPIException;
-import com.booksajo.bookPanda.product.exception.exception.ReviewException;
+import com.booksajo.bookPanda.exception.ErrorCode;
+import com.booksajo.bookPanda.exception.errorCode.NaverAPIErrorCode;
+import com.booksajo.bookPanda.exception.exception.NaverAPIException;
+import com.booksajo.bookPanda.exception.exception.ReviewException;
+import com.booksajo.bookPanda.exception.dto.ErrorResponse;
+import com.booksajo.bookPanda.exception.exception.BookSalesException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

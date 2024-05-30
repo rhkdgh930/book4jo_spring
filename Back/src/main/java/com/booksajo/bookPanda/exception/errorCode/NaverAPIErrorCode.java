@@ -1,6 +1,6 @@
-package com.booksajo.bookPanda.product.exception.errorCode;
+package com.booksajo.bookPanda.exception.errorCode;
 
-import com.booksajo.bookPanda.product.exception.ErrorCode;
+import com.booksajo.bookPanda.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

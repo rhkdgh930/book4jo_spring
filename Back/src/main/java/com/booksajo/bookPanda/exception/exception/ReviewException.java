@@ -1,6 +1,6 @@
-package com.booksajo.bookPanda.product.exception.exception;
+package com.booksajo.bookPanda.exception.exception;
 
-import com.booksajo.bookPanda.product.exception.ErrorCode;
+import com.booksajo.bookPanda.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

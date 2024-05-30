@@ -1,4 +1,4 @@
-package com.booksajo.bookPanda.product.exception.dto;
+package com.booksajo.bookPanda.exception.dto;
 
 
 import lombok.Builder;

@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.booksajo.bookPanda.product.exception.errorCode.NaverAPIErrorCode;
-import com.booksajo.bookPanda.product.exception.exception.NaverAPIException;
+import com.booksajo.bookPanda.exception.errorCode.NaverAPIErrorCode;
+import com.booksajo.bookPanda.exception.exception.NaverAPIException;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;

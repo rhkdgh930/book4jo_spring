@@ -1,4 +1,4 @@
-package com.booksajo.bookPanda.product.exception;
+package com.booksajo.bookPanda.exception;
 
 import org.springframework.http.HttpStatus;
 
