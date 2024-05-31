@@ -30,7 +30,6 @@ public class OrderService {
         User user = userRepository.findByUserEmail(email);
 
         requestDto.setUser(user);
-        requestDto.setStatus(Status.ORDER);
         requestDto.setOrderDate(LocalDateTime.now());
 
         Order order = new Order(requestDto);
