@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../styles/Header.module.css";
-
+import { Link } from "react-router-dom";
 
 
 
@@ -9,7 +9,7 @@ function Header(){
         <div className={styles.top}>
             <div className={styles.topContainer}>
             <div className={styles.leftCategoryContainer}>
-                <div>HOME</div>
+            <div> <Link to="/"> HOME</Link> </div> 
                 <div>국내도서</div>
             </div>
             <div className={styles.rightCategoryContainer}>
