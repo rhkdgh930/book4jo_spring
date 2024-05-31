@@ -1,0 +1,25 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Gradle
+/build/
+
+# Log files
+*.log
+
+# Environment files
+.env
+
+# Temporary files
+*.tmp
+*.swp
+
+# Backup files
+*.bak
