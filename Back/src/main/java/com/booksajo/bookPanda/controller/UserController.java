@@ -36,8 +36,4 @@ public class UserController {
         return ResponseEntity.ok(savedUserDto);
     }
 
-    @PostMapping("/test")
-    public String test() {
-        return "good";
-    }
 }
