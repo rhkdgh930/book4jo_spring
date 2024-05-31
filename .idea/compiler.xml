@@ -10,10 +10,7 @@
         <module name="bookPanda.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="bookPanda" target="17" />
-      <module name="bookPanda.main" target="17" />
-      <module name="bookPanda.test" target="17" />
+    <bytecodeTargetLevel target="17">
       <module name="com.booksajo.book_panda" target="17" />
       <module name="com.booksajo.book_panda.main" target="17" />
       <module name="com.booksajo.book_panda.test" target="17" />
