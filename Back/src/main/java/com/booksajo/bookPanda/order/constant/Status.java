@@ -1,4 +1,4 @@
-package com.booksajo.bookPanda.constant;
+package com.booksajo.bookPanda.order.constant;
 
 public enum Status {
     ORDER, CANCEL, DONE

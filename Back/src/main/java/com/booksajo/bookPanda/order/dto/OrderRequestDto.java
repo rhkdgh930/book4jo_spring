@@ -1,6 +1,6 @@
-package com.booksajo.bookPanda.dto;
+package com.booksajo.bookPanda.order.dto;
 
-import com.booksajo.bookPanda.constant.Status;
+import com.booksajo.bookPanda.order.constant.Status;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;

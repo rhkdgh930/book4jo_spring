@@ -1,11 +1,11 @@
-package com.booksajo.bookPanda.service;
+package com.booksajo.bookPanda.order.service;
 
-import com.booksajo.bookPanda.domain.Order;
-import com.booksajo.bookPanda.domain.OrderItem;
-import com.booksajo.bookPanda.dto.OrderItemRequestDto;
-import com.booksajo.bookPanda.dto.response.OrderItemResponseDto;
-import com.booksajo.bookPanda.repository.OrderItemRepository;
-import com.booksajo.bookPanda.repository.OrderRepository;
+import com.booksajo.bookPanda.order.domain.Order;
+import com.booksajo.bookPanda.order.domain.OrderItem;
+import com.booksajo.bookPanda.order.dto.OrderItemRequestDto;
+import com.booksajo.bookPanda.order.dto.response.OrderItemResponseDto;
+import com.booksajo.bookPanda.order.repository.OrderItemRepository;
+import com.booksajo.bookPanda.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

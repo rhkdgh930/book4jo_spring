@@ -1,6 +1,6 @@
-package com.booksajo.bookPanda.dto;
+package com.booksajo.bookPanda.order.dto;
 
-import com.booksajo.bookPanda.domain.Order;
+import com.booksajo.bookPanda.order.domain.Order;
 import lombok.Getter;
 import lombok.Setter;
 

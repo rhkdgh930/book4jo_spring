@@ -1,7 +1,7 @@
-package com.booksajo.bookPanda.domain;
+package com.booksajo.bookPanda.order.domain;
 
-import com.booksajo.bookPanda.constant.Status;
-import com.booksajo.bookPanda.dto.OrderRequestDto;
+import com.booksajo.bookPanda.order.constant.Status;
+import com.booksajo.bookPanda.order.dto.OrderRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

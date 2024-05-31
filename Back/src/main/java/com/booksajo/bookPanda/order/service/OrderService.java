@@ -1,8 +1,8 @@
-package com.booksajo.bookPanda.service;
+package com.booksajo.bookPanda.order.service;
 
-import com.booksajo.bookPanda.domain.Order;
-import com.booksajo.bookPanda.dto.OrderRequestDto;
-import com.booksajo.bookPanda.dto.response.OrderResponseDto;
+import com.booksajo.bookPanda.order.domain.Order;
+import com.booksajo.bookPanda.order.dto.OrderRequestDto;
+import com.booksajo.bookPanda.order.dto.response.OrderResponseDto;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;

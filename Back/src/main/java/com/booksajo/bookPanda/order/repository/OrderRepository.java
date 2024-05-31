@@ -1,7 +1,6 @@
-package com.booksajo.bookPanda.repository;
+package com.booksajo.bookPanda.order.repository;
 
-import com.booksajo.bookPanda.domain.Order;
-import java.util.List;
+import com.booksajo.bookPanda.order.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
