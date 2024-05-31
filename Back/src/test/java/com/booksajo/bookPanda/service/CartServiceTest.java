@@ -1,12 +1,13 @@
 package com.booksajo.bookPanda.service;
 
+import com.booksajo.bookPanda.cart.service.CartService;
 import com.booksajo.bookPanda.domain.book.BookInfo;
 import com.booksajo.bookPanda.domain.cart.Cart;
 import com.booksajo.bookPanda.domain.book.BookSales;
-import com.booksajo.bookPanda.repository.BookSalesRepository;
-import com.booksajo.bookPanda.repository.CartItemRepository;
-import com.booksajo.bookPanda.repository.CartRepository;
-import com.booksajo.bookPanda.repository.UserRepository;
+import com.booksajo.bookPanda.cart.repository.BookSalesRepository;
+import com.booksajo.bookPanda.cart.repository.CartItemRepository;
+import com.booksajo.bookPanda.cart.repository.CartRepository;
+import com.booksajo.bookPanda.cart.repository.UserRepository;
 import com.booksajo.bookPanda.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
-package com.booksajo.bookPanda.controller;
+package com.booksajo.bookPanda.cart;
 
 
 import com.booksajo.bookPanda.domain.cart.Cart;
 import com.booksajo.bookPanda.domain.cart.CartItem;
-import com.booksajo.bookPanda.service.CartService;
+import com.booksajo.bookPanda.cart.service.CartService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

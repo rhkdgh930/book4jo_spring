@@ -1,4 +1,4 @@
-package com.booksajo.bookPanda.repository;
+package com.booksajo.bookPanda.cart.repository;
 
 import com.booksajo.bookPanda.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
