@@ -1,4 +1,4 @@
-package com.booksajo.bookPanda.book.entity;
+package com.booksajo.bookPanda.book.domain;
 
 
 import com.booksajo.bookPanda.book.dto.BookInfo;

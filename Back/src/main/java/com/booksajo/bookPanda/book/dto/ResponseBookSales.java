@@ -1,6 +1,6 @@
 package com.booksajo.bookPanda.book.dto;
 
-import com.booksajo.bookPanda.book.entity.BookSales;
+import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.review.entity.Review;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

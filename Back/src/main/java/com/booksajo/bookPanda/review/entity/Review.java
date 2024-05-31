@@ -1,6 +1,6 @@
 package com.booksajo.bookPanda.review.entity;
 
-import com.booksajo.bookPanda.book.entity.BookSales;
+import com.booksajo.bookPanda.book.domain.BookSales;
 import jakarta.persistence.*;
 import lombok.*;
 

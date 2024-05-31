@@ -1,7 +1,7 @@
 package com.booksajo.bookPanda.book.service;
 
 import com.booksajo.bookPanda.book.dto.*;
-import com.booksajo.bookPanda.book.entity.BookSales;
+import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.exception.errorCode.BookSalesErrorCode;
 import com.booksajo.bookPanda.exception.exception.BookSalesException;
 import com.booksajo.bookPanda.book.repository.BookSalesRepository;

@@ -3,19 +3,16 @@ package com.booksajo.bookPanda.cart.service;
 //import com.booksajo.bookPanda.domain.book.BookSales;
 //import com.booksajo.bookPanda.domain.cart.Cart;
 //import com.booksajo.bookPanda.domain.cart.CartItem;
+import com.booksajo.bookPanda.book.repository.BookSalesRepository;
 import com.booksajo.bookPanda.cart.repository.CartItemRepository;
 import com.booksajo.bookPanda.cart.repository.CartRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CartService {
     private CartRepository cartRepository;
     private CartItemRepository cartItemRepository;
-//    private BookSalesRepository bookSalesRepository;
+    private BookSalesRepository bookSalesRepository;
 //    private UserRepository userRepository;
 //
 //    public Cart getCartByUserId(Long userId) {

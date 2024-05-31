@@ -1,7 +1,7 @@
 package com.booksajo.bookPanda.book.controller;
 
 import com.booksajo.bookPanda.book.dto.*;
-import com.booksajo.bookPanda.book.entity.BookSales;
+import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.book.service.BookInfoService;
 import com.booksajo.bookPanda.book.service.BookSalesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
