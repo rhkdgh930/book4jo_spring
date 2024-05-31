@@ -1,6 +1,6 @@
 package com.booksajo.bookPanda.cart.domain;
 
-//import com.booksajo.bookPanda.cart.domain.book.BookSales;
+import com.booksajo.bookPanda.book.domain.BookSales;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,13 +13,13 @@ public class CartItem {
     @Column(name = "id")
     private Long id;
 
-//    @OneToOne
-//    @JoinColumn(name = "booksales_id")
-//    private BookSales bookSales;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "cart_id")
-//    private Cart cart;
+    @OneToOne
+    @JoinColumn(name = "booksales_id")
+    private BookSales bookSales;
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
 
     @Column(name = "quantity")
