@@ -1,13 +1,10 @@
 package com.booksajo.bookPanda.cart.service;
 
-import com.booksajo.bookPanda.domain.User;
 import com.booksajo.bookPanda.domain.book.BookSales;
 import com.booksajo.bookPanda.domain.cart.Cart;
 import com.booksajo.bookPanda.domain.cart.CartItem;
-import com.booksajo.bookPanda.cart.repository.BookSalesRepository;
 import com.booksajo.bookPanda.cart.repository.CartItemRepository;
 import com.booksajo.bookPanda.cart.repository.CartRepository;
-import com.booksajo.bookPanda.cart.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

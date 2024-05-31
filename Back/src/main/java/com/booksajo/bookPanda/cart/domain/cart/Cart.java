@@ -1,6 +1,5 @@
 package com.booksajo.bookPanda.domain.cart;
 
-import com.booksajo.bookPanda.domain.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,12 +15,12 @@ public class Cart {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItems = new ArrayList<>();
+//    @OneToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
+//
+//    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<CartItem> cartItems = new ArrayList<>();
 
     public void addItem(CartItem cartItem) {
         cartItems.add(cartItem);

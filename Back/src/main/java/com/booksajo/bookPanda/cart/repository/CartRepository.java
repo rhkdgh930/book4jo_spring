@@ -1,6 +1,6 @@
 package com.booksajo.bookPanda.cart.repository;
 
-import com.booksajo.bookPanda.domain.cart.Cart;
+import com.booksajo.bookPanda.cart.domain.cart.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
