@@ -35,4 +35,9 @@ public class UserController {
         UserDto savedUserDto = userService.signUp(signUpDto);
         return ResponseEntity.ok(savedUserDto);
     }
+
+    @PostMapping("/test")
+    public String test() {
+        return "good";
+    }
 }
