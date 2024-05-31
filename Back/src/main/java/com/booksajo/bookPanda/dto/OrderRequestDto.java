@@ -1,13 +1,8 @@
 package com.booksajo.bookPanda.dto;
 
 import com.booksajo.bookPanda.constant.Status;
-import com.booksajo.bookPanda.domain.Order;
-import com.booksajo.bookPanda.domain.OrderItem;
-import com.booksajo.bookPanda.domain.User;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

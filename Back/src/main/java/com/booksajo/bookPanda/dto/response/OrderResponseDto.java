@@ -2,7 +2,6 @@ package com.booksajo.bookPanda.dto.response;
 
 import com.booksajo.bookPanda.constant.Status;
 import com.booksajo.bookPanda.domain.Order;
-import com.booksajo.bookPanda.domain.User;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

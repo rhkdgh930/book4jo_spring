@@ -1,17 +1,13 @@
 package com.booksajo.bookPanda.service;
 
-import com.booksajo.bookPanda.domain.BookSales;
 import com.booksajo.bookPanda.domain.Order;
 import com.booksajo.bookPanda.domain.OrderItem;
 import com.booksajo.bookPanda.dto.OrderItemRequestDto;
 import com.booksajo.bookPanda.dto.response.OrderItemResponseDto;
-import com.booksajo.bookPanda.dto.response.OrderResponseDto;
-import com.booksajo.bookPanda.repository.BookSalesRepository;
 import com.booksajo.bookPanda.repository.OrderItemRepository;
 import com.booksajo.bookPanda.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
