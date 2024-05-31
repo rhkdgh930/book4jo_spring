@@ -1,5 +1,6 @@
 package com.booksajo.bookPanda.dto.response;
 
+import com.booksajo.bookPanda.constant.Status;
 import com.booksajo.bookPanda.domain.Order;
 import com.booksajo.bookPanda.domain.User;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class OrderResponseDto {
     private Long id;
     private LocalDateTime orderDate;
     private int totalPrice;
-    private String status;
+    private Status status;
     private String userEmail;
 
     public OrderResponseDto(Order entity){

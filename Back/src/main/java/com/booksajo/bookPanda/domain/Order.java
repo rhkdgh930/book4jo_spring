@@ -1,5 +1,6 @@
 package com.booksajo.bookPanda.domain;
 
+import com.booksajo.bookPanda.constant.Status;
 import com.booksajo.bookPanda.dto.OrderRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -40,7 +41,7 @@ public class Order {
     private int totalPrice;
 
     @Enumerated(EnumType.STRING)
-    private String status; // 주문상태
+    private Status status; // 주문상태
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", columnDefinition = "BIGINT", nullable = false)
