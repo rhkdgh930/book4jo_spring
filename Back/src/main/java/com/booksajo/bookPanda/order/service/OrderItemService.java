@@ -16,15 +16,15 @@ import org.springframework.stereotype.Service;
 public class OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
-    private final BookSalesRepository bookSalesRepository;
+//    private final BookSalesRepository bookSalesRepository;
     private final OrderRepository orderRepository;
 
     //주문한 상품 추가
     @Transactional
     public OrderItemResponseDto createOrderItem(OrderItemRequestDto requestDto){
-        BookSales bookSales = bookSalesRepository.findById(requestDto.getBookSales().getId())
-                .orElseThrow(()->new IllegalArgumentException("주문할 책이 없습니다."));
-        requestDto.setBookSales(bookSales);
+//        BookSales bookSales = bookSalesRepository.findById(requestDto.getBookSales().getId())
+//                .orElseThrow(()->new IllegalArgumentException("주문할 책이 없습니다."));
+//        requestDto.setBookSales(bookSales);
 
         Order order = orderRepository.findById(requestDto.getOrder().getId())
                 .orElseThrow(()->new IllegalArgumentException("주문하지 않았습니다."));

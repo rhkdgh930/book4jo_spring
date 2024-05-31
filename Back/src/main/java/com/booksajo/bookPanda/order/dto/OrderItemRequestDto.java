@@ -10,5 +10,5 @@ public class OrderItemRequestDto {
     private Long id;
     private int quantity;
     private Order order;
-    private BookSales bookSales;
+//    private BookSales bookSales;
 }

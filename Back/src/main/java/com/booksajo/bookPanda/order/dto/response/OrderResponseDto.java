@@ -20,6 +20,6 @@ public class OrderResponseDto {
         this.orderDate = entity.getOrderDate();
         this.totalPrice = entity.getTotalPrice();
         this.status = entity.getStatus();
-        this.userEmail = entity.getUser().getUserEmail();
+//        this.userEmail = entity.getUser().getUserEmail();
     }
 }

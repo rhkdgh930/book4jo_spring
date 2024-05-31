@@ -12,11 +12,11 @@ public class OrderRequestDto {
     private LocalDateTime orderDate;
     private int totalPrice;
     private Status status;
-    private User user;
+//    private User user;
     private String userEmail;
 
-    public void setUser(User user) {
-        this.user = user;
-        this.userEmail = user.getUserEmail();
-    }
+//    public void setUser(User user) {
+//        this.user = user;
+//        this.userEmail = user.getUserEmail();
+//    }
 }
