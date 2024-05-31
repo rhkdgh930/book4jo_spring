@@ -1,4 +1,4 @@
-package com.booksajo.bookPanda.domain.book;
+package com.booksajo.bookPanda.payment.domain.book;
 
 import jakarta.persistence.*;
 import lombok.Getter;

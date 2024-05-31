@@ -1,6 +1,6 @@
-package com.booksajo.bookPanda.domain.order;
+package com.booksajo.bookPanda.payment.domain.order;
 
-import com.booksajo.bookPanda.domain.user.User;
+import com.booksajo.bookPanda.payment.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
