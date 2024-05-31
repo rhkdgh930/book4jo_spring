@@ -25,6 +25,12 @@
     <content url="file://$MODULE_DIR$/../../Back/src/test">
       <sourceFolder url="file://$MODULE_DIR$/../../Back/src/test/java" isTestSource="true" />
     </content>
+    <content url="file://$MODULE_DIR$/../../Back/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../Back/src/test/java" isTestSource="true" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Back/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../Back/src/test/java" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="bookPanda.main" />
