@@ -1,6 +1,5 @@
 package com.booksajo.bookPanda.payment.domain.payment;
 
-import com.booksajo.bookPanda.payment.domain.order.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +23,8 @@ public class Payment {
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "order_id")
+//    private Order order;
 
 }
