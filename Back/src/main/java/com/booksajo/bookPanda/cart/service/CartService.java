@@ -11,13 +11,14 @@ import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CartService {
 
     private final CartRepository cartRepository;
@@ -27,13 +28,6 @@ public class CartService {
     private final BookSalesRepository bookSalesRepository;
 
     private final UserRepository userRepository;
-
-    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository,BookSalesRepository bookSalesRepository, UserRepository userRepository) {
-        this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
-        this.bookSalesRepository = bookSalesRepository;
-        this.userRepository = userRepository;
-    }
 
     public Cart getCartByUserId(Long userId) {
         return cartRepository.findByUserId(userId).get();
