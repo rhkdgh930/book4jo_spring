@@ -1,13 +1,10 @@
 package com.booksajo.bookPanda.user.controller;
 
-import com.booksajo.bookPanda.user.dto.UserDto;
 import com.booksajo.bookPanda.user.dto.VerifyCodeDto;
 import com.booksajo.bookPanda.user.service.MailService;
-import com.booksajo.bookPanda.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.agent.VirtualMachine.ForHotSpot.Connection.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users/sign-up")
 public class MailController {
 
-    private final UserService userService;
     private final MailService mailService;
 
     // 인증 이메일 전송
