@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.exception.handler;
 
 import com.booksajo.bookPanda.exception.ErrorCode;
 import com.booksajo.bookPanda.exception.errorCode.NaverAPIErrorCode;
+import com.booksajo.bookPanda.exception.exception.CategoryException;
 import com.booksajo.bookPanda.exception.exception.NaverAPIException;
 import com.booksajo.bookPanda.exception.exception.ReviewException;
 import com.booksajo.bookPanda.exception.dto.ErrorResponse;
@@ -27,6 +28,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ReviewException.class) // ①
     public ResponseEntity<Object> handleReviewException(ReviewException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
+
+
+    @ExceptionHandler(CategoryException.class)
+    public ResponseEntity<Object> handleCategoryException(CategoryException e){
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }

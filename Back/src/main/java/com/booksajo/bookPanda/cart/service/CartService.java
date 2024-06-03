@@ -1,28 +1,35 @@
 package com.booksajo.bookPanda.cart.service;
 
+
 import com.booksajo.bookPanda.book.domain.BookSales;
+import com.booksajo.bookPanda.book.repository.BookSalesRepository;
 import com.booksajo.bookPanda.cart.domain.Cart;
 import com.booksajo.bookPanda.cart.domain.CartItem;
-import com.booksajo.bookPanda.book.repository.BookSalesRepository;
 import com.booksajo.bookPanda.cart.repository.CartItemRepository;
 import com.booksajo.bookPanda.cart.repository.CartRepository;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class CartService {
-    private CartRepository cartRepository;
-    private CartItemRepository cartItemRepository;
-    private BookSalesRepository bookSalesRepository;
-    private UserRepository userRepository;
+
+    private final CartRepository cartRepository;
+
+    private final CartItemRepository cartItemRepository;
+
+    private final BookSalesRepository bookSalesRepository;
+
+    private final UserRepository userRepository;
 
     public Cart getCartByUserId(Long userId) {
-        return cartRepository.findByUserId(userId).orElseGet(() -> createCartForUser(userId));
+        return cartRepository.findByUserId(userId).get();
     }
 
     @Transactional
