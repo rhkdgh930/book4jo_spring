@@ -21,12 +21,14 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -55,6 +57,10 @@ public class User implements UserDetails {
     @Column
     private String address;
 
+    @Column
+    @Pattern(regexp = "\\d+", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
+    private String phoneNumber;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -68,6 +74,14 @@ public class User implements UserDetails {
 
     public void updatePassword(String newPassword) {
         this.userPassword = newPassword;
+    }
+
+    public void updateAddress(String newAddress) {
+        this.address = newAddress;
+    }
+
+    public void updatePhoneNumber(String newPhoneNumber) {
+        this.phoneNumber = newPhoneNumber;
     }
 
     @Override

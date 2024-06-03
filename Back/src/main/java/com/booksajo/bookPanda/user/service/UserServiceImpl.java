@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
     public void updatePassword(String userEmail, String currentPassword, String newPassword) {
         User user = validatePassword(userEmail, currentPassword);
         user.updatePassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     public User validatePassword(String userEmail, String userPassword) throws UsernameNotFoundException {
@@ -63,5 +64,17 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("로그인 정보가 일치하지 않습니다.");
         }
         return user;
+    }
+
+    public void updateAddress(String userEmail, String newAddress) {
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));;
+        user.updateAddress(newAddress);
+        userRepository.save(user);
+    }
+
+    public void updatePhoneNumber(String userEmail, String newPhoneNumber) {
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));;
+        user.updatePhoneNumber(newPhoneNumber);
+        userRepository.save(user);
     }
 }

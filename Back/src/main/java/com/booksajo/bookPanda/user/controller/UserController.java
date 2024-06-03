@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.MemberUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,5 +48,10 @@ public class UserController {
     @PatchMapping("/mypage/updatePassword")
     public void updatePassword(@AuthenticationPrincipal User user, String newPassword) {
         userServiceImpl.updatePassword(user.getUserEmail(), user.getPassword(), newPassword);
+    }
+
+    @PatchMapping("/mypage/updateAddress")
+    public void updateAddress(@AuthenticationPrincipal User user, String newAddress) {
+        userServiceImpl.updateAddress(user.getUserEmail(), newAddress);
     }
 }
