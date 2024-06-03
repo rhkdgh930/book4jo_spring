@@ -38,7 +38,7 @@ public class CartController {
     }
 
     // 카트의 아이템 갯수 조회
-    @GetMapping("/{userId}/items/count")
+    @GetMapping("/items/count")
     public ResponseEntity<Integer> getCartItemsCount(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
         int itemCount = cartService.getCartItemCount(userId);
@@ -46,7 +46,7 @@ public class CartController {
     }
 
     // 카트에 아이템 추가
-    @PostMapping("/{userId}/items")
+    @PostMapping("/items")
     public ResponseEntity<Cart> addItemToCart(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long bookSalesId) {
         Long userId = ((User) userDetails).getId();
         Cart cart = cartService.addCartItem(userId, bookSalesId);
@@ -54,7 +54,7 @@ public class CartController {
     }
 
     // 카트에서 아이템 삭제
-    @DeleteMapping("/{userId}/items/{itemId}")
+    @DeleteMapping("/items/{itemId}")
     public ResponseEntity<Cart> removeItemFromCart(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long itemId) {
         Long userId = ((User) userDetails).getId();
         Cart cart = cartService.removeCartItem(userId, itemId);
