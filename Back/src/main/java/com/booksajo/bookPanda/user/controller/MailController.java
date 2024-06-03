@@ -10,18 +10,20 @@ import lombok.RequiredArgsConstructor;
 import net.bytebuddy.agent.VirtualMachine.ForHotSpot.Connection.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/users/sign-up")
 public class MailController {
 
     private final UserService userService;
     private final MailService mailService;
 
     // 인증 이메일 전송
-    @PostMapping("signup/sendmail")
+    @PostMapping("/sendmail")
     public String mailConfirm(HttpSession httpSession, @RequestParam(value = "email", required = false) String email)
         throws Exception {
         String code = mailService.sendSimpleMessage(email);
@@ -30,7 +32,7 @@ public class MailController {
         return code;
     }
 
-    @PostMapping("/signup/verify-code")
+    @PostMapping("/verify-code")
     public String verifyCode(HttpSession httpSession, @RequestBody VerifyCodeDto verifyCodeDto) {
         boolean result = false;
         if (httpSession.getAttribute("code").equals(verifyCodeDto.getVerifyCode())) {

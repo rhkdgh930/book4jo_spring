@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserServiceImpl userServiceImpl;
 
@@ -44,14 +44,4 @@ public class UserController {
         return ResponseEntity.ok(savedUserDto);
     }
 
-    //newPassword 받는법 정하고 수정해야함.
-    @PatchMapping("/mypage/updatePassword")
-    public void updatePassword(@AuthenticationPrincipal User user, String newPassword) {
-        userServiceImpl.updatePassword(user.getUserEmail(), user.getPassword(), newPassword);
-    }
-
-    @PatchMapping("/mypage/updateAddress")
-    public void updateAddress(@AuthenticationPrincipal User user, String newAddress) {
-        userServiceImpl.updateAddress(user.getUserEmail(), newAddress);
-    }
 }
