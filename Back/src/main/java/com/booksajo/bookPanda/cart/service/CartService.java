@@ -28,6 +28,13 @@ public class CartService {
 
     private final UserRepository userRepository;
 
+    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository,BookSalesRepository bookSalesRepository, UserRepository userRepository) {
+        this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
+        this.bookSalesRepository = bookSalesRepository;
+        this.userRepository = userRepository;
+    }
+
     public Cart getCartByUserId(Long userId) {
         return cartRepository.findByUserId(userId).get();
     }
