@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,8 +44,11 @@ public class User implements UserDetails {
     private String userEmail;
 
     @Column(nullable = false)
+    @Pattern(regexp = "(?=.*[a-zA-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,16}",
+        message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String userPassword;
 
+    @NotBlank
     @Column(nullable = false)
     private String userName;
 
@@ -59,6 +64,10 @@ public class User implements UserDetails {
         return this.roles.stream()
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
+    }
+
+    public void updatePassword(String newPassword) {
+        this.userPassword = newPassword;
     }
 
     @Override

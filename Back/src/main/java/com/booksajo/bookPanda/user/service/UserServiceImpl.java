@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.user.service;
 
 import com.booksajo.bookPanda.user.JWT.JwtToken;
 import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
+import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.user.dto.SignUpDto;
 import com.booksajo.bookPanda.user.dto.UserDto;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,5 +49,19 @@ public class UserServiceImpl implements UserService {
         List<String> roles = new ArrayList<>();
         roles.add("USER");
         return UserDto.toDto(userRepository.save(signUpDto.toEntity(encodedPassword, roles)));
+    }
+
+    @Transactional
+    public void updatePassword(String userEmail, String currentPassword, String newPassword) {
+        User user = validatePassword(userEmail, currentPassword);
+        user.updatePassword(passwordEncoder.encode(newPassword));
+    }
+
+    public User validatePassword(String userEmail, String userPassword) throws UsernameNotFoundException {
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
+        if (!passwordEncoder.matches(userPassword, user.getPassword())) {
+            throw new UsernameNotFoundException("로그인 정보가 일치하지 않습니다.");
+        }
+        return user;
     }
 }
