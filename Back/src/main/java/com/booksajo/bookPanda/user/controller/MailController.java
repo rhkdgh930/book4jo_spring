@@ -24,10 +24,11 @@ public class MailController {
         throws Exception {
         String code = mailService.sendSimpleMessage(email);
         System.out.println("인증코드 : " + code);
-        httpSession.setAttribute("code", code);
+        httpSession.setAttribute("code", code); //쿠키에 저장할수도있음
         return code;
     }
 
+    // 검증
     @PostMapping("/verify-code")
     public String verifyCode(HttpSession httpSession, @RequestBody VerifyCodeDto verifyCodeDto) {
         boolean result = false;
