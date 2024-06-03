@@ -49,7 +49,7 @@ public class User implements UserDetails {
     private String userPassword;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
     @Column

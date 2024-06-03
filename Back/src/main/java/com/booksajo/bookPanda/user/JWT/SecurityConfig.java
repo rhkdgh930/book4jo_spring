@@ -31,10 +31,10 @@ public class SecurityConfig {
             .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+//                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+//                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
+//                .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
+//                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
                 .requestMatchers("/api/cart/**").hasRole("USER")
                 .requestMatchers("/api/mypage/**").hasRole("USER")
                 .requestMatchers("/api/payment/**").hasRole("USER")
