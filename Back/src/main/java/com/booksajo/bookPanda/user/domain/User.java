@@ -1,27 +1,18 @@
 package com.booksajo.bookPanda.user.domain;
 
-import static lombok.AccessLevel.PROTECTED;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
@@ -51,7 +42,8 @@ public class User implements UserDetails {
     private String address;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
+    @Column(name = "ROLE_NAME")
+   // @Builder.Default
     private List<String> roles = new ArrayList<>();
 
     @Override

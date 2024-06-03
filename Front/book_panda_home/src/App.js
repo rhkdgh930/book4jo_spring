@@ -7,10 +7,23 @@ import AdminPage from './pages/AdminPage';
 import Category from './components/Category';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+
+const privatePaths = ["/admin", "/profile", "/order"];
 function App() {
+  // 인증되지 않은 사용자가 들어가면 안되는 곳
+  // => 구매페이지, 프로필페이지, 관리자페이지
+  //
+  /*
+  const location = useLocation();
+  useEffect(() => {
+    if (privatePaths.includes(location.pathname)) {
+      // user auth logic.... (api call);
+    }
+  }, [location.pathname]);
+  */
   return (
     <div className="App">
-      <BrowserRouter>
+      
      
         <Header></Header>
         <SearchBar></SearchBar>
@@ -22,7 +35,7 @@ function App() {
                 <Route path="user" element={<p>member</p>}/>
           </Route>
         </Routes>
-        </BrowserRouter>
+
     </div>
   );
 }

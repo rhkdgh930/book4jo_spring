@@ -2,12 +2,9 @@ package com.booksajo.bookPanda.user.service;
 
 import com.booksajo.bookPanda.user.JWT.JwtToken;
 import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
-import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.user.dto.SignUpDto;
 import com.booksajo.bookPanda.user.dto.UserDto;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.booksajo.bookPanda.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
         }
         String encodedPassword = passwordEncoder.encode(signUpDto.getUserPassword());
         List<String> roles = new ArrayList<>();
-        roles.add("USER");
+        roles.add("ROLE_USER");
         return UserDto.toDto(userRepository.save(signUpDto.toEntity(encodedPassword, roles)));
     }
 }

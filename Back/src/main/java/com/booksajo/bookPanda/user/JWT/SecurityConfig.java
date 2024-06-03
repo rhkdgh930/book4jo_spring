@@ -3,6 +3,8 @@ package com.booksajo.bookPanda.user.JWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,7 +14,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.authentication.AuthenticationManager;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,10 +30,18 @@ public class SecurityConfig {
             .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/users/sign-up").permitAll()
-                .requestMatchers("/users/sign-in").permitAll()
-                .requestMatchers("/users/test").hasRole("USER")
-                .anyRequest().permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
+                    .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+                    .requestMatchers(HttpMethod.OPTIONS,"/api/**").permitAll()
+                    .requestMatchers("/api/cart/**").hasRole("USER")
+                    .requestMatchers("/api/mypage/**").hasRole("USER")
+                    .requestMatchers("/api/payment/**").hasRole("USER")
+                    // 관리자는 관리자 페이지로 접근
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                    // 그 외의 요청은 모두가 접근 가능
+                    .anyRequest().permitAll()
             )
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .build();
