@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.order.domain;
 
 import com.booksajo.bookPanda.order.constant.Status;
 import com.booksajo.bookPanda.order.dto.OrderRequestDto;
+import com.booksajo.bookPanda.user.domain.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,9 +44,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status; // 주문상태
 
-//    @ManyToOne(fetch=FetchType.LAZY)
-//    @JoinColumn(name = "user_id", referencedColumnName = "user_id", columnDefinition = "BIGINT", nullable = false)
-//    private User user;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", columnDefinition = "BIGINT", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy="order", cascade= CascadeType.ALL, orphanRemoval = true, fetch= FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -55,6 +56,18 @@ public class Order {
         this.orderDate = requestDto.getOrderDate();
         this.totalPrice = requestDto.getTotalPrice();
         this.status = requestDto.getStatus();
-//        this.user = requestDto.getUser();
+        this.user = requestDto.getUser();
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", orderDate=" + orderDate +
+                ", totalPrice=" + totalPrice +
+                ", status=" + status +
+                ", user=" + user +
+                ", orderItems=" + orderItems +
+                '}';
     }
 }

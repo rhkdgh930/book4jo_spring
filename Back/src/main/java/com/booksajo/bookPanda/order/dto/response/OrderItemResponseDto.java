@@ -1,5 +1,6 @@
 package com.booksajo.bookPanda.order.dto.response;
 
+import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.order.domain.Order;
 import com.booksajo.bookPanda.order.domain.OrderItem;
 import lombok.Getter;
@@ -11,12 +12,12 @@ public class OrderItemResponseDto {
     private Long id;
     private int quantity;
     private Order order;
-//    private BookSales bookSales;
+    private BookSales bookSales;
 
     public OrderItemResponseDto(OrderItem entity){
         this.id = entity.getId();
         this.quantity = entity.getQuantity();
         this.order = entity.getOrder();
-//        this.bookSales = entity.getBookSales();
+        this.bookSales = entity.getBookSales();
     }
 }

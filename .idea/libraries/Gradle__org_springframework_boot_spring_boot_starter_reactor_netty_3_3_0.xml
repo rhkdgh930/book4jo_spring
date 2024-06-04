@@ -2,9 +2,11 @@
   <library name="Gradle: org.springframework.boot:spring-boot-starter-reactor-netty:3.3.0" type="java-imported" external-system-id="GRADLE">
     <properties groupId="org.springframework.boot" artifactId="spring-boot-starter-reactor-netty" version="3.3.0" />
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-reactor-netty/3.3.0/f1fb44cde3e36b86c05e5bfb435ca6c5584c38a5/spring-boot-starter-reactor-netty-3.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-reactor-netty/3.3.0/f1fb44cde3e36b86c05e5bfb435ca6c5584c38a5/spring-boot-starter-reactor-netty-3.3.0.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-reactor-netty/3.3.0/ea1e926716cd8ad71bedeb5afe03cc8533f32fae/spring-boot-starter-reactor-netty-3.3.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

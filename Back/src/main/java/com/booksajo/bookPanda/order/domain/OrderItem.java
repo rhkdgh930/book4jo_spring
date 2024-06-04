@@ -1,5 +1,6 @@
 package com.booksajo.bookPanda.order.domain;
 
+import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.order.dto.OrderItemRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,14 +33,14 @@ public class OrderItem {
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", columnDefinition = "BIGINT", nullable = false)
     private Order order;
 
-//    @OneToOne(fetch= FetchType.LAZY)
-//    @JoinColumn(name = "book_sales_id", referencedColumnName = "book_sales_id", columnDefinition = "BIGINT", nullable = false)
-//    private BookSales bookSales;
+    @OneToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name = "book_sales_id", referencedColumnName = "id", columnDefinition = "BIGINT", nullable = false)
+    private BookSales bookSales;
 
     @Builder
     public OrderItem(OrderItemRequestDto requestDto){
         this.quantity = requestDto.getQuantity();
         this.order = requestDto.getOrder();
-//        this.bookSales = requestDto.getBookSales();
+        this.bookSales = requestDto.getBookSales();
     }
 }

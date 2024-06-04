@@ -14,7 +14,7 @@ public class BookInfo {
     private String link;
     private String image;
     private String author;
-    private String discount;
+    private String discount; //가격.
     private String publisher;
     private String pubdate;
     private String isbn;

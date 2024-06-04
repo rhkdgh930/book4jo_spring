@@ -2,9 +2,11 @@
   <library name="Gradle: org.springframework.security:spring-security-web:6.3.0" type="java-imported" external-system-id="GRADLE">
     <properties groupId="org.springframework.security" artifactId="spring-security-web" version="6.3.0" />
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-web/6.3.0/dfdec2d22d6dff861af9e17e0893e3edc742694a/spring-security-web-6.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-web/6.3.0/dfdec2d22d6dff861af9e17e0893e3edc742694a/spring-security-web-6.3.0.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-web/6.3.0/8ce6df1a87034a79f73157c725dddacf9550f7a0/spring-security-web-6.3.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

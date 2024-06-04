@@ -2,9 +2,11 @@
   <library name="Gradle: org.springframework:spring-context-support:6.1.8" type="java-imported" external-system-id="GRADLE">
     <properties groupId="org.springframework" artifactId="spring-context-support" version="6.1.8" />
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context-support/6.1.8/26f6bf59023b4adda9588f3715ccc65e588773ae/spring-context-support-6.1.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework/spring-context-support/6.1.8/26f6bf59023b4adda9588f3715ccc65e588773ae/spring-context-support-6.1.8.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework/spring-context-support/6.1.8/f3e27eb7a579b7e8e5e5be1cb731bf0ddbddafe4/spring-context-support-6.1.8-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
