@@ -2,6 +2,9 @@ package com.booksajo.bookPanda.order.service;
 
 import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.book.repository.BookSalesRepository;
+import com.booksajo.bookPanda.cart.domain.CartItem;
+import com.booksajo.bookPanda.cart.repository.CartItemRepository;
+import com.booksajo.bookPanda.cart.repository.CartRepository;
 import com.booksajo.bookPanda.order.constant.Status;
 import com.booksajo.bookPanda.order.domain.Order;
 import com.booksajo.bookPanda.order.domain.OrderItem;
@@ -10,6 +13,7 @@ import com.booksajo.bookPanda.order.dto.response.OrderResponseDto;
 import com.booksajo.bookPanda.order.repository.OrderItemRepository;
 import com.booksajo.bookPanda.order.repository.OrderRepository;
 import com.booksajo.bookPanda.user.domain.User;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +26,11 @@ public class OrderService {
     OrderRepository orderRepository;
     BookSalesRepository bookSalesRepository;
     OrderItemRepository orderItemRepository;
+    CartItemRepository cartItemRepository;
+    CartRepository cartRepository;
 
     //바로 주문
+    @Transactional
     public OrderResponseDto createOrder(Long bookId, OrderRequestDto requestDto, Authentication authentication) {
         BookSales book = bookSalesRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("책이 없습니다."));
@@ -53,14 +60,57 @@ public class OrderService {
         }
     }
 
+    //장바구니에서 주문
+    @Transactional
+    public OrderResponseDto createCartOrder(Long cartId, OrderRequestDto requestDto, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        requestDto.setUser(user);
+        requestDto.setStatus(Status.NOT_PAID);
+
+        Order order = new Order();
+        order.setStatus(Status.NOT_PAID);
+        order.setUser(user);
+
+        List<CartItem> cartItems = cartItemRepository.findAllByCartId(cartId);
+
+        order.setTotalPrice(calculateTotalPrice(cartItems));
+
+        orderRepository.save(order);
+
+        List<OrderItem> orderItems = createOrderItemsFromCartItems(cartItems, order);
+
+        orderItemRepository.saveAll(orderItems);
+
+        return new OrderResponseDto(order);
+    }
+
     //TODO : 주문 취소
 
+    @Transactional
+    private List<OrderItem> createOrderItemsFromCartItems(List<CartItem> cartItems, Order order) {
+        List<OrderItem> orderItems = new ArrayList<>();
+        for (CartItem cartItem : cartItems) {
+            BookSales book = cartItem.getBookSales();
 
-    private int calculateTotalPrice(List<OrderItem> orderItems) {
+            if(isStocked(book)){
+                OrderItem orderItem = new OrderItem();
+                orderItem.setOrder(order);
+                orderItem.setBookSales(book);
+                orderItem.setQuantity(cartItem.getQuantity());
+
+                orderItems.add(orderItem);
+            } else {
+                throw new IllegalArgumentException(book.getBookInfo().getTitle() + "이 품절되었습니다.");
+            }
+        }
+        return orderItems;
+    }
+
+    private int calculateTotalPrice(List<CartItem> cartItems) {
         int totalPrice = 0;
-        for (OrderItem orderItem : orderItems) {
-            int itemPrice = Integer.parseInt(orderItem.getBookSales().getBookInfo().getDiscount());//TODO : 가격 측정
-            int quantity = orderItem.getQuantity();
+        for (CartItem cartItem : cartItems) {
+            int itemPrice = Integer.parseInt(cartItem.getBookSales().getBookInfo().getDiscount());//TODO : 가격 측정
+            int quantity = cartItem.getQuantity();
             totalPrice += (itemPrice * quantity);
         }
         return totalPrice;

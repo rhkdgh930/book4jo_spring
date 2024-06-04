@@ -30,4 +30,14 @@ public class OrderController {
         }
     }
 
+    //카트에서 주문
+    @PostMapping("/{cartId}/order")
+    public ResponseEntity<?> postCartOrder(@PathVariable Long cardId, @RequestBody OrderRequestDto requestDto, Authentication authentication){
+        try{
+            OrderResponseDto order = orderService.createCartOrder(cardId, requestDto, authentication);
+            return ResponseEntity.ok(order);
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
