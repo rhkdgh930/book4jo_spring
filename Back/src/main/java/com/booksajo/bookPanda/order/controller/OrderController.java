@@ -3,10 +3,12 @@ package com.booksajo.bookPanda.order.controller;
 import com.booksajo.bookPanda.order.dto.OrderRequestDto;
 import com.booksajo.bookPanda.order.dto.response.OrderResponseDto;
 import com.booksajo.bookPanda.order.service.OrderService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,5 +41,12 @@ public class OrderController {
         } catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    //현재 사용자의 주문 내역을 조회
+    @GetMapping("/{userId}/orders")
+    public ResponseEntity<?> getOrderMember(@PathVariable Long UserId) {
+        List<OrderResponseDto> orderHists = orderService.getOrderHist(UserId);
+        return ResponseEntity.ok(orderHists);
     }
 }

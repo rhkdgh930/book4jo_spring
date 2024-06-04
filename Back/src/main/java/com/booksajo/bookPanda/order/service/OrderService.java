@@ -84,6 +84,12 @@ public class OrderService {
         return new OrderResponseDto(order);
     }
 
+    //주문 내역
+    @Transactional
+    public List<OrderResponseDto> getOrderHist(Long userId){
+        return orderRepository.findAllByUserId(userId).stream().map(OrderResponseDto::new).toList();
+    }
+
     //TODO : 주문 취소
 
     @Transactional
