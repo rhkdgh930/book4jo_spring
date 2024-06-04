@@ -1,4 +1,4 @@
-package com.booksajo.bookPanda.payment.domain.payment;
+package com.booksajo.bookPanda.payment.domain;
 
 import com.booksajo.bookPanda.order.domain.Order;
 import jakarta.persistence.*;
@@ -16,7 +16,7 @@ public class Payment {
     private Long id;
 
     @Column(name = "price", nullable = false)
-    private Long price;
+    private Integer price;
 
     @Column(name = "payment_uid", nullable = false)
     private String paymentUid;
