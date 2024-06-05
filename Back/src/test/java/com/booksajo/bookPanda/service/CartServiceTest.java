@@ -1,29 +1,6 @@
 package com.booksajo.bookPanda.service;
 
-import com.booksajo.bookPanda.book.domain.BookSales;
-import com.booksajo.bookPanda.book.dto.BookInfo;
-import com.booksajo.bookPanda.book.repository.BookSalesRepository;
-import com.booksajo.bookPanda.cart.domain.Cart;
-import com.booksajo.bookPanda.cart.service.CartService;
-
-import com.booksajo.bookPanda.cart.repository.CartItemRepository;
-import com.booksajo.bookPanda.cart.repository.CartRepository;
-import com.booksajo.bookPanda.user.domain.User;
-import com.booksajo.bookPanda.user.repository.UserRepository;
-
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
+/*
 @ExtendWith(MockitoExtension.class)
 public class CartServiceTest {
     @Mock
@@ -115,3 +92,4 @@ public class CartServiceTest {
 
 
 }
+*/

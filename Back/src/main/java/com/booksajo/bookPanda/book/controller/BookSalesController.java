@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class BookSalesController {
 
     private final BookInfoService bookInfoService;
@@ -21,7 +22,7 @@ public class BookSalesController {
 
     @ResponseBody
     @GetMapping("/book")
-    public ResponseEntity<List<BookInfo>> getBookInfo(@Valid @RequestBody NaverRequestVariableDto dto) throws JsonProcessingException {
+    public ResponseEntity<List<BookInfo>> getBookInfo(@Valid NaverRequestVariableDto dto) throws JsonProcessingException {
         return ResponseEntity.ok(bookInfoService.searchBookWithWebClient(dto));
     }
 
