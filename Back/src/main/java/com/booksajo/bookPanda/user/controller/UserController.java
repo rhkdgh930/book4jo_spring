@@ -1,21 +1,13 @@
 package com.booksajo.bookPanda.user.controller;
 
 import com.booksajo.bookPanda.user.JWT.JwtToken;
-import com.booksajo.bookPanda.user.domain.UpdatePasswordRequest;
-import com.booksajo.bookPanda.user.domain.User;
-import com.booksajo.bookPanda.user.service.UserService;
 import com.booksajo.bookPanda.user.dto.SignInDto;
 import com.booksajo.bookPanda.user.dto.SignUpDto;
 import com.booksajo.bookPanda.user.dto.UserDto;
 import com.booksajo.bookPanda.user.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.MemberUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +22,7 @@ public class UserController {
 
     @PostMapping("/sign-in")
     public JwtToken signIn(@RequestBody SignInDto signInDto) {
+        System.out.println("nnnnnnnnnnnnnnnnnnnnnn");
         String userEmail = signInDto.getUserEmail();
         String userPassword = signInDto.getUserPassword();
         JwtToken jwtToken = userServiceImpl.signIn(userEmail, userPassword);
