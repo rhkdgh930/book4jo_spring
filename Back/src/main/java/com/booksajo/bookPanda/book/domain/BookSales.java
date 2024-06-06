@@ -40,4 +40,5 @@ public class BookSales {
     @JoinColumn(name = "book_sales_id")  // 단방향 관계를 위해 JoinColumn 사용
     @Transient
     private List<Review> reviewList;
+
 }

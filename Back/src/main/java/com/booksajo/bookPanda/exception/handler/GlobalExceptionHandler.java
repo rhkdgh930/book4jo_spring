@@ -2,11 +2,8 @@ package com.booksajo.bookPanda.exception.handler;
 
 import com.booksajo.bookPanda.exception.ErrorCode;
 import com.booksajo.bookPanda.exception.errorCode.NaverAPIErrorCode;
-import com.booksajo.bookPanda.exception.exception.CategoryException;
-import com.booksajo.bookPanda.exception.exception.NaverAPIException;
-import com.booksajo.bookPanda.exception.exception.ReviewException;
+import com.booksajo.bookPanda.exception.exception.*;
 import com.booksajo.bookPanda.exception.dto.ErrorResponse;
-import com.booksajo.bookPanda.exception.exception.BookSalesException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,6 +37,12 @@ public class GlobalExceptionHandler {
         return handleExceptionInternal(errorCode);
     }
 
+    @ExceptionHandler(CartException.class)
+    public ResponseEntity<Object> handleCartException(CartException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
 
     // 예외처리에 관한 http를 보내는 코드
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
@@ -59,4 +62,6 @@ public class GlobalExceptionHandler {
         // 커스텀 예외 생성 및 반환
         throw new NaverAPIException(NaverAPIErrorCode.INCORRECT_QUERY_REQ_ERROR);
     }
+
+
 }
