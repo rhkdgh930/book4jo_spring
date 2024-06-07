@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.booksajo.bookPanda.service.CartServiceTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-06-03T04:25:10" hostname="나잖아" time="0.855">
-  <properties/>
-  <testcase name="testAddExistingCartItem()" classname="com.booksajo.bookPanda.service.CartServiceTest" time="0.855"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

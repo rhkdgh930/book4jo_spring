@@ -2,11 +2,12 @@
 package com.booksajo.bookPanda.user.dto;
 
 import com.booksajo.bookPanda.user.domain.User;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -27,6 +28,7 @@ public class SignUpDto {
             .userEmail(userEmail)
             .userPassword(userPassword)
             .userName(userName)
+                .roles(roles)
             .address(address)
             .phoneNumber(phoneNumber)
             .roles(roles)

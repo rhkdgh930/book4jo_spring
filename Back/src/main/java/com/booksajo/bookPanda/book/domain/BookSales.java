@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.book.domain;
 
 
 import com.booksajo.bookPanda.book.dto.BookInfo;
+import com.booksajo.bookPanda.category.domain.Category;
 import com.booksajo.bookPanda.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,4 +42,6 @@ public class BookSales {
     @Transient
     private List<Review> reviewList;
 
+    @OneToOne
+    private Category category;
 }
