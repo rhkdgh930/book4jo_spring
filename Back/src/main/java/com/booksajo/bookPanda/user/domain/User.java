@@ -7,6 +7,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -37,7 +38,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, unique = true, nullable = false)
     private Long id;
 
@@ -58,7 +59,7 @@ public class User implements UserDetails {
     private String address;
 
     @Column
-    @Pattern(regexp = "\\d+", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
+    @Pattern(regexp = "^(\\d{3}-\\d{3,4}-\\d{4})?$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
     private String phoneNumber;
 
     @ElementCollection(fetch = FetchType.EAGER)

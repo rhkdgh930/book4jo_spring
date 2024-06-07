@@ -1,3 +1,4 @@
+// SignUpDto.java
 package com.booksajo.bookPanda.user.dto;
 
 import com.booksajo.bookPanda.user.domain.User;
@@ -17,7 +18,9 @@ public class SignUpDto {
     private String userPassword;
     private String userName;
     private String address;
+    private String phoneNumber;
     private List<String> roles;
+    private String authCode;
 
     public User toEntity(String encodedPassword, List<String> roles) {
         return User.builder()
@@ -25,6 +28,7 @@ public class SignUpDto {
             .userPassword(userPassword)
             .userName(userName)
             .address(address)
+            .phoneNumber(phoneNumber)
             .roles(roles)
             .build();
     }

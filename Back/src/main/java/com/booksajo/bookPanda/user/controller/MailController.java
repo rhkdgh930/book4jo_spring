@@ -1,15 +1,12 @@
 package com.booksajo.bookPanda.user.controller;
 
-import com.booksajo.bookPanda.user.dto.VerifyCodeDto;
+import com.booksajo.bookPanda.user.dto.SignUpDto;
+import com.booksajo.bookPanda.user.service.RedisService;
 import com.booksajo.bookPanda.user.service.MailService;
-import jakarta.servlet.http.HttpSession;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,26 +14,34 @@ import org.springframework.web.bind.annotation.RestController;
 public class MailController {
 
     private final MailService mailService;
+    private final RedisService redisService;
 
     // 인증 이메일 전송
-    @PostMapping("/sendmail")
-    public String mailConfirm(HttpSession httpSession, @RequestParam(value = "email", required = false) String email)
-        throws Exception {
-        String code = mailService.sendSimpleMessage(email);
-        System.out.println("인증코드 : " + code);
-        httpSession.setAttribute("code", code); //쿠키에 저장할수도있음
-        return code;
+    @PostMapping("/send-email")
+    public ResponseEntity<String> mailConfirm(@RequestBody SignUpDto signUpDto) throws Exception {
+        String email = signUpDto.getUserEmail();
+        try {
+            String code = mailService.sendSimpleMessage(email);
+            return ResponseEntity.ok("메일을 성공적으로 보냈습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("메일을 보내지 못했습니다.");
+        }
     }
 
-    // 검증
+    // 인증 코드 검증
     @PostMapping("/verify-code")
-    public String verifyCode(HttpSession httpSession, @RequestBody VerifyCodeDto verifyCodeDto) {
-        boolean result = false;
-        if (httpSession.getAttribute("code").equals(verifyCodeDto.getVerifyCode())) {
-            result = true;
+    public ResponseEntity<String> verifyCode(@RequestBody SignUpDto signUpDto) {
+        String email = signUpDto.getUserEmail();
+        String authCode = signUpDto.getAuthCode(); // SignUpDto에 authCode 필드 추가 필요
+        String redisAuthCode = redisService.getData(email);
+
+        if (redisAuthCode != null && redisAuthCode.equals(authCode)) {
+            redisService.deleteData(email); // 인증 성공 시 기존 인증 코드를 삭제
+            redisService.setDataExpire(email + "_verified", "true", 3600); // 1시간 동안 유효한 인증 상태 저장
+            return ResponseEntity.ok("인증에 성공하였습니다. 회원가입을 진행하세요.");
         } else {
-            throw new NoSuchElementException("인증번호가 일치하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 코드가 유효하지 않습니다.");
         }
-        return String.valueOf(result);
     }
+
 }

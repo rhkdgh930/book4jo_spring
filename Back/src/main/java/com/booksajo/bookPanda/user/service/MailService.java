@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
-
     private final UserRepository memberRepository;
+    private final RedisService redisUtil;
     private String authNum;
 
     private void checkDuplicatedEmail(String email) {
@@ -76,19 +76,19 @@ public class MailService {
 
     //메일 발송
     //등록해둔 javaMail 객체를 사용해서 이메일 send
-    public String sendSimpleMessage(String sendEmail) throws Exception {
-
-        authNum = createCode();    //랜덤 인증번호 생성
-
-        MimeMessage message = createMessage(sendEmail);    //메일 발송
+    public String sendSimpleMessage(String email) throws Exception {
         try {
+            authNum = createCode();    //랜덤 인증번호 생성
+            redisUtil.setDataExpire(email, authNum, 180000);
+            MimeMessage message = createMessage(email);    //메일 발송
             javaMailSender.send(message);
-        } catch (MailException es) {
-            es.printStackTrace();
+        } catch (MailException e) {
+            e.printStackTrace();
             throw new IllegalArgumentException();
         }
-
         return authNum;
     }
+
+
 
 }
