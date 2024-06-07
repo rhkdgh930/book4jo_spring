@@ -15,6 +15,7 @@ public class BookSalesDto {
     private Integer visitCount;
     private Integer sellCount;
     private Integer stock;
+    private Category category;
     private BookInfo bookInfo;
 
     public BookSales toEntity(Category category)

@@ -42,6 +42,6 @@ public class BookSales {
     @Transient
     private List<Review> reviewList;
 
-    @OneToOne
+    @ManyToOne
     private Category category;
 }

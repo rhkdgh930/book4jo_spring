@@ -14,19 +14,19 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class BookSalesController {
 
     private final BookInfoService bookInfoService;
     private final BookSalesService bookSalesService;
 
     @ResponseBody
-    @GetMapping("/book")
-    public ResponseEntity<List<BookInfo>> getBookInfo(@Valid NaverRequestVariableDto dto) throws JsonProcessingException {
+    @PostMapping("/book")
+    public ResponseEntity<List<BookInfo>> getBookInfo(@RequestBody NaverRequestVariableDto dto) throws JsonProcessingException {
+        System.out.println(dto);
         return ResponseEntity.ok(bookInfoService.searchBookWithWebClient(dto));
     }
 
-    @GetMapping("/bookSales")
+    @PostMapping("/getBookSales")
     public ResponseEntity<ResponseBookSales> getBookSales(@RequestParam("id") Long bookSalesId)
     {
         return ResponseEntity.ok(bookSalesService.getBookSales(bookSalesId));
@@ -46,7 +46,6 @@ public class BookSalesController {
     @PostMapping("/bookSales")
     public ResponseEntity<BookSales> createBookSales(@RequestBody BookSalesRequest bookSalesRequest)
     {
-        System.out.println(bookSalesRequest.getSalesInfoDto().getCategoryId());
         return ResponseEntity.ok(bookSalesService.createBookSales(bookSalesRequest));
     }
 

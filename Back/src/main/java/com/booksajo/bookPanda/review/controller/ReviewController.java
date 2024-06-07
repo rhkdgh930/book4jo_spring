@@ -21,9 +21,9 @@ public class ReviewController {
     }
 
     @GetMapping("reviews")
-    public ResponseEntity<List<Review>> getReviews()
+    public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "id") Long id)
     {
-        return ResponseEntity.ok(reviewService.getReviews());
+        return ResponseEntity.ok(reviewService.getReviews(id));
     }
 
     @PostMapping("review")
