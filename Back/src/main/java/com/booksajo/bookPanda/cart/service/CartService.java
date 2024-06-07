@@ -6,6 +6,7 @@ import com.booksajo.bookPanda.book.repository.BookSalesRepository;
 import com.booksajo.bookPanda.cart.domain.Cart;
 import com.booksajo.bookPanda.cart.domain.CartItem;
 import com.booksajo.bookPanda.cart.dto.CartItemDto;
+import com.booksajo.bookPanda.cart.dto.CartResponseDto;
 import com.booksajo.bookPanda.cart.repository.CartItemRepository;
 import com.booksajo.bookPanda.cart.repository.CartRepository;
 import com.booksajo.bookPanda.exception.errorCode.CartErrorCode;
@@ -29,9 +30,10 @@ public class CartService {
     private final BookSalesRepository bookSalesRepository;
     private final UserRepository userRepository;
 
-    public Cart getCartByUserId(Long userId) {
-        return cartRepository.findByUserId(userId)
+    public CartResponseDto getCartByUserId(Long userId) {
+        Cart cart = cartRepository.findById(userId)
                 .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
+        return toCartResponseDto(cart);
     }
 
     @Transactional
@@ -45,10 +47,11 @@ public class CartService {
 
     // 유저의 카트가 존재하면 카트에 아이템 추가, 존재하지 않을시 카트 생성 후 아이템 추가, 동일한 책이 존재 할 경우 수량 추가
     @Transactional
-    public Cart addCartItem(Long userId, Long bookSalesId) {
+    public CartResponseDto addCartItem(Long userId, Long bookSalesId) {
         Cart cart;
         try {
-            cart = getCartByUserId(userId);
+            cart = cartRepository.findByUserId(userId)
+                    .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
         } catch (CartException e) {
             if(e.getErrorCode() == CartErrorCode.USER_NOT_FOUND) {
                 cart = createCartForUser(userId);
@@ -77,20 +80,21 @@ public class CartService {
             cartItemRepository.save(cartItem);
         }
 
-        return cartRepository.save(cart);
+        return toCartResponseDto(cart);
     }
 
     public List<CartItemDto> getCartItems(Long userId) {
-        Cart cart = getCartByUserId(userId);
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
         return cart.getCartItems().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-
     @Transactional
     public void saveCartState(Long userId, List<CartItemDto> cartItems) {
-        Cart cart = getCartByUserId(userId);
+        Cart cart = cartRepository.findByUserId(userId)
+                        .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
         cart.getCartItems().clear();
         for (CartItemDto itemDto : cartItems) {
             BookSales bookSales = bookSalesRepository.findById(itemDto.getBookSalesId())
@@ -114,5 +118,14 @@ public class CartService {
         cartItemDto.setPrice(cartItem.getBookSales().getBookInfo().getDiscount());
         cartItemDto.setChecked(true);
         return cartItemDto;
+    }
+
+    private CartResponseDto toCartResponseDto(Cart cart) {
+        CartResponseDto cartResponseDto = new CartResponseDto();
+        cartResponseDto.setId(cart.getId());
+        cartResponseDto.setCartItems(cart.getCartItems().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList()));
+        return cartResponseDto;
     }
 }
