@@ -46,6 +46,7 @@ public class BookSalesController {
     @PostMapping("/bookSales")
     public ResponseEntity<BookSales> createBookSales(@RequestBody BookSalesRequest bookSalesRequest)
     {
+        System.out.println(bookSalesRequest.getSalesInfoDto().getCategoryId());
         return ResponseEntity.ok(bookSalesService.createBookSales(bookSalesRequest));
     }
 
