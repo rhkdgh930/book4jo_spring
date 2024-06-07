@@ -2,13 +2,14 @@ package com.booksajo.bookPanda.cart.controller;
 
 
 import com.booksajo.bookPanda.cart.domain.Cart;
-import com.booksajo.bookPanda.cart.domain.CartItem;
+import com.booksajo.bookPanda.cart.dto.CartItemDto;
 import com.booksajo.bookPanda.cart.service.CartService;
 import com.booksajo.bookPanda.user.domain.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    // 카트 조회
+    // 카트(장바구니) 조회
     @GetMapping
     public ResponseEntity<Cart> getCart(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
@@ -29,20 +30,12 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    // 카트의 아이템 조회
+    // 카트의 아이템(책) 조회
     @GetMapping("/items")
-    public ResponseEntity<List<CartItem>> getCartItems(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<List<CartItemDto>> getCartItems(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
-        List<CartItem> cartItems = cartService.getCartItems(userId);
+        List<CartItemDto> cartItems = cartService.getCartItems(userId);
         return ResponseEntity.ok(cartItems);
-    }
-
-    // 카트의 아이템 갯수 조회
-    @GetMapping("/items/count")
-    public ResponseEntity<Integer> getCartItemsCount(@AuthenticationPrincipal UserDetails userDetails) {
-        Long userId = ((User) userDetails).getId();
-        int itemCount = cartService.getCartItemCount(userId);
-        return ResponseEntity.ok(itemCount);
     }
 
     // 카트에 아이템 추가
@@ -53,13 +46,14 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    // 카트에서 아이템 삭제
-    @DeleteMapping("/items/{itemId}")
-    public ResponseEntity<Cart> removeItemFromCart(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long itemId) {
+    // Cart 페이지를 벗어날 때 장바구니 변경사항 DB에 반영
+    @PostMapping("/save")
+    public ResponseEntity<Void> saveCartState(@AuthenticationPrincipal UserDetails userDetails, @RequestBody List<CartItemDto> cartItems) {
         Long userId = ((User) userDetails).getId();
-        Cart cart = cartService.removeCartItem(userId, itemId);
-        return ResponseEntity.ok(cart);
+        cartService.saveCartState(userId, cartItems);
+        return ResponseEntity.ok().build();
     }
+
 
 
 
