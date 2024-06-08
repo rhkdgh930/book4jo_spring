@@ -91,6 +91,10 @@ public class OrderService {
     }
 
     //TODO : 주문 취소
+    @Transactional
+    public void cancelOrder(OrderRequestDto requestDto){
+        requestDto.setStatus(Status.CANCEL);
+    }
 
     @Transactional
     private List<OrderItem> createOrderItemsFromCartItems(List<CartItem> cartItems, Order order) {
