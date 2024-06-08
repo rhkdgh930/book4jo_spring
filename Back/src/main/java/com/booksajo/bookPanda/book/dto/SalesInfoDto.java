@@ -7,4 +7,5 @@ public class SalesInfoDto {
     private Integer visitCount;
     private Integer sellCount;
     private Integer stock;
+    private Long categoryId;
 }

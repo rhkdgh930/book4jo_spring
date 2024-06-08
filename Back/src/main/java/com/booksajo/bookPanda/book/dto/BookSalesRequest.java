@@ -1,9 +1,11 @@
 package com.booksajo.bookPanda.book.dto;
 
+import com.booksajo.bookPanda.category.domain.Category;
+import lombok.Data;
 import lombok.Getter;
 
+@Data
 @Getter
-
 public class BookSalesRequest {
     private String title;
     private String link;
@@ -15,4 +17,5 @@ public class BookSalesRequest {
     private String isbn;
     private String description;
     private SalesInfoDto salesInfoDto;
+    private Category category;
 }

@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.book.domain;
 
 
 import com.booksajo.bookPanda.book.dto.BookInfo;
+import com.booksajo.bookPanda.category.domain.Category;
 import com.booksajo.bookPanda.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,4 +41,7 @@ public class BookSales {
     @JoinColumn(name = "book_sales_id")  // 단방향 관계를 위해 JoinColumn 사용
     @Transient
     private List<Review> reviewList;
+
+    @ManyToOne
+    private Category category;
 }

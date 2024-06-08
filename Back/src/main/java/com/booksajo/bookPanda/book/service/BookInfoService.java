@@ -29,7 +29,7 @@ public class BookInfoService {
 
     public void errorTask(NaverRequestVariableDto dto)
     {
-        if(dto.getDisplay() > 10 || dto.getDisplay() < 1 )
+        if(dto.getDisplay() > 101 || dto.getDisplay() < 1 )
             throw new NaverAPIException(NaverAPIErrorCode.INVALID_DISPLAY_VALUE_ERROR);
         if(dto.getStart() > 100 || dto.getStart() < 1 )
             throw new NaverAPIException(NaverAPIErrorCode.INVALID_START_VALUE_ERROR);

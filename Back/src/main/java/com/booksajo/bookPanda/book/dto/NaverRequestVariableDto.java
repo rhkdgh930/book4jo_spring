@@ -1,9 +1,9 @@
 package com.booksajo.bookPanda.book.dto;
 
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class NaverRequestVariableDto {
 
     String query;

@@ -1,16 +1,20 @@
 package com.booksajo.bookPanda.book.service;
 
-import com.booksajo.bookPanda.book.dto.*;
 import com.booksajo.bookPanda.book.domain.BookSales;
-import com.booksajo.bookPanda.exception.errorCode.BookSalesErrorCode;
-import com.booksajo.bookPanda.exception.exception.BookSalesException;
+import com.booksajo.bookPanda.book.dto.*;
 import com.booksajo.bookPanda.book.repository.BookSalesRepository;
+import com.booksajo.bookPanda.category.domain.Category;
+import com.booksajo.bookPanda.category.repository.CategoryRepository;
+import com.booksajo.bookPanda.exception.errorCode.BookSalesErrorCode;
+import com.booksajo.bookPanda.exception.errorCode.CategoryErrorCode;
+import com.booksajo.bookPanda.exception.exception.BookSalesException;
+import com.booksajo.bookPanda.exception.exception.CategoryException;
 import com.booksajo.bookPanda.review.entity.Review;
 import com.booksajo.bookPanda.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,6 +26,7 @@ public class BookSalesService {
     private final BookSalesRepository bookSalesRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ReviewRepository reviewRepository;
+    private final CategoryRepository categoryRepository;
 
     private static final String BOOKSALES_VISITCOUNT_KEY = "visitcount";
 
@@ -52,7 +57,7 @@ public class BookSalesService {
     {
         BookSalesDto bookSalesDto = new BookSalesDto();
 
-        System.out.println(bookSalesRequest.getTitle());
+       // System.out.println(bookSalesRequest.getTitle());
 
         BookInfo newBookInfo = getBookInfo(bookSalesRequest);
         bookSalesDto.setBookInfo(newBookInfo);
@@ -60,11 +65,15 @@ public class BookSalesService {
         bookSalesDto.setVisitCount(bookSalesRequest.getSalesInfoDto().getVisitCount());
         bookSalesDto.setStock(bookSalesRequest.getSalesInfoDto().getStock());
 
+        Category category = categoryRepository.findById(bookSalesRequest.getSalesInfoDto().getCategoryId())
+                .orElseThrow(()->new CategoryException(CategoryErrorCode.CATEGORY_NOT_FOUND));
 
-        BookSales bookSales = bookSalesDto.toEntity();
+        BookSales bookSales = bookSalesDto.toEntity(category);
 
         return bookSalesRepository.save(bookSales);
     }
+
+
 
     private BookInfo getBookInfo(BookSalesRequest bookSalesRequest) {
         BookInfo newBookInfo = new BookInfo();

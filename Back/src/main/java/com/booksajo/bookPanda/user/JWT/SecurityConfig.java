@@ -29,9 +29,16 @@ public class SecurityConfig {
             .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/users/sign-up").permitAll()
-                .requestMatchers("/users/sign-in").permitAll()
-                .requestMatchers("/users/test").hasRole("USER")
+//                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+//                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
+//                .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
+//                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+//                .requestMatchers("/api/cart/**").hasRole("USER")
+//                .requestMatchers("/api/mypage/**").hasRole("USER")
+//                .requestMatchers("/api/payment/**").hasRole("USER")
+//                // 관리자는 관리자 페이지로 접근
+//                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // 그 외의 요청은 모두가 접근 가능
                 .anyRequest().permitAll()
             )
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

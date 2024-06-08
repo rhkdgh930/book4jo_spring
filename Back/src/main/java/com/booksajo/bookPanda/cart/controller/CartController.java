@@ -2,51 +2,66 @@ package com.booksajo.bookPanda.cart.controller;
 
 
 import com.booksajo.bookPanda.cart.domain.Cart;
-import com.booksajo.bookPanda.cart.domain.CartItem;
+import com.booksajo.bookPanda.cart.dto.CartItemDto;
+import com.booksajo.bookPanda.cart.dto.CartResponseDto;
 import com.booksajo.bookPanda.cart.service.CartService;
+import com.booksajo.bookPanda.user.domain.User;
+import com.booksajo.bookPanda.user.service.CustomUserDetailsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/api/cart")
 public class CartController {
-    private CartService cartService;
+    private final CartService cartService;
+    private final CustomUserDetailsService userDetailsService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable Long userId) {
-        Cart cart = cartService.getCartByUserId(userId);
+    public CartController(CartService cartService, CustomUserDetailsService userDetailsService) {
+        this.cartService = cartService;
+        this.userDetailsService = userDetailsService;
+    }
+
+    // 카트(장바구니) 조회
+    @GetMapping
+    public ResponseEntity<CartResponseDto> getCart(Principal principal) {
+        Long userId = getUserIdFromPrincipal(principal);
+        CartResponseDto cart = cartService.getCartByUserId(userId);
         return ResponseEntity.ok(cart);
     }
 
-    // 카트 조회
-    @GetMapping("/{userId}/items")
-    public ResponseEntity<List<CartItem>> getCartItems(@PathVariable Long userId) {
-        List<CartItem> cartItems = cartService.getCartItems(userId);
+    // 카트의 아이템(책) 조회
+    @GetMapping("/items")
+    public ResponseEntity<List<CartItemDto>> getCartItems(Principal principal) {
+        Long userId = getUserIdFromPrincipal(principal);
+        List<CartItemDto> cartItems = cartService.getCartItems(userId);
         return ResponseEntity.ok(cartItems);
     }
 
-    @GetMapping("/{userId}/items/count")
-    public ResponseEntity<Integer> getCartItemsCount(@PathVariable Long userId) {
-        int itemCount = cartService.getCartItemCount(userId);
-        return ResponseEntity.ok(itemCount);
-    }
-
     // 카트에 아이템 추가
-    @PostMapping("/{userId}/items")
-    public ResponseEntity<Cart> addItemToCart(@PathVariable Long userId, @RequestParam Long bookSalesId) {
-        Cart cart = cartService.addCartItem(userId, bookSalesId);
+    @PostMapping("/items")
+    public ResponseEntity<CartResponseDto> addItemToCart(Principal principal, @RequestParam("id") Long bookSalesId) {
+        Long userId = getUserIdFromPrincipal(principal);
+        CartResponseDto cart = cartService.addCartItem(userId, bookSalesId);
         return ResponseEntity.ok(cart);
     }
 
-    // 카트에서 아이템 삭제
-    @DeleteMapping("/{userId}/items/{itemId}")
-    public ResponseEntity<Cart> removeItemFromCart(@PathVariable Long userId, @PathVariable Long itemId) {
-        Cart cart = cartService.removeCartItem(userId, itemId);
-        return ResponseEntity.ok(cart);
+    // Cart 페이지를 벗어날 때 장바구니 변경사항 DB에 반영
+    @PostMapping("/save")
+    public ResponseEntity<Void> saveCartState(Principal principal, @RequestBody List<CartItemDto> cartItems) {
+        Long userId = getUserIdFromPrincipal(principal);
+        cartService.saveCartState(userId, cartItems);
+        return ResponseEntity.ok().build();
     }
 
+
+    private Long getUserIdFromPrincipal(Principal principal) {
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        return user.getId();
+    }
 
 
 }

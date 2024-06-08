@@ -22,9 +22,9 @@ public class ReviewService {
                 new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
     }
 
-    public List<Review> getReviews()
+    public List<Review> getReviews(Long id)
     {
-        return reviewRepository.findAll();
+        return reviewRepository.findByBookSalesId(id);
     }
 
     public Review postReview(ReviewDto dto)
