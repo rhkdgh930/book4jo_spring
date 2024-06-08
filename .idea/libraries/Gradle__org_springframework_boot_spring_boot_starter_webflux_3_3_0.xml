@@ -2,9 +2,11 @@
   <library name="Gradle: org.springframework.boot:spring-boot-starter-webflux:3.3.0" type="java-imported" external-system-id="GRADLE">
     <properties groupId="org.springframework.boot" artifactId="spring-boot-starter-webflux" version="3.3.0" />
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-webflux/3.3.0/7266190070229ddc77574f82d2304ca6e1a953d/spring-boot-starter-webflux-3.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-webflux/3.3.0/7266190070229ddc77574f82d2304ca6e1a953d/spring-boot-starter-webflux-3.3.0.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-webflux/3.3.0/99fadd057ac31bf1a3cdc5c94c4a811ee100813/spring-boot-starter-webflux-3.3.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

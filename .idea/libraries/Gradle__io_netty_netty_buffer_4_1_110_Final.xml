@@ -5,9 +5,11 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/externalAnnotations/io/netty/netty-buffer/4.1.27.Final-an1/netty-buffer-4.1.27.Final-an1-annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.110.Final/3d918a9ee057d995c362902b54634fc307132aac/netty-buffer-4.1.110.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.110.Final/3d918a9ee057d995c362902b54634fc307132aac/netty-buffer-4.1.110.Final.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.110.Final/4c8f734f43112bd731911a4c19fcab97875d2073/netty-buffer-4.1.110.Final-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
