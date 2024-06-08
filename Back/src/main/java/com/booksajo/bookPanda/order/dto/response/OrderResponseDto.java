@@ -13,13 +13,11 @@ public class OrderResponseDto {
     private LocalDateTime orderDate;
     private int totalPrice;
     private Status status;
-    private String userEmail;
 
     public OrderResponseDto(Order entity){
         this.id = entity.getId();
         this.orderDate = entity.getOrderDate();
         this.totalPrice = entity.getTotalPrice();
         this.status = entity.getStatus();
-//        this.userEmail = entity.getUser().getUserEmail();
     }
 }
