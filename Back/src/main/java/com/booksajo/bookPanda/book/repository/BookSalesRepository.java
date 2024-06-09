@@ -25,4 +25,8 @@ public interface BookSalesRepository extends JpaRepository<BookSales, Long> {
     @Query("select b from BookSales b join fetch b.category c where c.id=:categoryId")
     Page<BookSales> findBookSalesByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 
+
+    @Query("select b from BookSales b where b.bookInfo.title  like concat('%', :keyword , '%')")
+    Page<BookSales> getBookSalesTitleByContainedWord(@Param("keyword") String keyword , Pageable pageable);
+
 }

@@ -123,6 +123,10 @@ public class BookSalesService {
         return bookSalesRepository.findBookSalesByCategoryId(categoryId, PageRequest.of(page,size));
     }
 
+    public Page<BookSales> getBookSalesContainedWord(String keyword, int page,int size){
+        return bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size));
+    }
+
     @Scheduled(fixedRate = 5000) // 30초 마다 실행
     @Transactional
     public void syncViewCountToDatabase() {
