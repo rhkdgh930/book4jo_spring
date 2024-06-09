@@ -1,12 +1,15 @@
 package com.booksajo.bookPanda.book.controller;
 
-import com.booksajo.bookPanda.book.dto.*;
 import com.booksajo.bookPanda.book.domain.BookSales;
+import com.booksajo.bookPanda.book.dto.BookInfo;
+import com.booksajo.bookPanda.book.dto.BookSalesRequest;
+import com.booksajo.bookPanda.book.dto.NaverRequestVariableDto;
+import com.booksajo.bookPanda.book.dto.ResponseBookSales;
 import com.booksajo.bookPanda.book.service.BookInfoService;
 import com.booksajo.bookPanda.book.service.BookSalesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,4 +58,13 @@ public class BookSalesController {
         bookSalesService.deleteBookSales(bookSalesId);
     }
 
+
+    @GetMapping("/bookSales")
+    public ResponseEntity<?> getBookSales(@RequestParam("categoryId") Long categoryId,
+                             @RequestParam(name = "page" , defaultValue = "0") int page ,
+                             @RequestParam(name = "size" , defaultValue = "10") int size){
+
+        Page<BookSales> bookSales= bookSalesService.getBookSalesByCategoryId(categoryId,page,size);
+        return ResponseEntity.ok(bookSales.getContent());
+    }
 }
