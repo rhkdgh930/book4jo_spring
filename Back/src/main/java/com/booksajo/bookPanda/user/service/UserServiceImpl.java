@@ -11,9 +11,11 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,11 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
         return jwtToken;
+    }
+
+    @Transactional
+    public void logout() {
+
     }
 
     @Transactional
@@ -77,4 +84,21 @@ public class UserServiceImpl implements UserService {
         user.updatePhoneNumber(newPhoneNumber);
         userRepository.save(user);
     }
+
+    @Transactional
+    public JwtToken refreshAccessToken(String refreshToken) {
+        // 리프레시 토큰을 검증하고 사용자 정보를 추출하는 과정
+        String userEmail = jwtTokenProvider.extractUserEmail(refreshToken);
+
+        if (userEmail != null) {
+            // 새로운 액세스 토큰 생성
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userEmail, null);
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            return jwtTokenProvider.generateToken(authentication);
+        } else {
+            return null;
+        }
+    }
+
+
 }

@@ -1,5 +1,7 @@
 package com.booksajo.bookPanda.user.JWT;
 
+import com.booksajo.bookPanda.user.service.RedisService;
+import com.booksajo.bookPanda.user.service.TokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -8,6 +10,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import java.net.http.HttpRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +33,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
+    private TokenService tokenService;
+    private RedisService redisService;
     private final Key key;
+    private static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60;// 한시간
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -50,7 +59,7 @@ public class JwtTokenProvider {
             .compact();
 
         String refreshToken = Jwts.builder()
-            .setExpiration(new Date(now + 86400000))
+            .setExpiration(new Date(now + (86400000 * 24)))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
 
@@ -77,6 +86,10 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
+        String jti = tokenService.getJtiFromToken(token);
+        if (redisService.isTokenBlacklisted(jti)) {
+            return false;
+        }
         try {
             Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -106,6 +119,11 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
+    public String extractUserEmail(String refreshToken) {
+        return parseClaims(refreshToken).getSubject();
+    }
+
 
 }
 
