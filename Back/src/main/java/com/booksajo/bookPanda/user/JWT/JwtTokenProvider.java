@@ -33,8 +33,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-    private TokenService tokenService;
-    private RedisService redisService;
     private final Key key;
     private static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60;// 한시간
 
@@ -86,10 +84,6 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        String jti = tokenService.getJtiFromToken(token);
-        if (redisService.isTokenBlacklisted(jti)) {
-            return false;
-        }
         try {
             Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -123,7 +117,6 @@ public class JwtTokenProvider {
     public String extractUserEmail(String refreshToken) {
         return parseClaims(refreshToken).getSubject();
     }
-
 
 }
 

@@ -2,10 +2,12 @@ package com.booksajo.bookPanda.user.service;
 
 import com.booksajo.bookPanda.user.JWT.JwtToken;
 import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
+import com.booksajo.bookPanda.user.domain.UpdatePasswordRequest;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.user.dto.SignUpDto;
 import com.booksajo.bookPanda.user.dto.UserDto;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +44,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public void logout() {
-
-    }
-
-    @Transactional
     @Override
     public UserDto signUp(SignUpDto signUpDto) {
         if (userRepository.existsByUserEmail(signUpDto.getUserEmail())) {
@@ -61,9 +58,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updatePassword(String userEmail, String newPassword) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
-        user.updatePassword(passwordEncoder.encode(newPassword));
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.updatePassword(encodedPassword);
         userRepository.save(user);
     }
+
 
     public void updateName(String userEmail, String newName) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new RuntimeException("로그인 정보가 일치하지 않습니다."));
