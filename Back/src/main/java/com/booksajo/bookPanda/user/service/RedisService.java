@@ -44,12 +44,4 @@ public class RedisService {
         Duration expireDuration = Duration.ofMillis(duration);
         valueOperations.set(key, String.valueOf(userId), expireDuration);
     }
-
-    public void blacklistToken(String jti, long expiration) {
-        redisTemplate.opsForValue().set(jti, "blacklisted", expiration, TimeUnit.MILLISECONDS);
-    }
-
-    public boolean isTokenBlacklisted(String jti) {
-        return redisTemplate.hasKey(jti);
-    }
 }
