@@ -1,7 +1,11 @@
 package com.booksajo.bookPanda.book.repository;
 
 import com.booksajo.bookPanda.book.domain.BookSales;
+import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -15,5 +19,14 @@ public interface BookSalesRepository extends JpaRepository<BookSales, Long> {
 
     // category의 id와 같은 값을 가진 BookSales 엔티티를 조회하여 List로 반환
     List<BookSales> findByCategoryId(Long categoryId);
+
+
+
+    @Query("select b from BookSales b join fetch b.category c where c.id=:categoryId")
+    Page<BookSales> findBookSalesByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+
+
+    @Query("select b from BookSales b where b.bookInfo.title  like concat('%', :keyword , '%')")
+    Page<BookSales> getBookSalesTitleByContainedWord(@Param("keyword") String keyword , Pageable pageable);
 
 }
