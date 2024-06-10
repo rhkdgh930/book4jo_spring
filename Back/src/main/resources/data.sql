@@ -28,3 +28,5 @@ INSERT INTO category(name) VALUES ("컴퓨터/모바일");
 INSERT INTO category(name) VALUES ("초등학교참고서");
 INSERT INTO category(name) VALUES ("중학교참고서");
 INSERT INTO category(name) VALUES ("고등학교참고서");
+INSERT INTO users VALUES (1, "청주", "010-1234-5678", "tmdvy@naver.com", "승표", "1234");
+INSERT INTO cart VALUES(1, 1);
