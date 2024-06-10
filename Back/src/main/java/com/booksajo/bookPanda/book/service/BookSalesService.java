@@ -12,6 +12,8 @@ import com.booksajo.bookPanda.exception.exception.CategoryException;
 import com.booksajo.bookPanda.review.entity.Review;
 import com.booksajo.bookPanda.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -115,6 +117,14 @@ public class BookSalesService {
 
         String redisKey = BOOKSALES_VISITCOUNT_KEY + postId;
         redisTemplate.opsForValue().increment(redisKey, 1);
+    }
+
+    public Page<BookSales> getBookSalesByCategoryId(Long categoryId,int page, int size){
+        return bookSalesRepository.findBookSalesByCategoryId(categoryId, PageRequest.of(page,size));
+    }
+
+    public Page<BookSales> getBookSalesContainedWord(String keyword, int page,int size){
+        return bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size));
     }
 
     @Scheduled(fixedRate = 5000) // 30초 마다 실행
