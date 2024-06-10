@@ -34,18 +34,6 @@ public class TokenService {
                 }
             }
         }
-
-        if (accessToken != null) {
-            String jti = getJtiFromToken(accessToken); // JWT에서 jti 추출
-            long expiration = getExpirationFromToken(accessToken); // JWT에서 만료 시간 추출
-            redisService.blacklistToken(jti, expiration);
-        }
-
-        if (refreshToken != null) {
-            String jti = getJtiFromToken(refreshToken);
-            long expiration = getExpirationFromToken(refreshToken);
-            redisService.blacklistToken(jti, expiration);
-        }
     }
 
     public void clearCookie(String cookieName, HttpServletRequest request,
@@ -55,22 +43,5 @@ public class TokenService {
         cookie.setHttpOnly(true); // HttpOnly 설정
         cookie.setPath("/");
         response.addCookie(cookie);
-    }
-
-    public String getJtiFromToken(String token) {
-        // JWT 파싱 로직 추가 (예: JWT 라이브러리 사용)
-        return Jwts.parser()
-            .parseClaimsJws(token)
-            .getBody()
-            .getId();
-    }
-
-    private long getExpirationFromToken(String token) {
-        // JWT 파싱 로직 추가 (예: JWT 라이브러리 사용)
-        return Jwts.parser()
-            .parseClaimsJws(token)
-            .getBody()
-            .getExpiration()
-            .getTime();
     }
 }
