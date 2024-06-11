@@ -81,8 +81,6 @@ public class UserController {
 
         // 쿠키 설정
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-//        accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(60 * 60 * 24); // 1시간 유효기간
         response.addCookie(accessTokenCookie);
@@ -118,6 +116,24 @@ public class UserController {
     public JwtToken refreshAccessToken(@RequestBody JwtDto jwtDto) {
         String refreshToken = jwtDto.refreshToken();
         JwtToken newAccessToken = userServiceImpl.refreshAccessToken(refreshToken);
+
+        //refresh 아직 유효한지 체크
+        //JwtToken jwtToken = userServiceImpl.signIn(userEmail, userPassword);로 재발급
+        // 쿠키 설정
+        //        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        //        accessTokenCookie.setPath("/");
+        //        accessTokenCookie.setMaxAge(60 * 60 * 24); // 1시간 유효기간
+        //        response.addCookie(accessTokenCookie);
+        //
+        //        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        //        refreshTokenCookie.setHttpOnly(true);
+        //        refreshTokenCookie.setSecure(true);
+        //        refreshTokenCookie.setPath("/");
+        //        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 유효기간
+        //        response.addCookie(refreshTokenCookie);
+        //
+        //
+
         return newAccessToken;
     }
 

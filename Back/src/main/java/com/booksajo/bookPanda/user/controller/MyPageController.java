@@ -1,11 +1,8 @@
 package com.booksajo.bookPanda.user.controller;
 
-import com.booksajo.bookPanda.user.domain.UpdatePasswordRequest;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.user.service.UserServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +31,9 @@ public class MyPageController {
     public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal UserDetails user,
         @PathVariable("field") String field,
         @RequestParam("value") String value) {
-        System.out.println(user);
-        System.out.println("field:" + field);
-        System.out.println("value:" + value);
         String userEmail = user.getUsername();
         switch (field) {
-            case "userName":
+            case "name":
                 userServiceImpl.updateName(userEmail, value);
                 break;
             case "address":
@@ -55,9 +49,10 @@ public class MyPageController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal User user,
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserDetails user,
         @RequestParam("newPassword") String newPassword) {
-        userServiceImpl.updatePassword(user.getUserEmail(), newPassword);
+        String userEmail = user.getUsername();
+        userServiceImpl.updatePassword(userEmail, newPassword);
         return ResponseEntity.ok().body("비밀번호 변경에 성공했습니다.");
     }
 }
