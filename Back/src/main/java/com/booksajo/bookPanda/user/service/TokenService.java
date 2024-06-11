@@ -25,10 +25,10 @@ public class TokenService {
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("accessTokenCookie".equals(cookie.getName())) {
+                if ("accessToken".equals(cookie.getName())) {
                     accessToken = cookie.getValue();
                     clearCookie(cookie.getName(), request, response);
-                } else if ("refreshTokenCookie".equals(cookie.getName())) {
+                } else if ("refreshToken".equals(cookie.getName())) {
                     refreshToken = cookie.getValue();
                     clearCookie(cookie.getName(), request, response);
                 }

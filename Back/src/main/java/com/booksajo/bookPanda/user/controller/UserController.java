@@ -15,7 +15,11 @@ import com.booksajo.bookPanda.user.service.UserServiceImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +28,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,10 +81,10 @@ public class UserController {
 
         // 쿠키 설정
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
+//        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(60 * 60); // 1시간 유효기간
+        accessTokenCookie.setMaxAge(60 * 60 * 24); // 1시간 유효기간
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
@@ -129,5 +136,22 @@ public class UserController {
     public String changePassword(@Valid @RequestBody UpdatePasswordRequest request) {
         userServiceImpl.updatePassword(request.getUserEmail(), request.getNewPassword());
         return "비밀번호 변경에 성공했습니다.";
+    }
+
+    @GetMapping("/login-check")
+    public Map<String, Boolean> loginCheck(HttpServletRequest request) {
+        boolean isLoggedIn = false;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("accessToken")||cookie.getName().equals("refreshToken")) {
+                    // 세션을 통해 사용자 인증 정보를 확인
+                    isLoggedIn = true;
+                }
+            }
+        }
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isLoggedIn", isLoggedIn);
+        return response;
     }
 }

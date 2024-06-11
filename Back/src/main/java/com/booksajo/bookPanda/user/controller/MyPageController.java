@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,15 +23,21 @@ public class MyPageController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal User user, HttpServletRequest request) {
-        String userEmail = user.getUserEmail();
+    public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal UserDetails user) {
+        System.out.println(user);
+        String userEmail = user.getUsername();
+        System.out.println(userEmail);
         User userInfo = userRepository.findByUserEmail(userEmail).orElseThrow();
         return ResponseEntity.ok(userInfo);
     }
 
     @PutMapping("/{field}")
-    public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal User user, @PathVariable String field, @RequestBody User updatedUser) {
-        String userEmail = user.getUserEmail();
+    public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal UserDetails user, @PathVariable("field") String field, @RequestBody User updatedUser) {
+        System.out.println(user);
+        System.out.println("field:"+field);
+        System.out.println("updateUser:"+updatedUser);
+        String userEmail = user.getUsername();
+        System.out.println(userEmail);
         switch (field) {
             case "userName":
                 userServiceImpl.updateName(userEmail, updatedUser.getUsername());
