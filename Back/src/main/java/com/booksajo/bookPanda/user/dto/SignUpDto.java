@@ -17,7 +17,7 @@ public class SignUpDto {
 
     private String userEmail;
     private String userPassword;
-    private String userName;
+    private String name;
     private String address;
     private String phoneNumber;
     private List<String> roles;
@@ -26,8 +26,8 @@ public class SignUpDto {
     public User toEntity(String encodedPassword, List<String> roles) {
         return User.builder()
             .userEmail(userEmail)
-            .userPassword(userPassword)
-            .userName(userName)
+            .userPassword(encodedPassword)
+            .name(name)
                 .roles(roles)
             .address(address)
             .phoneNumber(phoneNumber)

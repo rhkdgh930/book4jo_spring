@@ -31,8 +31,7 @@ public class CartService {
     private final UserRepository userRepository;
 
     public CartResponseDto getCartByUserId(Long userId) {
-        Cart cart = cartRepository.findById(userId)
-                .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
+        Cart cart = cartRepository.findByUserIdWithItems(userId);
         return toCartResponseDto(cart);
     }
 
@@ -95,7 +94,9 @@ public class CartService {
     public void saveCartState(Long userId, List<CartItemDto> cartItems) {
         Cart cart = cartRepository.findByUserId(userId)
                         .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
-        cart.getCartItems().clear();
+
+        cartItemRepository.deleteByCartId(cart.getId());
+
         for (CartItemDto itemDto : cartItems) {
             BookSales bookSales = bookSalesRepository.findById(itemDto.getBookSalesId())
                     .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));

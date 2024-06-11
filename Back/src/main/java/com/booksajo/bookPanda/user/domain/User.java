@@ -47,19 +47,17 @@ public class User implements UserDetails {
     private String userEmail;
 
     @Column(nullable = false)
-    @Pattern(regexp = "(?=.*[a-zA-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,16}",
-        message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String userPassword;
 
     @NotBlank
     @Column(name = "user_name", nullable = false)
-    private String userName;
+    private String name;
 
     @Column
     private String address;
 
     @Column
-    @Pattern(regexp = "^(\\d{3}-\\d{3,4}-\\d{4})?$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
+    @Pattern(regexp = "^[\\d ]*$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
     private String phoneNumber;
 
     @ElementCollection(fetch = FetchType.EAGER)

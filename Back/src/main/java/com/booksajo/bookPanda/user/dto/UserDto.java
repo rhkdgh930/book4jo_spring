@@ -16,7 +16,7 @@ public class UserDto {
 
     private Long id;
     private String userEmail;
-    private String userName;
+    private String name;
     private String address;
     private String phoneNumber;
 
@@ -24,7 +24,7 @@ public class UserDto {
         return UserDto.builder()
             .id(user.getId())
             .userEmail(user.getUserEmail())
-            .userName(user.getUsername())
+            .name(user.getName())
             .address(user.getAddress())
             .phoneNumber(user.getPhoneNumber())
             .build();
@@ -34,7 +34,7 @@ public class UserDto {
         return User.builder()
             .id(id)
             .userEmail(userEmail)
-            .userName(userName)
+            .name(name)
             .address(address)
             .phoneNumber(phoneNumber)
             .build();

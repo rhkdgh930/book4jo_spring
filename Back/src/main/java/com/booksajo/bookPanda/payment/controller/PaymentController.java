@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,6 +43,22 @@ public class PaymentController {
             return ResponseEntity.ok(responseMap);
         } else {
             return ResponseEntity.badRequest().body("Invalid response from Iamport");
+        }
+    }
+
+    @PostMapping("/cancel/{impUid}")
+    public ResponseEntity<?> cancelPayment(@PathVariable String impUid) {
+        return paymentService.cancelPayment(impUid);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllPayments() {
+        ResponseEntity<List<Map<String, Object>>> response = paymentService.getAllPayments();
+        List<Map<String, Object>> responseBody = response.getBody();
+        if (responseBody != null && !responseBody.isEmpty()) {
+            return ResponseEntity.ok(responseBody);
+        } else {
+            return ResponseEntity.noContent().build();
         }
     }
 }

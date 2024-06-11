@@ -79,7 +79,7 @@ public class MailService {
     public String sendSimpleMessage(String email) throws Exception {
         try {
             authNum = createCode();    //랜덤 인증번호 생성
-            redisUtil.setDataExpire(email, authNum, 180000);
+            redisUtil.setDataExpire(email, authNum, 300000); //5분
             MimeMessage message = createMessage(email);    //메일 발송
             javaMailSender.send(message);
         } catch (MailException e) {
