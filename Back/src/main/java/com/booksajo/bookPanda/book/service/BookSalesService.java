@@ -11,6 +11,7 @@ import com.booksajo.bookPanda.exception.exception.BookSalesException;
 import com.booksajo.bookPanda.exception.exception.CategoryException;
 import com.booksajo.bookPanda.review.entity.Review;
 import com.booksajo.bookPanda.review.repository.ReviewRepository;
+import com.booksajo.bookPanda.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -55,7 +56,7 @@ public class BookSalesService {
         return bookSalesRepository.findAll();
     }
 
-    public BookSales createBookSales(BookSalesRequest bookSalesRequest)
+    public BookSales createBookSales(BookSalesRequest bookSalesRequest, User user)
     {
         BookSalesDto bookSalesDto = new BookSalesDto();
 
@@ -67,10 +68,12 @@ public class BookSalesService {
         bookSalesDto.setVisitCount(bookSalesRequest.getSalesInfoDto().getVisitCount());
         bookSalesDto.setStock(bookSalesRequest.getSalesInfoDto().getStock());
 
+
         Category category = categoryRepository.findById(bookSalesRequest.getSalesInfoDto().getCategoryId())
                 .orElseThrow(()->new CategoryException(CategoryErrorCode.CATEGORY_NOT_FOUND));
 
         BookSales bookSales = bookSalesDto.toEntity(category);
+        bookSales.setUser(user);
 
         return bookSalesRepository.save(bookSales);
     }

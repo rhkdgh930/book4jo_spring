@@ -4,10 +4,15 @@ import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.book.dto.*;
 import com.booksajo.bookPanda.book.service.BookInfoService;
 import com.booksajo.bookPanda.book.service.BookSalesService;
+import com.booksajo.bookPanda.user.domain.User;
+import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -19,6 +24,8 @@ public class BookSalesController {
 
     private final BookInfoService bookInfoService;
     private final BookSalesService bookSalesService;
+    private final UserRepository userRepository;
+
 
     @ResponseBody
     @PostMapping("/book")
@@ -45,9 +52,15 @@ public class BookSalesController {
         return ResponseEntity.ok(bookSalesService.patchBookSales(bookSalesId, bookSalesRequest));
     }
     @PostMapping("/bookSales")
-    public ResponseEntity<BookSales> createBookSales(@RequestBody BookSalesRequest bookSalesRequest)
+    public ResponseEntity<BookSales> createBookSales( @AuthenticationPrincipal UserDetails userDetails,@RequestBody BookSalesRequest bookSalesRequest)
     {
-        return ResponseEntity.ok(bookSalesService.createBookSales(bookSalesRequest));
+        String userEmail = userDetails.getUsername();
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));
+        System.out.println("=======================");
+        System.out.println(user.getName());
+        System.out.println("=======================");
+        return ResponseEntity.ok(bookSalesService.createBookSales(bookSalesRequest, user));
     }
 
     @DeleteMapping("/bookSales")
