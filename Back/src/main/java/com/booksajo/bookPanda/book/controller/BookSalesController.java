@@ -59,10 +59,21 @@ public class BookSalesController {
 
     @GetMapping("/bookSales")
     public ResponseEntity<?> getBookSales(@RequestParam("categoryId") Long categoryId,
+                             @RequestParam(name = "order" , defaultValue = "") String order,
                              @RequestParam(name = "page" , defaultValue = "0") int page ,
                              @RequestParam(name = "size" , defaultValue = "10") int size){
 
-        Page<BookSales> bookSales= bookSalesService.getBookSalesByCategoryId(categoryId,page,size);
+        Page<BookSales> bookSales;
+        switch(order){
+            case "sellCount":
+                bookSales= bookSalesService.getBookSalesByCategoryIdOrderBySellCount(categoryId,page,size);
+                break;
+            case "visitCount":
+                bookSales = bookSalesService.getBookSalesByCategoryIdOrderByVisitCount(categoryId,page,size);
+                break;
+            default:
+                bookSales = bookSalesService.getBookSalesByCategoryIdOrderById(categoryId,page,size);
+        }
         return ResponseEntity.ok(bookSales.getContent());
     }
 

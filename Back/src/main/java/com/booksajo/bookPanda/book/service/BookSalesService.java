@@ -123,6 +123,18 @@ public class BookSalesService {
         return bookSalesRepository.findBookSalesByCategoryId(categoryId, PageRequest.of(page,size));
     }
 
+    public Page<BookSales> getBookSalesByCategoryIdOrderByVisitCount(Long categoryId, int page , int size){
+        return bookSalesRepository.findBookSalesByCategoryIdOrderByVisitCount(categoryId,PageRequest.of(page,size));
+    }
+
+    public Page<BookSales> getBookSalesByCategoryIdOrderBySellCount(Long categoryId, int page , int size){
+        return bookSalesRepository.findBookSalesByCategoryIdOrderBySellCount(categoryId,PageRequest.of(page,size));
+    }
+
+    public Page<BookSales> getBookSalesByCategoryIdOrderById(Long categoryId, int page , int size){
+        return bookSalesRepository.findBookSalesByCategoryIdOrderById(categoryId,PageRequest.of(page,size));
+    }
+
     public Page<BookSales> getBookSalesContainedWord(String keyword, int page,int size){
         return bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size));
     }
