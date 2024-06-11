@@ -17,7 +17,7 @@ public class SignUpDto {
 
     private String userEmail;
     private String userPassword;
-    private String userName;
+    private String name;
     private String address;
     private String phoneNumber;
     private List<String> roles;
@@ -27,7 +27,7 @@ public class SignUpDto {
         return User.builder()
             .userEmail(userEmail)
             .userPassword(encodedPassword)
-            .userName(userName)
+            .name(name)
                 .roles(roles)
             .address(address)
             .phoneNumber(phoneNumber)

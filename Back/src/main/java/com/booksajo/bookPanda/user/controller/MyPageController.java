@@ -24,29 +24,29 @@ public class MyPageController {
 
     @GetMapping
     public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal UserDetails user) {
-        System.out.println(user);
         String userEmail = user.getUsername();
-        System.out.println(userEmail);
-        User userInfo = userRepository.findByUserEmail(userEmail).orElseThrow();
+        User userInfo = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(userInfo);
     }
 
+
     @PutMapping("/{field}")
-    public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal UserDetails user, @PathVariable("field") String field, @RequestBody User updatedUser) {
+    public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal UserDetails user,
+        @PathVariable("field") String field,
+        @RequestParam("value") String value) {
         System.out.println(user);
-        System.out.println("field:"+field);
-        System.out.println("updateUser:"+updatedUser);
+        System.out.println("field:" + field);
+        System.out.println("value:" + value);
         String userEmail = user.getUsername();
-        System.out.println(userEmail);
         switch (field) {
             case "userName":
-                userServiceImpl.updateName(userEmail, updatedUser.getUsername());
+                userServiceImpl.updateName(userEmail, value);
                 break;
             case "address":
-                userServiceImpl.updateAddress(userEmail, updatedUser.getAddress());
+                userServiceImpl.updateAddress(userEmail, value);
                 break;
             case "phoneNumber":
-                userServiceImpl.updatePhoneNumber(userEmail, updatedUser.getPhoneNumber());
+                userServiceImpl.updatePhoneNumber(userEmail, value);
                 break;
             default:
                 return ResponseEntity.badRequest().body("필드가 존재하지 않습니다.");
@@ -55,8 +55,9 @@ public class MyPageController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal User user, @Valid @RequestBody UpdatePasswordRequest request) {
-        userServiceImpl.updatePassword(user.getUserEmail(), request.getNewPassword());
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal User user,
+        @RequestParam("newPassword") String newPassword) {
+        userServiceImpl.updatePassword(user.getUserEmail(), newPassword);
         return ResponseEntity.ok().body("비밀번호 변경에 성공했습니다.");
     }
 }
