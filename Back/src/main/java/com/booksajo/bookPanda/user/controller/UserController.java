@@ -74,8 +74,8 @@ public class UserController {
 
         // 쿠키 설정
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
+//        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(60 * 60); // 1시간 유효기간
         response.addCookie(accessTokenCookie);
