@@ -51,13 +51,13 @@ public class User implements UserDetails {
 
     @NotBlank
     @Column(name = "user_name", nullable = false)
-    private String userName;
+    private String name;
 
     @Column
     private String address;
 
     @Column
-    @Pattern(regexp = "^(\\d{3}-\\d{3,4}-\\d{4})?$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
+    @Pattern(regexp = "^[\\d ]*$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
     private String phoneNumber;
 
     @ElementCollection(fetch = FetchType.EAGER)

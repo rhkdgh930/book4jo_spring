@@ -63,20 +63,22 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-
+    @Transactional
     public void updateName(String userEmail, String newName) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new RuntimeException("로그인 정보가 일치하지 않습니다."));
-        user.setUserName(newName);
+        user.setName(newName);
         userRepository.save(user);
+        System.out.println(user.getUsername());
     }
 
-
+    @Transactional
     public void updateAddress(String userEmail, String newAddress) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
         user.updateAddress(newAddress);
         userRepository.save(user);
     }
 
+    @Transactional
     public void updatePhoneNumber(String userEmail, String newPhoneNumber) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));;
         user.updatePhoneNumber(newPhoneNumber);
