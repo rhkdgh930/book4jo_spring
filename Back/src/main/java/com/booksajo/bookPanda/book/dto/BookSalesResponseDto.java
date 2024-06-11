@@ -2,7 +2,9 @@ package com.booksajo.bookPanda.book.dto;
 
 import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.category.domain.Category;
-import com.booksajo.bookPanda.user.domain.User;
+import com.booksajo.bookPanda.review.dto.ReviewResponseDto;
+import com.booksajo.bookPanda.review.entity.Review;
+import com.booksajo.bookPanda.user.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookSalesDto {
+public class BookSalesResponseDto {
     private Long id;
     private Integer visitCount;
     private Integer sellCount;
@@ -30,5 +32,17 @@ public class BookSalesDto {
                 .category(category)
                 .bookInfo(this.bookInfo)
                 .build();
+    }
+
+    public static BookSalesResponseDto of(BookSales bookSales)
+    {
+        return new BookSalesResponseDto(
+                bookSales.getId(),
+                bookSales.getVisitCount(),
+                bookSales.getSellCount(),
+                bookSales.getStock(),
+                bookSales.getCategory(),
+                bookSales.getBookInfo()
+        );
     }
 }

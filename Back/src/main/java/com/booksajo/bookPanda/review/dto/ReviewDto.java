@@ -1,16 +1,21 @@
 package com.booksajo.bookPanda.review.dto;
 
 import com.booksajo.bookPanda.book.domain.BookSales;
+import com.booksajo.bookPanda.book.dto.BookSalesDto;
 import com.booksajo.bookPanda.review.entity.Review;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.booksajo.bookPanda.user.dto.UserResponseDto;
+import lombok.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReviewDto {
-
+    private Long id;
     private BookSales bookSales;
-    // private User user;
     private Integer rate;
     private String content;
 
@@ -18,9 +23,10 @@ public class ReviewDto {
     {
         return Review.builder()
                 .bookSales(this.bookSales)
-                //.user(this.user)
                 .rate(this.rate)
                 .content(this.content)
                 .build();
     }
+
+
 }
