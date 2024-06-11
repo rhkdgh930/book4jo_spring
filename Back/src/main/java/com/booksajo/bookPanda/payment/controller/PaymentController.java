@@ -1,7 +1,10 @@
 package com.booksajo.bookPanda.payment.controller;
 
+import com.booksajo.bookPanda.payment.dto.PaymentRequestDto;
+import com.booksajo.bookPanda.payment.dto.PaymentResponseDto;
 import com.booksajo.bookPanda.payment.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,6 +62,16 @@ public class PaymentController {
             return ResponseEntity.ok(responseBody);
         } else {
             return ResponseEntity.noContent().build();
+        }
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<PaymentResponseDto> savePayment(@RequestBody PaymentRequestDto requestDto) {
+        try {
+            PaymentResponseDto savedPayment = paymentService.savePayment(requestDto);
+            return ResponseEntity.ok(savedPayment);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

@@ -1,5 +1,9 @@
 package com.booksajo.bookPanda.payment.service;
 
+import com.booksajo.bookPanda.order.repository.OrderRepository;
+import com.booksajo.bookPanda.payment.domain.Payment;
+import com.booksajo.bookPanda.payment.dto.PaymentRequestDto;
+import com.booksajo.bookPanda.payment.dto.PaymentResponseDto;
 import com.booksajo.bookPanda.payment.repository.PaymentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -18,8 +25,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
-    private RestTemplate restTemplate;
-    private PaymentRepository paymentRepository;
+    private final RestTemplate restTemplate;
+    private final PaymentRepository paymentRepository;
+    private final OrderRepository orderRepository;
 
     @Value("${iamport.api_key}")
     private String apiKey;
@@ -32,9 +40,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     private String accessToken;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.restTemplate = restTemplate;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -89,9 +98,15 @@ public class PaymentServiceImpl implements PaymentService {
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
             logger.info("Payment info retrieved successfully for impUid: {}", impUid);
             return response;
+        } catch (HttpClientErrorException e) {
+            logger.error("HttpClientErrorException occurred while retrieving payment info for impUid: {}", impUid, e);
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", "Failed to retrieve payment info: " + e.getMessage()));
+        } catch (HttpServerErrorException e) {
+            logger.error("HttpServerErrorException occurred while retrieving payment info for impUid: {}", impUid, e);
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", "Failed to retrieve payment info: " + e.getMessage()));
         } catch (Exception e) {
             logger.error("Exception occurred while retrieving payment info for impUid: {}", impUid, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to retrieve payment info"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to retrieve payment info: " + e.getMessage()));
         }
     }
 
@@ -173,6 +188,36 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (Exception e) {
             logger.error("Exception occurred while retrieving all payments", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Override
+    @Transactional
+    public PaymentResponseDto savePayment(PaymentRequestDto requestDto) {
+        ResponseEntity<Map> response = getPaymentInfo(requestDto.getImpUid());
+        Map<String, Object> responseBody = response.getBody();
+        if (responseBody != null && responseBody.containsKey("response")) {
+            Map<String, Object> paymentInfo = (Map<String, Object>) responseBody.get("response");
+
+
+            Payment payment = Payment.builder()
+                    .impUid((String) paymentInfo.get("imp_uid"))
+                    .merchantUid((String) paymentInfo.get("merchant_uid"))
+                    .amount((Integer) paymentInfo.get("amount"))
+                    .buyerName((String) paymentInfo.get("buyer_name"))
+                    .buyerEmail((String) paymentInfo.get("buyer_email"))
+                    .buyerAddr((String) paymentInfo.get("buyer_addr"))
+                    .buyerPostcode((String) paymentInfo.get("buyer_postcode"))
+                    .status((String) paymentInfo.get("status"))
+                    //.order(orderRepository.findById(requestDto.getOrderId()).orElse(null))
+                    .build();
+
+
+            Payment savedPayment = paymentRepository.save(payment);
+
+            return new PaymentResponseDto(savedPayment);
+        } else {
+            throw new RuntimeException("Invalid response from Iamport");
         }
     }
 }
