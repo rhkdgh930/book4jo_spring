@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -234,5 +235,14 @@ public class PaymentServiceImpl implements PaymentService {
         } else {
             throw new RuntimeException("Iamport로부터 잘못된 응답");
         }
+    }
+
+    @Override
+    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(String userEmail) {
+        List<Payment> payments = paymentRepository.findByBuyerEmail(userEmail);
+        List<PaymentResponseDto> paymentResponseDtos = payments.stream()
+                .map(PaymentResponseDto::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(paymentResponseDtos);
     }
 }

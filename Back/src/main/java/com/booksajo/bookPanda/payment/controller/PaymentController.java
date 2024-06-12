@@ -74,4 +74,9 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/user/{email}")
+    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(@PathVariable("email") String userEmail) {
+        return paymentService.getAllPaymentsByUser(userEmail);
+    }
 }
