@@ -14,14 +14,16 @@ public class OrderResponseDto {
     private LocalDateTime orderDate;
     private int totalPrice;
     private Status status;
-    private User user;
+    private String userName;
+    private String userAddress;
 
     public OrderResponseDto(Order entity){
         this.id = entity.getId();
         this.orderDate = entity.getOrderDate();
         this.totalPrice = entity.getTotalPrice();
         this.status = entity.getStatus();
-        this.user = entity.getUser();
+        this.userName = entity.getUser().getName();
+        this.userAddress = entity.getUser().getAddress();
     }
 
     @Override
@@ -31,7 +33,6 @@ public class OrderResponseDto {
                 ", orderDate=" + orderDate +
                 ", totalPrice=" + totalPrice +
                 ", status=" + status +
-                ", user=" + user +
                 '}';
     }
 }

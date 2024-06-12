@@ -1,6 +1,7 @@
 package com.booksajo.bookPanda.review.entity;
 
 import com.booksajo.bookPanda.book.domain.BookSales;
+import com.booksajo.bookPanda.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,13 +17,13 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_sales_id")
     private BookSales bookSales;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private Integer rate;
     private String content;

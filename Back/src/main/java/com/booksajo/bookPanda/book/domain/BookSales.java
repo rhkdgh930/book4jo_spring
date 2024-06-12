@@ -4,6 +4,7 @@ package com.booksajo.bookPanda.book.domain;
 import com.booksajo.bookPanda.book.dto.BookInfo;
 import com.booksajo.bookPanda.category.domain.Category;
 import com.booksajo.bookPanda.review.entity.Review;
+import com.booksajo.bookPanda.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,4 +45,8 @@ public class BookSales {
 
     @ManyToOne
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user", nullable = false)
+    private User user;
 }

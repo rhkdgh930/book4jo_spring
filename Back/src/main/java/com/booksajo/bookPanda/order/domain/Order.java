@@ -44,7 +44,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status; // 주문상태
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", columnDefinition = "BIGINT", nullable = false)
     private User user;
 
