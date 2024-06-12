@@ -24,6 +24,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,22 +38,17 @@ public class OrderService {
 
     //바로 주문
     @Transactional
-    public OrderResponseDto createOrder(Long bookId, OrderRequestDto requestDto, Authentication authentication) {
+    public OrderResponseDto createOrder(Long bookId, OrderRequestDto requestDto, String userEmail) {
         System.out.println("OrderService.createOrder");
         System.out.println("bookId = " + bookId);
         BookSales book = bookSalesRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("책이 없습니다."));
         if(isStocked(book)){
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            System.out.println("userEmail = " + userEmail);
+            User user = userRepository.findByUserEmail(userEmail)
+                    .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));
 
-            System.out.println(userDetails.getUsername());
-            Optional<User> user = userRepository.findByUserEmail(userDetails.getUsername());
-
-            if(user.isPresent()){
-                requestDto.setUser(user.get());
-            } else {
-                throw new IllegalArgumentException("존재하지 않는 회원입니다.");
-            }
+            requestDto.setUser(user);
             requestDto.setStatus(Status.NOT_PAID);
 
             List<OrderItem> orderItems = new ArrayList<>();
@@ -65,10 +61,11 @@ public class OrderService {
             OrderItem orderItem = new OrderItem();
             orderItem.setBookSales(book);
             orderItem.setOrder(order);
+            orderItem.setQuantity(1);
 
             orderItems.add(orderItem);
 
-            orderItemRepository.saveAll(orderItems);
+            orderItemRepository.save(orderItem);
 
             return new OrderResponseDto(order);
         } else {
@@ -78,19 +75,16 @@ public class OrderService {
 
     //장바구니에서 주문
     @Transactional
-    public OrderResponseDto createCartOrder(Long userId, OrderRequestDto requestDto, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUserEmail(userDetails.getUsername());
-        if(user.isPresent()){
-            requestDto.setUser(user.get());
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
-        }
+    public OrderResponseDto createCartOrder(String userEmail, OrderRequestDto requestDto) {
+        System.out.println("userEmail = " + userEmail);
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));
+        requestDto.setUser(user);
         requestDto.setStatus(Status.NOT_PAID);
 
         Order order = new Order(requestDto);
 
-        Cart cart = cartRepository.findByUserId(userId)
+        Cart cart = cartRepository.findByUserUserEmail(userEmail)
                 .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
         List<CartItem> cartItems = cart.getCartItems();
 
@@ -115,14 +109,17 @@ public class OrderService {
 
     //주문 내역
     @Transactional
-    public List<OrderResponseDto> getOrderHist(Long userId){
-        return orderRepository.findAllByUserId(userId).stream().map(OrderResponseDto::new).toList();
+    public List<OrderResponseDto> getOrderHist(String userEmail){
+        return orderRepository.findAllByUserUserEmail(userEmail).stream().map(OrderResponseDto::new).toList();
     }
 
     //TODO : 주문 취소
     @Transactional
-    public void cancelOrder(OrderRequestDto requestDto){
-        requestDto.setStatus(Status.CANCEL);
+    public OrderResponseDto cancelOrder(long orderId){
+        Order order = orderRepository.findById(orderId).orElseThrow(()->new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
+        orderRepository.delete(order);
+
+        return new OrderResponseDto(order);
     }
 
     @Transactional
