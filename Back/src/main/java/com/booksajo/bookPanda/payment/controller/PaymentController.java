@@ -26,7 +26,7 @@ public class PaymentController {
     }
 
     @GetMapping("/info/{impUid}")
-    public ResponseEntity<?> getPaymentInfo(@PathVariable String impUid) {
+    public ResponseEntity<?> getPaymentInfo(@PathVariable("impUid") String impUid) {
         ResponseEntity<Map> response = paymentService.getPaymentInfo(impUid);
         Map<String, Object> responseBody = response.getBody();
         if (responseBody != null) {
@@ -38,7 +38,7 @@ public class PaymentController {
     }
 
     @PostMapping("/verify/{impUid}")
-    public ResponseEntity<?> verifyPayment(@PathVariable String impUid) {
+    public ResponseEntity<?> verifyPayment(@PathVariable("impUid") String impUid) {
         ResponseEntity<Map> response = paymentService.verifyPayment(impUid);
         Map<String, Object> responseBody = response.getBody();
         if (responseBody != null) {
@@ -50,7 +50,7 @@ public class PaymentController {
     }
 
     @PostMapping("/cancel/{impUid}")
-    public ResponseEntity<?> cancelPayment(@PathVariable String impUid) {
+    public ResponseEntity<?> cancelPayment(@PathVariable("impUid") String impUid) {
         return paymentService.cancelPayment(impUid);
     }
 

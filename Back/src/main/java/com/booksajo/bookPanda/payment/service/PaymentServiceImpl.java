@@ -38,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${iamport.api_url}")
     private String apiUrl;
 
-    private String accessToken;
+    private String accessToken = null;
 
     public PaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
@@ -48,8 +48,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public String getToken() {
-        if (accessToken != null) {
-            logger.debug("Using cached access token");
+        if (accessToken != null && !accessToken.isEmpty()) {
+            logger.debug("캐시된 액세스 토큰 사용 중");
             return accessToken;
         }
 
@@ -65,22 +65,34 @@ public class PaymentServiceImpl implements PaymentService {
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
 
         try {
-            logger.debug("Sending request to get access token");
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-            Map<String, Object> responseBody = response.getBody();
+            logger.debug("액세스 토큰 요청을 보냄");
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<Map<String, Object>>() {});
+            logger.debug("응답 받음: {}", response);
 
-            if (responseBody != null && responseBody.containsKey("response")) {
-                Map<String, Object> responseMap = (Map<String, Object>) responseBody.get("response");
-                accessToken = (String) responseMap.get("access_token");
-                logger.info("Access token retrieved successfully");
-                return accessToken;
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                Map<String, Object> responseBody = response.getBody();
+
+                if (responseBody.containsKey("response")) {
+                    Map<String, Object> responseMap = (Map<String, Object>) responseBody.get("response");
+                    if (responseMap.containsKey("access_token")) {
+                        accessToken = (String) responseMap.get("access_token");
+                        logger.info("액세스 토큰 성공적으로 가져옴");
+                        return accessToken;
+                    } else {
+                        logger.error("응답 본문에 'access_token' 키가 없음");
+                        throw new RuntimeException("응답 본문에 'access_token' 키가 없음");
+                    }
+                } else {
+                    logger.error("응답 본문에 'response' 키가 없음");
+                    throw new RuntimeException("응답 본문에 'response' 키가 없음");
+                }
             } else {
-                logger.error("Failed to retrieve access token: response body is null or does not contain 'response'");
-                throw new RuntimeException("Failed to retrieve access token");
+                logger.error("액세스 토큰 요청 실패, 상태 코드: {}, 응답 본문: {}", response.getStatusCode(), response.getBody());
+                throw new RuntimeException("액세스 토큰 요청 실패");
             }
         } catch (Exception e) {
-            logger.error("Exception occurred while retrieving access token", e);
-            throw new RuntimeException("Failed to retrieve access token", e);
+            logger.error("액세스 토큰을 가져오는 동안 예외 발생", e);
+            throw new RuntimeException("액세스 토큰을 가져오는 동안 예외 발생", e);
         }
     }
 
@@ -94,19 +106,19 @@ public class PaymentServiceImpl implements PaymentService {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
-            logger.debug("Sending request to get payment info for impUid: {}", impUid);
+            logger.debug("impUid: {}의 결제 정보를 요청 중", impUid);
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-            logger.info("Payment info retrieved successfully for impUid: {}", impUid);
+            logger.info("impUid: {}의 결제 정보를 성공적으로 가져옴", impUid);
             return response;
         } catch (HttpClientErrorException e) {
-            logger.error("HttpClientErrorException occurred while retrieving payment info for impUid: {}", impUid, e);
-            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", "Failed to retrieve payment info: " + e.getMessage()));
+            logger.error("impUid: {}의 결제 정보를 가져오는 동안 HttpClientErrorException 발생", impUid, e);
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", "결제 정보를 가져오는 동안 오류 발생: " + e.getMessage()));
         } catch (HttpServerErrorException e) {
-            logger.error("HttpServerErrorException occurred while retrieving payment info for impUid: {}", impUid, e);
-            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", "Failed to retrieve payment info: " + e.getMessage()));
+            logger.error("impUid: {}의 결제 정보를 가져오는 동안 HttpServerErrorException 발생", impUid, e);
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", "결제 정보를 가져오는 동안 오류 발생: " + e.getMessage()));
         } catch (Exception e) {
-            logger.error("Exception occurred while retrieving payment info for impUid: {}", impUid, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to retrieve payment info: " + e.getMessage()));
+            logger.error("impUid: {}의 결제 정보를 가져오는 동안 예외 발생", impUid, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 정보를 가져오는 동안 오류 발생: " + e.getMessage()));
         }
     }
 
@@ -119,8 +131,8 @@ public class PaymentServiceImpl implements PaymentService {
     public ResponseEntity<Map<String, Object>> cancelPayment(String impUid) {
         String token = getToken();
         if (token == null) {
-            logger.error("Failed to retrieve access token for cancelling payment");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Failed to retrieve access token"));
+            logger.error("결제를 취소하는 동안 액세스 토큰을 가져오지 못함");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "액세스 토큰을 가져오지 못함"));
         }
         String url = apiUrl + "/payments/cancel";
 
@@ -135,27 +147,27 @@ public class PaymentServiceImpl implements PaymentService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
 
         try {
-            logger.debug("Sending request to cancel payment for impUid: {}", impUid);
+            logger.debug("impUid: {}의 결제를 취소하는 요청을 보냄", impUid);
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<>() {});
-            logger.info("Response Status Code: {}", response.getStatusCode());
-            logger.info("Response Body: {}", response.getBody());
+            logger.info("응답 상태 코드: {}", response.getStatusCode());
+            logger.info("응답 본문: {}", response.getBody());
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> responseBody = response.getBody();
                 if (responseBody.containsKey("response") && responseBody.get("response") != null) {
-                    logger.info("Payment canceled successfully for impUid: {}", impUid);
+                    logger.info("impUid: {}의 결제 성공적으로 취소됨", impUid);
                     return ResponseEntity.ok(responseBody);
                 } else {
-                    logger.error("Failed to cancel payment, response: {}", responseBody);
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to cancel payment", "response", responseBody));
+                    logger.error("결제 취소 실패, 응답: {}", responseBody);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", responseBody));
                 }
             } else {
-                logger.error("Failed to cancel payment, status code: {}, response: {}", response.getStatusCode(), response.getBody());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to cancel payment", "response", response.getBody()));
+                logger.error("결제 취소 실패, 상태 코드: {}, 응답: {}", response.getStatusCode(), response.getBody());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", response.getBody()));
             }
         } catch (Exception e) {
-            logger.error("Exception occurred while cancelling payment for impUid: {}", impUid, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to cancel payment"));
+            logger.error("impUid: {}의 결제를 취소하는 동안 예외 발생", impUid, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패"));
         }
     }
 
@@ -170,23 +182,23 @@ public class PaymentServiceImpl implements PaymentService {
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         try {
-            logger.debug("Sending request to get all payments with URL: {}", url);
+            logger.debug("모든 결제 정보를 가져오는 요청을 URL: {}로 보냄", url);
             ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
                     entity,
                     new ParameterizedTypeReference<List<Map<String, Object>>>() {}
             );
-            logger.info("Response Status Code: {}", response.getStatusCode());
-            logger.info("Response Body: {}", response.getBody());
+            logger.info("응답 상태 코드: {}", response.getStatusCode());
+            logger.info("응답 본문: {}", response.getBody());
 
             if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-                logger.warn("Received 204 No Content from Iamport API");
+                logger.warn("Iamport API에서 204 No Content 응답을 받음");
             }
 
             return response;
         } catch (Exception e) {
-            logger.error("Exception occurred while retrieving all payments", e);
+            logger.error("모든 결제 정보를 가져오는 동안 예외 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -196,9 +208,14 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseDto savePayment(PaymentRequestDto requestDto) {
         ResponseEntity<Map> response = getPaymentInfo(requestDto.getImpUid());
         Map<String, Object> responseBody = response.getBody();
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            logger.error("결제 정보 가져오는 중 오류 발생: {}", response);
+            throw new RuntimeException("Iamport로부터 잘못된 응답");
+        }
+
         if (responseBody != null && responseBody.containsKey("response")) {
             Map<String, Object> paymentInfo = (Map<String, Object>) responseBody.get("response");
-
 
             Payment payment = Payment.builder()
                     .impUid((String) paymentInfo.get("imp_uid"))
@@ -212,12 +229,10 @@ public class PaymentServiceImpl implements PaymentService {
                     //.order(orderRepository.findById(requestDto.getOrderId()).orElse(null))
                     .build();
 
-
             Payment savedPayment = paymentRepository.save(payment);
-
             return new PaymentResponseDto(savedPayment);
         } else {
-            throw new RuntimeException("Invalid response from Iamport");
+            throw new RuntimeException("Iamport로부터 잘못된 응답");
         }
     }
 }
