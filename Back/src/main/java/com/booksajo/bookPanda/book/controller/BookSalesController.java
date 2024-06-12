@@ -76,7 +76,7 @@ public class BookSalesController {
                              @RequestParam(name = "page" , defaultValue = "0") int page ,
                              @RequestParam(name = "size" , defaultValue = "10") int size){
 
-        Page<BookSales> bookSales;
+        List<BookSalesDto> bookSales;
         switch(order){
             case "sellCount":
                 bookSales= bookSalesService.getBookSalesByCategoryIdOrderBySellCount(categoryId,page,size);
@@ -87,7 +87,7 @@ public class BookSalesController {
             default:
                 bookSales = bookSalesService.getBookSalesByCategoryIdOrderById(categoryId,page,size);
         }
-        return ResponseEntity.ok(bookSales.getContent());
+        return ResponseEntity.ok(bookSales);
     }
 
     @GetMapping("/bookSales/title")
@@ -96,11 +96,11 @@ public class BookSalesController {
             @RequestParam(name = "page" , defaultValue = "0") int page ,
             @RequestParam(name = "size" , defaultValue = "5") int size
     ){
-        Page<BookSales> bookSales = bookSalesService.getBookSalesContainedWord(keyword,page,size);
+        List<BookSalesDto> bookSales = bookSalesService.getBookSalesContainedWord(keyword,page,size);
 
         List<BookTitleInfo> bookTitleInfos = new ArrayList<>();
 
-        for(BookSales book:bookSales.get().toList()){
+        for(BookSalesDto book:bookSales){
             bookTitleInfos.add(new BookTitleInfo(book.getId(),book.getBookInfo().getTitle()));
         }
 

@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -122,24 +123,82 @@ public class BookSalesService {
         redisTemplate.opsForValue().increment(redisKey, 1);
     }
 
-    public Page<BookSales> getBookSalesByCategoryId(Long categoryId,int page, int size){
-        return bookSalesRepository.findBookSalesByCategoryId(categoryId, PageRequest.of(page,size));
+    @Transactional(readOnly = true)
+    public List<BookSalesDto> getBookSalesByCategoryId(Long categoryId,int page, int size){
+
+        List<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryId(categoryId, PageRequest.of(page,size)).get().toList();
+        List<BookSalesDto> dtos = new ArrayList<>();
+
+        for(BookSales book : bookSales){
+            BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
+                    .sellCount(book.getSellCount()).stock(book.getStock())
+                    .bookInfo(book.getBookInfo()).build();
+            dtos.add(dto);
+        }
+
+
+        return dtos;
     }
 
-    public Page<BookSales> getBookSalesByCategoryIdOrderByVisitCount(Long categoryId, int page , int size){
-        return bookSalesRepository.findBookSalesByCategoryIdOrderByVisitCount(categoryId,PageRequest.of(page,size));
+    @Transactional(readOnly = true)
+    public List<BookSalesDto> getBookSalesByCategoryIdOrderByVisitCount(Long categoryId, int page , int size){
+        List<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderByVisitCount(categoryId,PageRequest.of(page,size)).get().toList();
+        List<BookSalesDto> dtos = new ArrayList<>();
+
+        for(BookSales book : bookSales){
+            BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
+                    .sellCount(book.getSellCount()).stock(book.getStock())
+                    .bookInfo(book.getBookInfo()).build();
+            dtos.add(dto);
+        }
+
+
+
+        return dtos;
     }
 
-    public Page<BookSales> getBookSalesByCategoryIdOrderBySellCount(Long categoryId, int page , int size){
-        return bookSalesRepository.findBookSalesByCategoryIdOrderBySellCount(categoryId,PageRequest.of(page,size));
+    @Transactional(readOnly = true)
+    public List<BookSalesDto> getBookSalesByCategoryIdOrderBySellCount(Long categoryId, int page , int size){
+
+        List<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderBySellCount(categoryId,PageRequest.of(page,size)).get().toList();
+        List<BookSalesDto> dtos = new ArrayList<>();
+
+        for(BookSales book : bookSales){
+            BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
+                    .sellCount(book.getSellCount()).stock(book.getStock())
+                    .bookInfo(book.getBookInfo()).build();
+            dtos.add(dto);
+        }
+
+        return dtos;
     }
 
-    public Page<BookSales> getBookSalesByCategoryIdOrderById(Long categoryId, int page , int size){
-        return bookSalesRepository.findBookSalesByCategoryIdOrderById(categoryId,PageRequest.of(page,size));
+    @Transactional(readOnly = true)
+    public List<BookSalesDto> getBookSalesByCategoryIdOrderById(Long categoryId, int page , int size){
+        List<BookSales> bookSales =  bookSalesRepository.findBookSalesByCategoryIdOrderById(categoryId,PageRequest.of(page,size)).get().toList();
+        List<BookSalesDto> dtos = new ArrayList<>();
+
+        for(BookSales book : bookSales){
+            BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
+                    .sellCount(book.getSellCount()).stock(book.getStock())
+                    .bookInfo(book.getBookInfo()).build();
+            dtos.add(dto);
+        }
+        return  dtos;
     }
 
-    public Page<BookSales> getBookSalesContainedWord(String keyword, int page,int size){
-        return bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size));
+    @Transactional(readOnly = true)
+    public List<BookSalesDto> getBookSalesContainedWord(String keyword, int page,int size){
+        List<BookSales> bookSales =bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size)).get().toList();
+        List<BookSalesDto> dtos = new ArrayList<>();
+
+        for(BookSales book : bookSales){
+            BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
+                    .sellCount(book.getSellCount()).stock(book.getStock())
+                    .bookInfo(book.getBookInfo()).build();
+            dtos.add(dto);
+        }
+        return  dtos;
     }
 
     @Scheduled(fixedRate = 5000) // 30초 마다 실행
