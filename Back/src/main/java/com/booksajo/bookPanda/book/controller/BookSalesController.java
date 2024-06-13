@@ -4,18 +4,26 @@ import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.book.dto.*;
 import com.booksajo.bookPanda.book.service.BookInfoService;
 import com.booksajo.bookPanda.book.service.BookSalesService;
+import com.booksajo.bookPanda.user.JWT.JwtToken;
+import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -25,6 +33,7 @@ public class BookSalesController {
     private final BookInfoService bookInfoService;
     private final BookSalesService bookSalesService;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @ResponseBody
@@ -52,8 +61,9 @@ public class BookSalesController {
         return ResponseEntity.ok(bookSalesService.patchBookSales(bookSalesId, bookSalesRequest));
     }
     @PostMapping("/bookSales")
-    public ResponseEntity<BookSales> createBookSales( @AuthenticationPrincipal UserDetails userDetails,@RequestBody BookSalesRequest bookSalesRequest)
+    public ResponseEntity<BookSales> createBookSales(@AuthenticationPrincipal UserDetails userDetails, @RequestBody BookSalesRequest bookSalesRequest)
     {
+
         String userEmail = userDetails.getUsername();
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));

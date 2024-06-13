@@ -33,6 +33,7 @@ public class JwtTokenProvider {
     private static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60;// 한시간
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+        System.out.println(secretKey);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -122,6 +123,7 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
 
     public String extractUserEmail(String refreshToken) {
         return parseClaims(refreshToken).getSubject();
