@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.user.controller;
 
 import com.booksajo.bookPanda.user.JWT.JwtAuthenticationFilter;
 import com.booksajo.bookPanda.user.JWT.JwtToken;
+import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
 import com.booksajo.bookPanda.user.domain.UpdatePasswordRequest;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.dto.JwtDto;
@@ -51,6 +52,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/sign-in")
     public ResponseEntity<JwtDto> signIn(@RequestBody SignInDto signInDto, HttpServletResponse response) {
@@ -81,8 +83,6 @@ public class UserController {
 
         // 쿠키 설정
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-//        accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(60 * 60 * 24); // 1시간 유효기간
         response.addCookie(accessTokenCookie);
@@ -101,7 +101,7 @@ public class UserController {
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@RequestBody @Valid SignUpDto signUpDto) {
         String email = signUpDto.getUserEmail();
-        // 레디스에 인증상태를 저장
+        // 레디스에 인증  상태를 저장
         String verified = redisService.getData(email + "_verified");
 
         if (verified == null || !verified.equals("true")) {
@@ -115,11 +115,45 @@ public class UserController {
     }
 
     @PostMapping("/refresh-token")
-    public JwtToken refreshAccessToken(@RequestBody JwtDto jwtDto) {
-        String refreshToken = jwtDto.refreshToken();
-        JwtToken newAccessToken = userServiceImpl.refreshAccessToken(refreshToken);
-        return newAccessToken;
+    public ResponseEntity<JwtDto> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = null;
+
+        // 쿠키에서 리프레시 토큰 가져오기
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (refreshToken == null || !jwtTokenProvider.validateToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
+        }
+
+        // 새로운 액세스 토큰 생성
+        JwtToken newJwtToken = userServiceImpl.refreshAccessToken(refreshToken);
+        String newAccessToken = newJwtToken.getAccessToken();
+        String newRefreshToken = newJwtToken.getRefreshToken();
+
+        // 쿠키 설정
+        Cookie newAccessTokenCookie = new Cookie("accessToken", newAccessToken);
+        newAccessTokenCookie.setPath("/");
+        newAccessTokenCookie.setMaxAge(60 * 60); // 1시간 유효기간
+        response.addCookie(newAccessTokenCookie);
+
+        Cookie newRefreshTokenCookie = new Cookie("refreshToken", newRefreshToken);
+        newRefreshTokenCookie.setHttpOnly(true);
+        newRefreshTokenCookie.setSecure(true);
+        newRefreshTokenCookie.setPath("/");
+        newRefreshTokenCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 유효기간
+        response.addCookie(newRefreshTokenCookie);
+
+        return ResponseEntity.ok(new JwtDto(newAccessToken, newRefreshToken));
     }
+
 
 
     @PostMapping("/logout")

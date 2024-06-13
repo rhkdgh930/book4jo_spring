@@ -1,7 +1,5 @@
 package com.booksajo.bookPanda.user.JWT;
 
-import com.booksajo.bookPanda.user.service.RedisService;
-import com.booksajo.bookPanda.user.service.TokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -10,14 +8,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,7 +71,8 @@ public class JwtTokenProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
-        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("auth").toString().split(","))
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(
+                claims.get("auth").toString().split(","))
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
 
@@ -104,11 +101,23 @@ public class JwtTokenProvider {
 
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder()
+            Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(accessToken)
                 .getBody();
+
+            List<String> roles = claims.entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith("ROLE_"))
+                .map(Map.Entry::getValue)
+                .map(Object::toString)
+                .collect(Collectors.toList());
+
+            if (!roles.isEmpty()) {
+                claims.put("auth", roles);
+            }
+
+            return claims;
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
