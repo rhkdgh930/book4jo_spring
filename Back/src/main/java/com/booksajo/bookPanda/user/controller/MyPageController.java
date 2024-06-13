@@ -23,6 +23,7 @@ public class MyPageController {
     public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal UserDetails user) {
         String userEmail = user.getUsername();
         User userInfo = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println(user.getAuthorities());
         return ResponseEntity.ok(userInfo);
     }
 

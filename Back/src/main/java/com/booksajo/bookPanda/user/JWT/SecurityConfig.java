@@ -22,6 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
@@ -38,15 +39,17 @@ public class SecurityConfig {
 //                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
 //                .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
 //                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
-//                .requestMatchers("/api/cart/**").hasRole("USER")
-//                .requestMatchers("/api/mypage/**").hasRole("USER")
-//                .requestMatchers("/api/payment/**").hasRole("USER")
-//                // 관리자는 관리자 페이지로 접근
-//                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // 그 외의 요청은 모두가 접근 가능
-                .anyRequest().permitAll()
+                    .requestMatchers("/api/cart/**").hasRole("USER")
+                    .requestMatchers("/api/mypage/**").hasAnyRole("USER","ADMIN")
+                    .requestMatchers("/api/payment/**").hasRole("USER")
+                    // 관리자는 관리자 페이지로 접근
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+//               그 외의 요청은 모두가 접근 가능
+                    .anyRequest().permitAll()
             )
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 

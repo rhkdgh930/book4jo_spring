@@ -28,7 +28,7 @@ public class SignUpDto {
             .userEmail(userEmail)
             .userPassword(encodedPassword)
             .name(name)
-                .roles(roles)
+            .roles(roles)
             .address(address)
             .phoneNumber(phoneNumber)
             .roles(roles)

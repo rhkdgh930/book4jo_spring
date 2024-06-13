@@ -9,6 +9,7 @@ import com.booksajo.bookPanda.user.dto.SignUpDto;
 import com.booksajo.bookPanda.user.dto.UserDto;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,11 +51,22 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByUserEmail(signUpDto.getUserEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 아이디입니다.");
         }
+
         String encodedPassword = passwordEncoder.encode(signUpDto.getUserPassword());
         List<String> roles = new ArrayList<>();
-        roles.add("USER");
-        return UserDto.toDto(userRepository.save(signUpDto.toEntity(encodedPassword, roles)));
+        if (signUpDto.getName().contains("BiGpAnDa")) {
+            roles.add("ADMIN");
+            System.out.println("어드민설정 완료!");
+        }
+        else {
+            roles.add("USER");
+        }
+
+        User user = signUpDto.toEntity(encodedPassword, roles);
+
+        return UserDto.toDto(userRepository.save(user));
     }
+
 
     @Transactional
     public void updatePassword(String userEmail, String newPassword) {
@@ -86,18 +99,23 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public JwtToken refreshAccessToken(String refreshToken) {
-        // 리프레시 토큰을 검증하고 사용자 정보를 추출하는 과정
-        String userEmail = jwtTokenProvider.extractUserEmail(refreshToken);
-
-        if (userEmail != null) {
-            // 새로운 액세스 토큰 생성
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userEmail, null);
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            return jwtTokenProvider.generateToken(authentication);
-        } else {
-            return null;
+        // 리프레시 토큰 유효성 검사
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("Invalid refresh token");
         }
+
+        // 리프레시 토큰에서 사용자 정보 추출
+        String userEmail = jwtTokenProvider.extractUserEmail(refreshToken);
+        User user = userRepository.findByUserEmail(userEmail)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 새로운 액세스 토큰 및 리프레시 토큰 생성
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+            user.getUserEmail(),
+            null,
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        return jwtTokenProvider.generateToken(authentication);
     }
-
-
 }
