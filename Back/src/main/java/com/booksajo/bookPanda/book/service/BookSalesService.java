@@ -57,6 +57,21 @@ public class BookSalesService {
         return bookSalesRepository.findAll();
     }
 
+    public BookSalesOrderResponseDto getOrderBookSalesInfo(Long bookId){
+        BookSales book1 = bookSalesRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("해당 책1이 없습니다."));
+        BookSales book = bookSalesRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 책이 없습니다."));
+        BookSalesOrderResponseDto responseDto = new BookSalesOrderResponseDto();
+        responseDto.setTitle(book.getBookInfo().getTitle());
+        responseDto.setDiscount(book.getBookInfo().getDiscount());
+        responseDto.setImage(book.getBookInfo().getImage());
+        responseDto.setUserName(book.getUser().getName());
+        responseDto.setUserAddress(book.getUser().getAddress());
+
+        return responseDto;
+    }
+
     public BookSales createBookSales(BookSalesRequest bookSalesRequest, User user)
     {
         BookSalesDto bookSalesDto = new BookSalesDto();

@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.order.domain;
 
 import com.booksajo.bookPanda.order.constant.Status;
 import com.booksajo.bookPanda.order.dto.OrderRequestDto;
+import com.booksajo.bookPanda.order.dto.response.OrderResponseDto;
 import com.booksajo.bookPanda.user.domain.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -70,4 +71,5 @@ public class Order {
                 ", orderItems=" + orderItems +
                 '}';
     }
+
 }

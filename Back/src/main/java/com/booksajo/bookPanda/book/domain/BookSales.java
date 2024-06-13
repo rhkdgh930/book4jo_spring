@@ -46,7 +46,7 @@ public class BookSales {
     @ManyToOne
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user", nullable = false)
     private User user;
 }

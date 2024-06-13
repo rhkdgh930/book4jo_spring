@@ -113,6 +113,15 @@ public class OrderService {
         return orderRepository.findAllByUserUserEmail(userEmail).stream().map(OrderResponseDto::new).toList();
     }
 
+    @Transactional
+    public OrderResponseDto updateOrderStatus(long orderId){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문 번호가 없습니다."));
+        order.setStatus(Status.PAYING);
+        orderRepository.save(order);
+        return new OrderResponseDto(order);
+    }
+
     //TODO : 주문 취소
     @Transactional
     public OrderResponseDto cancelOrder(long orderId){

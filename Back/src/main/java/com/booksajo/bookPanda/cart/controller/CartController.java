@@ -3,6 +3,7 @@ package com.booksajo.bookPanda.cart.controller;
 
 import com.booksajo.bookPanda.cart.domain.Cart;
 import com.booksajo.bookPanda.cart.dto.CartItemDto;
+import com.booksajo.bookPanda.cart.dto.CartOrderResponseDto;
 import com.booksajo.bookPanda.cart.dto.CartResponseDto;
 import com.booksajo.bookPanda.cart.service.CartService;
 import com.booksajo.bookPanda.user.domain.User;
@@ -53,6 +54,23 @@ public class CartController {
         List<CartItemDto> cartItems = cartService.getCartItems(userId);
         System.out.println(cartItems);
         return ResponseEntity.ok(cartItems);
+    }
+
+    @GetMapping("/order")
+    public ResponseEntity<?> getCartOrder(@AuthenticationPrincipal UserDetails userDetails){
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        String userEmail = userDetails.getUsername();
+        CartOrderResponseDto responseDto = cartService.getCartOrder(userEmail);
+        List<CartItemDto> cartItems = responseDto.getCartItems();
+        for(CartItemDto itemDto : cartItems){
+            System.out.println(itemDto);
+        }
+        System.out.println(responseDto.getTotalPrice());
+        System.out.println(responseDto.getUserAddress());
+
+        return ResponseEntity.ok(responseDto);
     }
 
     // 카트에 아이템 추가
