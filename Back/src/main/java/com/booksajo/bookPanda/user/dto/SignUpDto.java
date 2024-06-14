@@ -19,6 +19,8 @@ public class SignUpDto {
     private String userPassword;
     private String name;
     private String address;
+    private String detailedAddress;
+    private String postCode;
     private String phoneNumber;
     private List<String> roles;
     private String authCode;
@@ -30,6 +32,8 @@ public class SignUpDto {
             .name(name)
             .roles(roles)
             .address(address)
+            .detailedAddress(detailedAddress)
+            .postCode(postCode)
             .phoneNumber(phoneNumber)
             .roles(roles)
             .build();

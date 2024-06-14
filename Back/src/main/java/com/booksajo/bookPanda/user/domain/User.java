@@ -58,6 +58,12 @@ public class User implements UserDetails {
     private String address;
 
     @Column
+    private String detailedAddress;
+
+    @Column
+    private String postCode;
+
+    @Column
     @Pattern(regexp = "^[\\d ]*$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
     private String phoneNumber;
 

@@ -14,20 +14,23 @@ public class UserResponseDto {
     private String userEmail;
     private String name;
     private String address;
+    private String detailedAddress;
+    private String postCode;
     private String phoneNumber;
 
     public UserResponseDto(User user) {
     }
 
 
-    public static UserResponseDto of(User user)
-    {
+    public static UserResponseDto of(User user) {
         return new UserResponseDto(
-                user.getId(),
-                user.getUserEmail(),
-                user.getUsername(),
-                user.getAddress(),
-                user.getPhoneNumber()
+            user.getId(),
+            user.getUserEmail(),
+            user.getUsername(),
+            user.getAddress(),
+            user.getDetailedAddress(),
+            user.getPostCode(),
+            user.getPhoneNumber()
         );
     }
 }
