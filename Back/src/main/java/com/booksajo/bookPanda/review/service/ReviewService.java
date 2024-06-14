@@ -7,7 +7,6 @@ import com.booksajo.bookPanda.review.dto.ReviewResponseDto;
 import com.booksajo.bookPanda.review.entity.Review;
 import com.booksajo.bookPanda.review.repository.ReviewRepository;
 import com.booksajo.bookPanda.user.domain.User;
-import com.booksajo.bookPanda.user.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

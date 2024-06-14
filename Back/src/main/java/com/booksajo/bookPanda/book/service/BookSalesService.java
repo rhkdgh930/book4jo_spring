@@ -9,6 +9,7 @@ import com.booksajo.bookPanda.exception.errorCode.BookSalesErrorCode;
 import com.booksajo.bookPanda.exception.errorCode.CategoryErrorCode;
 import com.booksajo.bookPanda.exception.exception.BookSalesException;
 import com.booksajo.bookPanda.exception.exception.CategoryException;
+import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.review.entity.Review;
 import com.booksajo.bookPanda.review.repository.ReviewRepository;
 import com.booksajo.bookPanda.user.domain.User;
@@ -31,6 +32,7 @@ public class BookSalesService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ReviewRepository reviewRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     private static final String BOOKSALES_VISITCOUNT_KEY = "visitcount";
 
@@ -55,6 +57,21 @@ public class BookSalesService {
     public List<BookSales> getBookSalesList()
     {
         return bookSalesRepository.findAll();
+    }
+
+    public BookSalesOrderResponseDto getOrderBookSalesInfo(Long bookId, String userEmail){
+        BookSales book = bookSalesRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 책이 없습니다."));
+        BookSalesOrderResponseDto responseDto = new BookSalesOrderResponseDto();
+        responseDto.setTitle(book.getBookInfo().getTitle());
+        responseDto.setDiscount(book.getBookInfo().getDiscount());
+        responseDto.setImage(book.getBookInfo().getImage());
+
+        User user = userRepository.findByUserEmail(userEmail)
+                        .orElseThrow(() -> new IllegalArgumentException("로그인 하세요."));
+        responseDto.setUser(user);
+
+        return responseDto;
     }
 
     public BookSales createBookSales(BookSalesRequest bookSalesRequest, User user)
@@ -140,12 +157,14 @@ public class BookSalesService {
         return dtos;
     }
 
+    //조회순
     @Transactional(readOnly = true)
-    public List<BookSalesDto> getBookSalesByCategoryIdOrderByVisitCount(Long categoryId, int page , int size){
-        List<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderByVisitCount(categoryId,PageRequest.of(page,size)).get().toList();
+    public PageInfoDto getBookSalesByCategoryIdOrderByVisitCount(Long categoryId, int page , int size){
+        Page<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderByVisitCount(categoryId,PageRequest.of(page,size));
+
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();
@@ -154,45 +173,48 @@ public class BookSalesService {
 
 
 
-        return dtos;
+        return new PageInfoDto(bookSales.getTotalPages(),dtos);
     }
 
+    //판매량순
     @Transactional(readOnly = true)
-    public List<BookSalesDto> getBookSalesByCategoryIdOrderBySellCount(Long categoryId, int page , int size){
+    public PageInfoDto getBookSalesByCategoryIdOrderBySellCount(Long categoryId, int page , int size){
+        Page<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderBySellCount(categoryId,PageRequest.of(page,size));
 
-        List<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderBySellCount(categoryId,PageRequest.of(page,size)).get().toList();
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();
             dtos.add(dto);
         }
 
-        return dtos;
+        return new PageInfoDto(bookSales.getTotalPages(),dtos);
     }
 
+    //등록순
     @Transactional(readOnly = true)
-    public List<BookSalesDto> getBookSalesByCategoryIdOrderById(Long categoryId, int page , int size){
-        List<BookSales> bookSales =  bookSalesRepository.findBookSalesByCategoryIdOrderById(categoryId,PageRequest.of(page,size)).get().toList();
+    public PageInfoDto getBookSalesByCategoryIdOrderById(Long categoryId, int page , int size){
+        Page<BookSales> bookSales =  bookSalesRepository.findBookSalesByCategoryIdOrderById(categoryId,PageRequest.of(page,size));
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();
             dtos.add(dto);
         }
-        return  dtos;
+
+        return   new PageInfoDto(bookSales.getTotalPages(),dtos);
     }
 
     @Transactional(readOnly = true)
     public List<BookSalesDto> getBookSalesContainedWord(String keyword, int page,int size){
-        List<BookSales> bookSales =bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size)).get().toList();
+        Page<BookSales> bookSales =bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size));
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();

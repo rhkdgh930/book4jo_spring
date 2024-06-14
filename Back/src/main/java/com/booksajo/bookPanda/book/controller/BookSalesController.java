@@ -86,7 +86,7 @@ public class BookSalesController {
                              @RequestParam(name = "page" , defaultValue = "0") int page ,
                              @RequestParam(name = "size" , defaultValue = "10") int size){
 
-        List<BookSalesDto> bookSales;
+       PageInfoDto bookSales;
         switch(order){
             case "sellCount":
                 bookSales= bookSalesService.getBookSalesByCategoryIdOrderBySellCount(categoryId,page,size);
@@ -115,5 +115,16 @@ public class BookSalesController {
         }
 
         return ResponseEntity.ok(bookTitleInfos);
+    }
+
+    @GetMapping("/bookSales/order")
+    public ResponseEntity<?> getBookSalesOrder(@RequestParam("bookId") long bookId, @AuthenticationPrincipal UserDetails userDetails){
+        String userEmail = userDetails.getUsername();
+        BookSalesOrderResponseDto responseDto = bookSalesService.getOrderBookSalesInfo(bookId, userEmail);
+        System.out.println(responseDto.getDiscount());
+        System.out.println(responseDto.getQuantity());
+        System.out.println(responseDto.getUserName());
+        System.out.println(responseDto.getTitle());
+        return ResponseEntity.ok(responseDto);
     }
 }

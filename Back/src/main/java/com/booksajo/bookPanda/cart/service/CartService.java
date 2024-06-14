@@ -6,6 +6,7 @@ import com.booksajo.bookPanda.book.repository.BookSalesRepository;
 import com.booksajo.bookPanda.cart.domain.Cart;
 import com.booksajo.bookPanda.cart.domain.CartItem;
 import com.booksajo.bookPanda.cart.dto.CartItemDto;
+import com.booksajo.bookPanda.cart.dto.CartOrderResponseDto;
 import com.booksajo.bookPanda.cart.dto.CartResponseDto;
 import com.booksajo.bookPanda.cart.repository.CartItemRepository;
 import com.booksajo.bookPanda.cart.repository.CartRepository;
@@ -13,8 +14,11 @@ import com.booksajo.bookPanda.exception.errorCode.CartErrorCode;
 import com.booksajo.bookPanda.exception.exception.CartException;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -82,6 +86,43 @@ public class CartService {
         return toCartResponseDto(cart);
     }
 
+    public CartOrderResponseDto getCartOrder(String userEmail){
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));
+        Long userId = user.getId();
+
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저가 카트가 없습니다."));
+        CartOrderResponseDto responseDto = new CartOrderResponseDto();
+
+        List<CartItemDto> checkedCartItems = new ArrayList<>();
+        List<CartItemDto> cartItems = getCartItems(userId);
+        for(CartItemDto itemDto : cartItems){
+            if(itemDto.isChecked()){
+                checkedCartItems.add(itemDto);
+            }
+        }
+
+        responseDto.setId(cart.getId());
+        responseDto.setCartItems(checkedCartItems);
+        responseDto.setTotalPrice(calculationTotalPrice(checkedCartItems));
+        responseDto.setUserAddress1(cart.getUser().getAddress());
+        responseDto.setUserName(cart.getUser().getName());
+        responseDto.setUserPhoneNumber(cart.getUser().getPhoneNumber());
+
+        return responseDto;
+    }
+
+    private int calculationTotalPrice(List<CartItemDto> cartItems){
+        int totalPrice = 0;
+        for(CartItemDto itemDto : cartItems){
+            int quantity = itemDto.getQuantity();
+            int price = Integer.parseInt(itemDto.getPrice());
+            totalPrice += (quantity * price);
+        }
+        return totalPrice;
+    }
+
     public List<CartItemDto> getCartItems(Long userId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
@@ -91,22 +132,35 @@ public class CartService {
     }
 
     @Transactional
-    public void saveCartState(Long userId, List<CartItemDto> cartItems) {
+    public void updateCartItemQuantity(Long userId, Long cartItemId, int quantity) {
         Cart cart = cartRepository.findByUserId(userId)
-                        .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
 
-        cartItemRepository.deleteByCartId(cart.getId());
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));
 
-        for (CartItemDto itemDto : cartItems) {
-            BookSales bookSales = bookSalesRepository.findById(itemDto.getBookSalesId())
-                    .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));
-            CartItem cartItem = new CartItem();
-            cartItem.setBookSales(bookSales);
-            cartItem.setQuantity(itemDto.getQuantity());
-            cart.addItem(cartItem);
-            cartItemRepository.save(cartItem);
+        if (!cart.getCartItems().contains(cartItem)) {
+            throw new CartException(CartErrorCode.BOOK_NOT_FOUND);
         }
-        cartRepository.save(cart);
+
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
+    }
+
+    @Transactional
+    public void deleteCartItem(Long userId, Long cartItemId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));
+
+        if (!cart.getCartItems().contains(cartItem)) {
+            throw new CartException(CartErrorCode.BOOK_NOT_FOUND);
+        }
+
+        cart.getCartItems().remove(cartItem);
+        cartItemRepository.delete(cartItem);
     }
 
     private CartItemDto convertToDto(CartItem cartItem) {
@@ -117,6 +171,7 @@ public class CartService {
         cartItemDto.setImage(cartItem.getBookSales().getBookInfo().getImage());
         cartItemDto.setQuantity(cartItem.getQuantity());
         cartItemDto.setPrice(cartItem.getBookSales().getBookInfo().getDiscount());
+        cartItemDto.setStock(cartItem.getBookSales().getStock());
         cartItemDto.setChecked(true);
         return cartItemDto;
     }

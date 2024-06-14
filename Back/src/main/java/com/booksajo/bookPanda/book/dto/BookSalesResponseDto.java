@@ -2,9 +2,6 @@ package com.booksajo.bookPanda.book.dto;
 
 import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.category.domain.Category;
-import com.booksajo.bookPanda.review.dto.ReviewResponseDto;
-import com.booksajo.bookPanda.review.entity.Review;
-import com.booksajo.bookPanda.user.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

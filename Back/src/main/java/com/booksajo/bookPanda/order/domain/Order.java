@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.order.domain;
 
 import com.booksajo.bookPanda.order.constant.Status;
 import com.booksajo.bookPanda.order.dto.OrderRequestDto;
+import com.booksajo.bookPanda.order.dto.response.OrderResponseDto;
 import com.booksajo.bookPanda.user.domain.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -48,6 +49,16 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id", columnDefinition = "BIGINT", nullable = false)
     private User user;
 
+    @Column(name = "address", nullable = false)
+    private String address1;
+
+    @Column(name = "address2", nullable = false)
+    private String address2;
+
+    @Column(name = "post_code", nullable = false)
+    private String postCode;
+
+
     @OneToMany(mappedBy="order", cascade= CascadeType.ALL, orphanRemoval = true, fetch= FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -55,6 +66,9 @@ public class Order {
     public Order(OrderRequestDto requestDto){
         this.orderDate = requestDto.getOrderDate();
         this.totalPrice = requestDto.getTotalPrice();
+        this.address1 = requestDto.getAddress1();
+        this.address2 = requestDto.getAddress2();
+        this.postCode = requestDto.getPostCode();
         this.status = requestDto.getStatus();
         this.user = requestDto.getUser();
     }
@@ -70,4 +84,5 @@ public class Order {
                 ", orderItems=" + orderItems +
                 '}';
     }
+
 }
