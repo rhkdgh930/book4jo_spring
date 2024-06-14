@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,12 +141,14 @@ public class BookSalesService {
         return dtos;
     }
 
+    //조회순
     @Transactional(readOnly = true)
-    public List<BookSalesDto> getBookSalesByCategoryIdOrderByVisitCount(Long categoryId, int page , int size){
-        List<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderByVisitCount(categoryId,PageRequest.of(page,size)).get().toList();
+    public PageInfoDto getBookSalesByCategoryIdOrderByVisitCount(Long categoryId, int page , int size){
+        Page<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderByVisitCount(categoryId,PageRequest.of(page,size));
+
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();
@@ -154,45 +157,48 @@ public class BookSalesService {
 
 
 
-        return dtos;
+        return new PageInfoDto(bookSales.getTotalPages(),dtos);
     }
 
+    //판매량순
     @Transactional(readOnly = true)
-    public List<BookSalesDto> getBookSalesByCategoryIdOrderBySellCount(Long categoryId, int page , int size){
+    public PageInfoDto getBookSalesByCategoryIdOrderBySellCount(Long categoryId, int page , int size){
+        Page<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderBySellCount(categoryId,PageRequest.of(page,size));
 
-        List<BookSales> bookSales = bookSalesRepository.findBookSalesByCategoryIdOrderBySellCount(categoryId,PageRequest.of(page,size)).get().toList();
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();
             dtos.add(dto);
         }
 
-        return dtos;
+        return new PageInfoDto(bookSales.getTotalPages(),dtos);
     }
 
+    //등록순
     @Transactional(readOnly = true)
-    public List<BookSalesDto> getBookSalesByCategoryIdOrderById(Long categoryId, int page , int size){
-        List<BookSales> bookSales =  bookSalesRepository.findBookSalesByCategoryIdOrderById(categoryId,PageRequest.of(page,size)).get().toList();
+    public PageInfoDto getBookSalesByCategoryIdOrderById(Long categoryId, int page , int size){
+        Page<BookSales> bookSales =  bookSalesRepository.findBookSalesByCategoryIdOrderById(categoryId,PageRequest.of(page,size));
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();
             dtos.add(dto);
         }
-        return  dtos;
+
+        return   new PageInfoDto(bookSales.getTotalPages(),dtos);
     }
 
     @Transactional(readOnly = true)
     public List<BookSalesDto> getBookSalesContainedWord(String keyword, int page,int size){
-        List<BookSales> bookSales =bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size)).get().toList();
+        Page<BookSales> bookSales =bookSalesRepository.getBookSalesTitleByContainedWord(keyword,PageRequest.of(page,size));
         List<BookSalesDto> dtos = new ArrayList<>();
 
-        for(BookSales book : bookSales){
+        for(BookSales book : bookSales.get().toList()){
             BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
                     .sellCount(book.getSellCount()).stock(book.getStock())
                     .bookInfo(book.getBookInfo()).build();
