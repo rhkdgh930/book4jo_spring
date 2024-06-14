@@ -116,4 +116,14 @@ public class BookSalesController {
 
         return ResponseEntity.ok(bookTitleInfos);
     }
+
+    @GetMapping("/bookSales/order")
+    public ResponseEntity<?> getBookSalesOrder(@RequestParam("bookId") long bookId){
+        BookSalesOrderResponseDto responseDto = bookSalesService.getOrderBookSalesInfo(bookId);
+        System.out.println(responseDto.getDiscount());
+        System.out.println(responseDto.getQuantity());
+        System.out.println(responseDto.getUserName());
+        System.out.println(responseDto.getTitle());
+        return ResponseEntity.ok(responseDto);
+    }
 }

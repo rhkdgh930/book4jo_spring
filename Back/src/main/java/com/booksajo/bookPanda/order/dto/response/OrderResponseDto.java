@@ -16,6 +16,7 @@ public class OrderResponseDto {
     private Status status;
     private String userName;
     private String userAddress;
+    private String userPhoneNumber;
 
     public OrderResponseDto(Order entity){
         this.id = entity.getId();
@@ -24,6 +25,7 @@ public class OrderResponseDto {
         this.status = entity.getStatus();
         this.userName = entity.getUser().getName();
         this.userAddress = entity.getUser().getAddress();
+        this.userPhoneNumber = entity.getUser().getPhoneNumber();
     }
 
     @Override

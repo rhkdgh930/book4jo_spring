@@ -7,6 +7,8 @@ import com.booksajo.bookPanda.order.service.OrderItemService;
 import com.booksajo.bookPanda.order.service.OrderService;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -91,6 +93,16 @@ public class OrderController {
     public ResponseEntity<?> getOrderItems(@RequestParam("orderId") Long orderId){
         List<OrderItemResponseDto> orderItems = orderItemService.getOrderItems(orderId);
         return ResponseEntity.ok(orderItems);
+    }
+
+    @PutMapping("/order/{orderId}")
+    public ResponseEntity<?> editPost(@RequestParam("orderId") Long orderId) {
+        try {
+            OrderResponseDto responseDto = orderService.updateOrderStatus(orderId);
+            return ResponseEntity.ok(responseDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     private Long getUserIdFromPrincipal(Principal principal) {
