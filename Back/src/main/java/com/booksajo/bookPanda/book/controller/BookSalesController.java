@@ -86,7 +86,7 @@ public class BookSalesController {
                              @RequestParam(name = "page" , defaultValue = "0") int page ,
                              @RequestParam(name = "size" , defaultValue = "10") int size){
 
-        List<BookSalesDto> bookSales;
+       PageInfoDto bookSales;
         switch(order){
             case "sellCount":
                 bookSales= bookSalesService.getBookSalesByCategoryIdOrderBySellCount(categoryId,page,size);
