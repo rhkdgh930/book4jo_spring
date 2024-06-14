@@ -1,7 +1,6 @@
 package com.booksajo.bookPanda.cart.controller;
 
 
-import com.booksajo.bookPanda.cart.domain.Cart;
 import com.booksajo.bookPanda.cart.dto.CartItemDto;
 import com.booksajo.bookPanda.cart.dto.CartResponseDto;
 import com.booksajo.bookPanda.cart.service.CartService;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -96,17 +94,6 @@ public class CartController {
         Long userId = user.getId();
 
         cartService.deleteCartItem(userId, id);
-        return ResponseEntity.ok().build();
-    }
-
-    // Cart 페이지를 벗어날 때 장바구니 변경사항 DB에 반영
-    @PostMapping("/save")
-    public ResponseEntity<Void> saveCartState(@AuthenticationPrincipal UserDetails userDetails, @RequestBody List<CartItemDto> cartItems) {
-        String userEmail = userDetails.getUsername();
-        User user = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(()-> new CartException(CartErrorCode.USER_NOT_FOUND));
-        Long userId = user.getId();
-        cartService.saveCartState(userId, cartItems);
         return ResponseEntity.ok().build();
     }
 

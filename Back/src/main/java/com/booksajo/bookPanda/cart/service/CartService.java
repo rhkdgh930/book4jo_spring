@@ -122,27 +122,6 @@ public class CartService {
         cartItemRepository.delete(cartItem);
     }
 
-
-
-    @Transactional
-    public void saveCartState(Long userId, List<CartItemDto> cartItems) {
-        Cart cart = cartRepository.findByUserId(userId)
-                        .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
-
-        cartItemRepository.deleteByCartId(cart.getId());
-
-        for (CartItemDto itemDto : cartItems) {
-            BookSales bookSales = bookSalesRepository.findById(itemDto.getBookSalesId())
-                    .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));
-            CartItem cartItem = new CartItem();
-            cartItem.setBookSales(bookSales);
-            cartItem.setQuantity(itemDto.getQuantity());
-            cart.addItem(cartItem);
-            cartItemRepository.save(cartItem);
-        }
-        cartRepository.save(cart);
-    }
-
     private CartItemDto convertToDto(CartItem cartItem) {
         CartItemDto cartItemDto = new CartItemDto();
         cartItemDto.setId(cartItem.getId());
@@ -151,6 +130,7 @@ public class CartService {
         cartItemDto.setImage(cartItem.getBookSales().getBookInfo().getImage());
         cartItemDto.setQuantity(cartItem.getQuantity());
         cartItemDto.setPrice(cartItem.getBookSales().getBookInfo().getDiscount());
+        cartItemDto.setStock(cartItem.getBookSales().getStock());
         cartItemDto.setChecked(true);
         return cartItemDto;
     }
