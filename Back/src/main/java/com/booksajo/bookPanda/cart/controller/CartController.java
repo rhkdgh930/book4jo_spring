@@ -68,7 +68,6 @@ public class CartController {
             System.out.println(itemDto);
         }
         System.out.println(responseDto.getTotalPrice());
-        System.out.println(responseDto.getUserAddress());
 
         return ResponseEntity.ok(responseDto);
     }

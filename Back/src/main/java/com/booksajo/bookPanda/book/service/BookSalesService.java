@@ -9,6 +9,7 @@ import com.booksajo.bookPanda.exception.errorCode.BookSalesErrorCode;
 import com.booksajo.bookPanda.exception.errorCode.CategoryErrorCode;
 import com.booksajo.bookPanda.exception.exception.BookSalesException;
 import com.booksajo.bookPanda.exception.exception.CategoryException;
+import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.review.entity.Review;
 import com.booksajo.bookPanda.review.repository.ReviewRepository;
 import com.booksajo.bookPanda.user.domain.User;
@@ -20,7 +21,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +32,7 @@ public class BookSalesService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ReviewRepository reviewRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     private static final String BOOKSALES_VISITCOUNT_KEY = "visitcount";
 
@@ -58,17 +59,17 @@ public class BookSalesService {
         return bookSalesRepository.findAll();
     }
 
-    public BookSalesOrderResponseDto getOrderBookSalesInfo(Long bookId){
-        BookSales book1 = bookSalesRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("해당 책1이 없습니다."));
+    public BookSalesOrderResponseDto getOrderBookSalesInfo(Long bookId, String userEmail){
         BookSales book = bookSalesRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 책이 없습니다."));
         BookSalesOrderResponseDto responseDto = new BookSalesOrderResponseDto();
         responseDto.setTitle(book.getBookInfo().getTitle());
         responseDto.setDiscount(book.getBookInfo().getDiscount());
         responseDto.setImage(book.getBookInfo().getImage());
-        responseDto.setUserName(book.getUser().getName());
-        responseDto.setUserAddress(book.getUser().getAddress());
+
+        User user = userRepository.findByUserEmail(userEmail)
+                        .orElseThrow(() -> new IllegalArgumentException("로그인 하세요."));
+        responseDto.setUser(user);
 
         return responseDto;
     }

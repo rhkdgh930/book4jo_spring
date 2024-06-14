@@ -118,8 +118,9 @@ public class BookSalesController {
     }
 
     @GetMapping("/bookSales/order")
-    public ResponseEntity<?> getBookSalesOrder(@RequestParam("bookId") long bookId){
-        BookSalesOrderResponseDto responseDto = bookSalesService.getOrderBookSalesInfo(bookId);
+    public ResponseEntity<?> getBookSalesOrder(@RequestParam("bookId") long bookId, @AuthenticationPrincipal UserDetails userDetails){
+        String userEmail = userDetails.getUsername();
+        BookSalesOrderResponseDto responseDto = bookSalesService.getOrderBookSalesInfo(bookId, userEmail);
         System.out.println(responseDto.getDiscount());
         System.out.println(responseDto.getQuantity());
         System.out.println(responseDto.getUserName());

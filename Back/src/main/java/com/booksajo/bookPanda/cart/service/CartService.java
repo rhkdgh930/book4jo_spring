@@ -102,9 +102,11 @@ public class CartService {
                 checkedCartItems.add(itemDto);
             }
         }
+
+        responseDto.setId(cart.getId());
         responseDto.setCartItems(checkedCartItems);
         responseDto.setTotalPrice(calculationTotalPrice(checkedCartItems));
-        responseDto.setUserAddress(cart.getUser().getAddress());
+        responseDto.setUserAddress1(cart.getUser().getAddress());
         responseDto.setUserName(cart.getUser().getName());
         responseDto.setUserPhoneNumber(cart.getUser().getPhoneNumber());
 

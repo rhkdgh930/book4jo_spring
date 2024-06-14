@@ -1,8 +1,6 @@
 package com.booksajo.bookPanda.review.dto;
 
 
-import com.booksajo.bookPanda.book.domain.BookSales;
-import com.booksajo.bookPanda.book.dto.BookSalesDto;
 import com.booksajo.bookPanda.book.dto.BookSalesResponseDto;
 import com.booksajo.bookPanda.review.entity.Review;
 import com.booksajo.bookPanda.user.dto.UserResponseDto;

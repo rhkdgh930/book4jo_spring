@@ -2,7 +2,6 @@ package com.booksajo.bookPanda.order.dto.response;
 
 import com.booksajo.bookPanda.order.constant.Status;
 import com.booksajo.bookPanda.order.domain.Order;
-import com.booksajo.bookPanda.user.domain.User;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,9 @@ public class OrderResponseDto {
     private int totalPrice;
     private Status status;
     private String userName;
-    private String userAddress;
+    private String address1;
+    private String address2;
+    private String postCode;
     private String userPhoneNumber;
 
     public OrderResponseDto(Order entity){
@@ -24,7 +25,9 @@ public class OrderResponseDto {
         this.totalPrice = entity.getTotalPrice();
         this.status = entity.getStatus();
         this.userName = entity.getUser().getName();
-        this.userAddress = entity.getUser().getAddress();
+        this.address1 = entity.getAddress1();
+        this.address2 = entity.getAddress2();
+        this.postCode = entity.getPostCode();
         this.userPhoneNumber = entity.getUser().getPhoneNumber();
     }
 
