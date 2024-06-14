@@ -35,6 +35,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -188,4 +189,19 @@ public class UserController {
         response.put("isLoggedIn", isLoggedIn);
         return response;
     }
+
+    @DeleteMapping("/delete-user")
+    public void deleteUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, String> request) {
+        System.out.println(userDetails.getUsername());
+        System.out.println(request.get("password"));
+        String password = request.get("password");
+        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (passwordEncoder.matches(password, user.getUserPassword())) {
+            userServiceImpl.deleteUser(user);
+        } else {
+            throw new IllegalArgumentException("Invalid password");
+        }
+    }
+
 }
