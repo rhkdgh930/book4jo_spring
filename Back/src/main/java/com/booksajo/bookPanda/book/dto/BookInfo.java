@@ -1,5 +1,6 @@
 package com.booksajo.bookPanda.book.dto;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 

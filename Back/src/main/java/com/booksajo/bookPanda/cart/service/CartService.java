@@ -91,6 +91,40 @@ public class CartService {
     }
 
     @Transactional
+    public void updateCartItemQuantity(Long userId, Long cartItemId, int quantity) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));
+
+        if (!cart.getCartItems().contains(cartItem)) {
+            throw new CartException(CartErrorCode.BOOK_NOT_FOUND);
+        }
+
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
+    }
+
+    @Transactional
+    public void deleteCartItem(Long userId, Long cartItemId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));
+
+        if (!cart.getCartItems().contains(cartItem)) {
+            throw new CartException(CartErrorCode.BOOK_NOT_FOUND);
+        }
+
+        cart.getCartItems().remove(cartItem);
+        cartItemRepository.delete(cartItem);
+    }
+
+
+
+    @Transactional
     public void saveCartState(Long userId, List<CartItemDto> cartItems) {
         Cart cart = cartRepository.findByUserId(userId)
                         .orElseThrow( () -> new CartException(CartErrorCode.USER_NOT_FOUND));
