@@ -11,13 +11,15 @@ import lombok.NoArgsConstructor;
 public class OrderItemResponseDto {
     private Long id;
     private int quantity;
-    private Order order;
-    private BookSales bookSales;
+    private String title;
+    private String image;
+    private int price;
 
     public OrderItemResponseDto(OrderItem entity){
         this.id = entity.getId();
         this.quantity = entity.getQuantity();
-        this.order = entity.getOrder();
-        this.bookSales = entity.getBookSales();
+        this.title = entity.getBookSales().getBookInfo().getTitle();
+        this.image = entity.getBookSales().getBookInfo().getImage();
+        this.price = Integer.parseInt(entity.getBookSales().getBookInfo().getDiscount());
     }
 }

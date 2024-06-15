@@ -37,7 +37,7 @@ public class MailController {
 
         if (redisAuthCode != null && redisAuthCode.equals(authCode)) {
             redisService.deleteData(email); // 인증 성공 시 기존 인증 코드를 삭제
-            redisService.setDataExpire(email + "_verified", "true", 3600); // 1시간 동안 유효한 인증 상태 저장
+            redisService.setDataExpire(email + "_verified", "true", 300000); // 5분
             return ResponseEntity.ok("인증에 성공하였습니다. 회원가입을 진행하세요.");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 코드가 유효하지 않습니다.");

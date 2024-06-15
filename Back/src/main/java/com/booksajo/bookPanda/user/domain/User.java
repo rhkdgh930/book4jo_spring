@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -47,21 +48,26 @@ public class User implements UserDetails {
     private String userEmail;
 
     @Column(nullable = false)
-    @Pattern(regexp = "(?=.*[a-zA-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,16}",
-        message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String userPassword;
 
     @NotBlank
-    @Column(name = "user_name", nullable = false)
-    private String userName;
+    @Column(name = "user_name") //, nullable = false
+    private String name;
 
     @Column
     private String address;
 
     @Column
-    @Pattern(regexp = "^(\\d{3}-\\d{3,4}-\\d{4})?$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
+    private String detailedAddress;
+
+    @Column
+    private String postCode;
+
+    @Column
+    @Pattern(regexp = "^[\\d ]*$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
     private String phoneNumber;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -69,7 +75,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-            .map(SimpleGrantedAuthority::new)
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
             .collect(Collectors.toList());
     }
 

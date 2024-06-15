@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'
+	implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -36,6 +37,7 @@ dependencies {
 	testImplementation 'org.mockito:mockito-junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.70.Final'
@@ -48,6 +50,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.1.11'
 
 }
 

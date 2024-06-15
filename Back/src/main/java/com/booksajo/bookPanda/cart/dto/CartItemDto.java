@@ -11,4 +11,5 @@ public class CartItemDto {
     private int quantity;
     private String price;
     private boolean checked;
+    private int stock;
 }

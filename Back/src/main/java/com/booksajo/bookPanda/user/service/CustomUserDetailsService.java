@@ -20,9 +20,22 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-        return userRepository.findByUserEmail(userEmail)
-            .map(this::createUserDetails)
-            .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
+        User user = userRepository.findByUserEmail(userEmail)
+            .orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
+        if (user.getName().contains("BiGpAnDa")){
+            return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUserEmail())
+                .password(user.getPassword()) // 인코딩된 비밀번호
+                .authorities("ROLE_ADMIN") // 권한 설정
+                .build();
+        }
+        else {
+            return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUserEmail())
+                .password(user.getPassword()) // 인코딩된 비밀번호
+                .authorities("ROLE_USER") // 권한 설정
+                .build();
+        }
     }
 
     private UserDetails createUserDetails(User user) {

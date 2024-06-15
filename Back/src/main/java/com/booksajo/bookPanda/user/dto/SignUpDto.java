@@ -17,8 +17,10 @@ public class SignUpDto {
 
     private String userEmail;
     private String userPassword;
-    private String userName;
+    private String name;
     private String address;
+    private String detailedAddress;
+    private String postCode;
     private String phoneNumber;
     private List<String> roles;
     private String authCode;
@@ -26,10 +28,12 @@ public class SignUpDto {
     public User toEntity(String encodedPassword, List<String> roles) {
         return User.builder()
             .userEmail(userEmail)
-            .userPassword(userPassword)
-            .userName(userName)
-                .roles(roles)
+            .userPassword(encodedPassword)
+            .name(name)
+            .roles(roles)
             .address(address)
+            .detailedAddress(detailedAddress)
+            .postCode(postCode)
             .phoneNumber(phoneNumber)
             .roles(roles)
             .build();

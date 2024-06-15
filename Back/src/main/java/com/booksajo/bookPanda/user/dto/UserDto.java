@@ -16,16 +16,20 @@ public class UserDto {
 
     private Long id;
     private String userEmail;
-    private String userName;
+    private String name;
     private String address;
+    private String detailedAddress;
+    private String postCode;
     private String phoneNumber;
 
     static public UserDto toDto(User user) {
         return UserDto.builder()
             .id(user.getId())
             .userEmail(user.getUserEmail())
-            .userName(user.getUsername())
+            .name(user.getName())
             .address(user.getAddress())
+            .detailedAddress(user.getDetailedAddress())
+            .postCode(user.getPostCode())
             .phoneNumber(user.getPhoneNumber())
             .build();
     }
@@ -34,8 +38,10 @@ public class UserDto {
         return User.builder()
             .id(id)
             .userEmail(userEmail)
-            .userName(userName)
+            .name(name)
             .address(address)
+            .detailedAddress(detailedAddress)
+            .postCode(postCode)
             .phoneNumber(phoneNumber)
             .build();
     }

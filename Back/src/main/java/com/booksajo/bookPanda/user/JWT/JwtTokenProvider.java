@@ -12,6 +12,8 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +30,10 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     private final Key key;
+    private static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60;// 한시간
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+        System.out.println(secretKey);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -50,7 +54,7 @@ public class JwtTokenProvider {
             .compact();
 
         String refreshToken = Jwts.builder()
-            .setExpiration(new Date(now + 86400000))
+            .setExpiration(new Date(now + (86400000 * 24)))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
 
@@ -68,7 +72,8 @@ public class JwtTokenProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
-        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("auth").toString().split(","))
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(
+                claims.get("auth").toString().split(","))
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
 
@@ -97,14 +102,31 @@ public class JwtTokenProvider {
 
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder()
+            Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(accessToken)
                 .getBody();
+
+            List<String> roles = claims.entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith("ROLE_"))
+                .map(Map.Entry::getValue)
+                .map(Object::toString)
+                .collect(Collectors.toList());
+
+            if (!roles.isEmpty()) {
+                claims.put("auth", roles);
+            }
+
+            return claims;
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+
+    public String extractUserEmail(String refreshToken) {
+        return parseClaims(refreshToken).getSubject();
     }
 
 }
