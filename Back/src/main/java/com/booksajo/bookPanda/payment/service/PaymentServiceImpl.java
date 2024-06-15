@@ -1,5 +1,6 @@
 package com.booksajo.bookPanda.payment.service;
 
+import com.booksajo.bookPanda.order.domain.Order;
 import com.booksajo.bookPanda.order.repository.OrderRepository;
 import com.booksajo.bookPanda.payment.domain.Payment;
 import com.booksajo.bookPanda.payment.dto.PaymentRequestDto;
@@ -218,6 +219,9 @@ public class PaymentServiceImpl implements PaymentService {
         if (responseBody != null && responseBody.containsKey("response")) {
             Map<String, Object> paymentInfo = (Map<String, Object>) responseBody.get("response");
 
+//            Order order = orderRepository.findById(requestDto.getOrderId())
+//                    .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
             Payment payment = Payment.builder()
                     .impUid((String) paymentInfo.get("imp_uid"))
                     .merchantUid((String) paymentInfo.get("merchant_uid"))
@@ -227,7 +231,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .buyerAddr((String) paymentInfo.get("buyer_addr"))
                     .buyerPostcode((String) paymentInfo.get("buyer_postcode"))
                     .status((String) paymentInfo.get("status"))
-                    //.order(orderRepository.findById(requestDto.getOrderId()).orElse(null))
+                    //.order(order)
                     .build();
 
             Payment savedPayment = paymentRepository.save(payment);
