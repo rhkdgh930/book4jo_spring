@@ -43,9 +43,10 @@ public class BookSalesController {
         return ResponseEntity.ok(bookInfoService.searchBookWithWebClient(dto));
     }
 
-    @PostMapping("/getBookSales")
+    @GetMapping("/getBookSales")
     public ResponseEntity<ResponseBookSales> getBookSales(@RequestParam("id") Long bookSalesId)
     {
+        System.out.println(bookSalesId);
         return ResponseEntity.ok(bookSalesService.getBookSales(bookSalesId));
     }
 

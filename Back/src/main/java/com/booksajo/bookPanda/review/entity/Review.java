@@ -21,7 +21,7 @@ public class Review {
     @JoinColumn(name = "book_sales_id")
     private BookSales bookSales;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
