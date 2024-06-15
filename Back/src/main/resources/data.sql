@@ -2,8 +2,6 @@
 INSERT INTO users(id,`user_email`,`user_name`, `user_password`)
 VALUES(1,"admin@admin.com" , "admin" , "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK");
 
-INSERT INTO users
-VALUES(2 ,"청주", "용암동", "01012345678", "13331", "tmdvy@naver.com" , "승표" , "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK");
 
 INSERT INTO category(name) VALUES ("건강/취미");
 INSERT INTO category(name) VALUES ("경제경영");
