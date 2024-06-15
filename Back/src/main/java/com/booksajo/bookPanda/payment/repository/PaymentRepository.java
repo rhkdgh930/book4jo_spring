@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    List<Payment> findByBuyerEmail(String userEmail);
+    //List<Payment> findByBuyerEmail(String userEmail);
 
 }

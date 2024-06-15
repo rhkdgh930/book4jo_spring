@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/payment")
 public class PaymentController {
 
     @Autowired
@@ -75,8 +75,8 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/user/{email}")
-    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(@PathVariable("email") String userEmail) {
-        return paymentService.getAllPaymentsByUser(userEmail);
-    }
+//    @GetMapping("/user/{email}")
+//    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(@PathVariable("email") String userEmail) {
+//        return paymentService.getAllPaymentsByUser(userEmail);
+//    }
 }

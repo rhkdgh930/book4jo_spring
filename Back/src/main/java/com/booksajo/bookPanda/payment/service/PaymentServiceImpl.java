@@ -226,10 +226,10 @@ public class PaymentServiceImpl implements PaymentService {
                     .impUid((String) paymentInfo.get("imp_uid"))
                     .merchantUid((String) paymentInfo.get("merchant_uid"))
                     .amount((Integer) paymentInfo.get("amount"))
-                    .buyerName((String) paymentInfo.get("buyer_name"))
-                    .buyerEmail((String) paymentInfo.get("buyer_email"))
-                    .buyerAddr((String) paymentInfo.get("buyer_addr"))
-                    .buyerPostcode((String) paymentInfo.get("buyer_postcode"))
+//                    .buyerName((String) paymentInfo.get("buyer_name"))
+//                    .buyerEmail((String) paymentInfo.get("buyer_email"))
+//                    .buyerAddr((String) paymentInfo.get("buyer_addr"))
+//                    .buyerPostcode((String) paymentInfo.get("buyer_postcode"))
                     .status((String) paymentInfo.get("status"))
                     //.order(order)
                     .build();
@@ -241,12 +241,12 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    @Override
-    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(String userEmail) {
-        List<Payment> payments = paymentRepository.findByBuyerEmail(userEmail);
-        List<PaymentResponseDto> paymentResponseDtos = payments.stream()
-                .map(PaymentResponseDto::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(paymentResponseDtos);
-    }
+//    @Override
+//    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(String userEmail) {
+//        List<Payment> payments = paymentRepository.findByBuyerEmail(userEmail);
+//        List<PaymentResponseDto> paymentResponseDtos = payments.stream()
+//                .map(PaymentResponseDto::new)
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(paymentResponseDtos);
+//    }
 }

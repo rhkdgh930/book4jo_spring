@@ -21,10 +21,10 @@ public class Payment {
     private String impUid;
     private String merchantUid;
     private int amount;
-    private String buyerName;
-    private String buyerEmail;
-    private String buyerAddr;
-    private String buyerPostcode;
+//    private String buyerName;
+//    private String buyerEmail;
+//    private String buyerAddr;
+//    private String buyerPostcode;
     private String status;
 
 //    @OneToOne(fetch = FetchType.LAZY)

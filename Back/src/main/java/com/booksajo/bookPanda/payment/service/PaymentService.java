@@ -14,6 +14,6 @@ public interface PaymentService {
     ResponseEntity<Map<String, Object>> cancelPayment(String impUid);
     ResponseEntity<List<Map<String, Object>>> getAllPayments();
     PaymentResponseDto savePayment(PaymentRequestDto requestDto);
-    ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(String userEmail);
+    //ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(String userEmail);
 
 }
