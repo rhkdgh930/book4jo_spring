@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -54,6 +55,22 @@ public class BookSalesController {
     public ResponseEntity<List<BookSales>> getBookSaless()
     {
         return ResponseEntity.ok(bookSalesService.getBookSalesList());
+    }
+
+    @GetMapping("/bookSales/order/id")
+    public ResponseEntity<?> getBookSalesOrderById(){
+            return ResponseEntity.ok(bookSalesService.getBookSalesOrderByIdTop(0,5));
+    }
+
+    @GetMapping("/bookSales/order/sellCount")
+    public ResponseEntity<?> getBookSalesOrderBySellCount(){
+        return ResponseEntity.ok(bookSalesService.getBookSalesOrderBySellCount());
+    }
+
+
+    @GetMapping("/bookSales/order/visitCount")
+    public ResponseEntity<?> getBookSalesOrderByVisitCount(){
+        return ResponseEntity.ok(bookSalesService.getBookSalesOrderByVisitCount());
     }
 
     @PatchMapping("/bookSales")

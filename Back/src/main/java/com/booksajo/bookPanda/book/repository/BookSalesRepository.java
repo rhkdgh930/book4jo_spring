@@ -20,6 +20,10 @@ public interface BookSalesRepository extends JpaRepository<BookSales, Long> {
     // category의 id와 같은 값을 가진 BookSales 엔티티를 조회하여 List로 반환
     List<BookSales> findByCategoryId(Long categoryId);
 
+
+    @Query("select b from BookSales b Order By b.id DESC")
+    List<BookSales> findBookSalesOrderById(Pageable pageable);
+
     @Query("select b from BookSales b join fetch b.category c where c.id=:categoryId")
     Page<BookSales> findBookSalesByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 

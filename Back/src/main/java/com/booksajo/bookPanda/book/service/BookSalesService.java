@@ -38,6 +38,7 @@ public class BookSalesService {
 
 
 
+
     public ResponseBookSales getBookSales(Long id)
     {
         incrementViewCount(id);
@@ -54,10 +55,12 @@ public class BookSalesService {
         return res;
     }
 
+
     public List<BookSales> getBookSalesList()
     {
         return bookSalesRepository.findAll();
     }
+
 
     public BookSalesOrderResponseDto getOrderBookSalesInfo(Long bookId, String userEmail){
         BookSales book = bookSalesRepository.findById(bookId)
@@ -241,6 +244,52 @@ public class BookSalesService {
         return new PageInfoDto(bookSales.getTotalPages(),dtos);
     }
 
+    @Transactional(readOnly = true)
+    public List<BookSalesDto> getBookSalesOrderByIdTop(int page,int size){
+        List<BookSales> bookSaels = bookSalesRepository.findBookSalesOrderById(PageRequest.of(page,size));
+
+        List<BookSalesDto> dto = new ArrayList<>();
+        for(BookSales book : bookSaels){
+            BookSalesDto bookSalesDto = BookSalesDto.builder().id(book.getId()).category(book.getCategory())
+                    .sellCount(book.getSellCount()).visitCount(book.getVisitCount()).bookInfo(book.getBookInfo())
+                    .stock(book.getStock()).build();
+
+            dto.add(bookSalesDto);
+        }
+
+        return dto;
+    }
+
+
+    public List<BookSalesDto> getBookSalesOrderBySellCount(){
+        List<BookSales> bookSales = bookSalesRepository.findTop5ByOrderBySellCountDesc();
+
+        List<BookSalesDto> dto = new ArrayList<>();
+        for(BookSales book : bookSales){
+            BookSalesDto bookSalesDto = BookSalesDto.builder().id(book.getId()).category(book.getCategory())
+                    .sellCount(book.getSellCount()).visitCount(book.getVisitCount()).bookInfo(book.getBookInfo())
+                    .stock(book.getStock()).build();
+
+            dto.add(bookSalesDto);
+        }
+
+        return dto;
+    }
+
+    public List<BookSalesDto> getBookSalesOrderByVisitCount(){
+        List<BookSales> bookSales = bookSalesRepository.findTop5ByOrderByVisitCountDesc();
+
+        List<BookSalesDto> dto = new ArrayList<>();
+        for(BookSales book : bookSales){
+            BookSalesDto bookSalesDto = BookSalesDto.builder().id(book.getId()).category(book.getCategory())
+                    .sellCount(book.getSellCount()).visitCount(book.getVisitCount()).bookInfo(book.getBookInfo())
+                    .stock(book.getStock()).build();
+
+            dto.add(bookSalesDto);
+        }
+
+        return dto;
+    }
 
     @Scheduled(fixedRate = 5000) // 30초 마다 실행
     @Transactional
