@@ -118,6 +118,16 @@ public class BookSalesController {
         return ResponseEntity.ok(bookTitleInfos);
     }
 
+    @GetMapping("/bookSales/search")
+    public ResponseEntity<PageInfoDto> totalSearch(@RequestParam("keyword") String keyword,
+                                                   @RequestParam(name = "page" , defaultValue = "0") int page ,
+                                                   @RequestParam(name = "size" , defaultValue = "10") int size){
+        PageInfoDto pageInfo = bookSalesService.totalSearch(keyword,page,size);
+
+        return ResponseEntity.ok(pageInfo);
+
+    }
+
     @GetMapping("/bookSales/order")
     public ResponseEntity<?> getBookSalesOrder(@RequestParam("bookId") long bookId, @AuthenticationPrincipal UserDetails userDetails){
         String userEmail = userDetails.getUsername();

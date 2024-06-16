@@ -223,6 +223,25 @@ public class BookSalesService {
         return  dtos;
     }
 
+    //통합검색
+    @Transactional(readOnly = true)
+    public PageInfoDto totalSearch(String keyword, int page, int size){
+
+        Page<BookSales> bookSales = bookSalesRepository.findBookSalesByKeyword(keyword, PageRequest.of(page,size));
+        List<BookSalesDto> dtos = new ArrayList<>();
+
+        for(BookSales book : bookSales.get().toList()){
+            BookSalesDto dto = BookSalesDto.builder().id(book.getId()).visitCount(book.getVisitCount())
+                    .sellCount(book.getSellCount()).stock(book.getStock())
+                    .category(book.getCategory())
+                    .bookInfo(book.getBookInfo()).build();
+            dtos.add(dto);
+        }
+
+        return new PageInfoDto(bookSales.getTotalPages(),dtos);
+    }
+
+
     @Scheduled(fixedRate = 5000) // 30초 마다 실행
     @Transactional
     public void syncViewCountToDatabase() {
