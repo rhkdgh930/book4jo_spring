@@ -73,11 +73,11 @@ public class CartController {
     }
 
     // 카트에 아이템 추가
-    @PostMapping("/items")
-    public ResponseEntity<CartResponseDto> addItemToCart(@AuthenticationPrincipal UserDetails userDetails, @RequestParam("id") Long bookSalesId) {
+    @PostMapping("/items/{id}")
+    public ResponseEntity<CartResponseDto> addItemToCart(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("id") Long bookSalesId) {
         String userEmail = userDetails.getUsername();
         User user = userRepository.findByUserEmail(userEmail)
-                    .orElseThrow(()-> new CartException(CartErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
         Long userId = user.getId();
 
         CartResponseDto cart = cartService.addCartItem(userId, bookSalesId);
@@ -98,6 +98,22 @@ public class CartController {
         cartService.updateCartItemQuantity(userId, id, quantity);
         return ResponseEntity.ok().build();
     }
+
+    // 아이템 체크 상태 변경
+    @PatchMapping("/items/{id}/checked")
+    public ResponseEntity<Void> updateCartItemChecked(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, @RequestParam boolean checked) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        String userEmail = userDetails.getUsername();
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
+        Long userId = user.getId();
+
+        cartService.updateCartItemChecked(userId, id, checked);
+        return ResponseEntity.ok().build();
+    }
+
 
     // 아이템 삭제
     @DeleteMapping("/items/{id}")

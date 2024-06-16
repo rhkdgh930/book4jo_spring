@@ -1,5 +1,7 @@
 package com.booksajo.bookPanda.review.service;
 
+import com.booksajo.bookPanda.book.domain.BookSales;
+import com.booksajo.bookPanda.book.repository.BookSalesRepository;
 import com.booksajo.bookPanda.exception.errorCode.ReviewErrorCode;
 import com.booksajo.bookPanda.exception.exception.ReviewException;
 import com.booksajo.bookPanda.review.dto.ReviewDto;
@@ -15,9 +17,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final BookSalesRepository bookSalesRepository;
 
     public Review getReview(Long id)
     {
@@ -31,10 +35,14 @@ public class ReviewService {
         return ReviewResponseDto.convertToDtoList(reviewRepository.findByBookSalesId(id));
     }
 
+    @Transactional
     public Review postReview(ReviewDto dto, User user)
     {
         Review newReview = dto.toEntity();
+        //BookSales bookSales = bookSalesRepository.findById(dto.getBookSales().getId()).orElseThrow();
         newReview.setUser(user);
+        //newReview.setBookSales(bookSales);
+        System.out.println(dto.getBookSales());
         return reviewRepository.save(newReview);
     }
 

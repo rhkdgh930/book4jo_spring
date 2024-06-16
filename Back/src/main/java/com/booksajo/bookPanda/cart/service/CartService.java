@@ -14,11 +14,9 @@ import com.booksajo.bookPanda.exception.errorCode.CartErrorCode;
 import com.booksajo.bookPanda.exception.exception.CartException;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,6 +76,7 @@ public class CartService {
             CartItem cartItem = new CartItem();
             cartItem.setBookSales(bookSales);
             cartItem.setQuantity(1);
+            cartItem.setChecked(true);
 
             cart.addItem(cartItem);
             cartItemRepository.save(cartItem);
@@ -86,13 +85,29 @@ public class CartService {
         return toCartResponseDto(cart);
     }
 
+    @Transactional
+    public void updateCartItemChecked(Long userId, Long cartItemId, boolean checked) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartException(CartErrorCode.BOOK_NOT_FOUND));
+
+        if (!cart.getCartItems().contains(cartItem)) {
+            throw new CartException(CartErrorCode.BOOK_NOT_FOUND);
+        }
+
+        cartItem.setChecked(checked);
+        cartItemRepository.save(cartItem);
+    }
+
     public CartOrderResponseDto getCartOrder(String userEmail){
         User user = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));
+                .orElseThrow(()-> new CartException(CartErrorCode.USER_NOT_FOUND));
         Long userId = user.getId();
 
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 카트가 없습니다."));
+                .orElseThrow(() -> new CartException(CartErrorCode.CART_NOT_FOUND));
         CartOrderResponseDto responseDto = new CartOrderResponseDto();
 
         List<CartItemDto> checkedCartItems = new ArrayList<>();

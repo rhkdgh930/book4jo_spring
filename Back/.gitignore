@@ -1,11 +1,7 @@
 .gradle
-<<<<<<< HEAD
-.build/
 !gradle/wrapper/gradle-wrapper.jar
-=======
 build/
 !Back/gradle/wrapper/gradle-wrapper.jar
->>>>>>> caf47353bfadfe18242e868010ba153cde3bd331
 !**/src/main/**/build/
 !**/src/test/**/build/
 
