@@ -17,5 +17,5 @@ public class PaymentRequestDto {
 //    private String buyerAddr;
 //    private String buyerPostcode;
     private String status;
-    //private Long orderId;
+    private Long orderId;
 }

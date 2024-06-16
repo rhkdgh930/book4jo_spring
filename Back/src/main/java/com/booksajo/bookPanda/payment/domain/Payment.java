@@ -27,9 +27,9 @@ public class Payment {
 //    private String buyerPostcode;
     private String status;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "order_id")
-//    private Order order;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
 
 

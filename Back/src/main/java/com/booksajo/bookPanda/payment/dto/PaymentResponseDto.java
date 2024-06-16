@@ -15,6 +15,7 @@ public class PaymentResponseDto {
 //    private String buyerAddr;
 //    private String buyerPostcode;
     private String status;
+    private Long orderId;
 
     public PaymentResponseDto(Payment payment) {
         this.impUid = payment.getImpUid();
@@ -25,5 +26,6 @@ public class PaymentResponseDto {
 //        this.buyerAddr = payment.getBuyerAddr();
 //        this.buyerPostcode = payment.getBuyerPostcode();
         this.status = payment.getStatus();
+        this.orderId = payment.getOrder().getId();
     }
 }

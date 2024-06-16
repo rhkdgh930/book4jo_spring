@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -219,8 +220,12 @@ public class PaymentServiceImpl implements PaymentService {
         if (responseBody != null && responseBody.containsKey("response")) {
             Map<String, Object> paymentInfo = (Map<String, Object>) responseBody.get("response");
 
-//            Order order = orderRepository.findById(requestDto.getOrderId())
-//                    .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+            Optional<Order> orderOptional = orderRepository.findById(requestDto.getOrderId());
+            if(orderOptional.isEmpty()) {
+                throw new RuntimeException("Order not found");
+            }
+
+            Order order = orderOptional.get();
 
             Payment payment = Payment.builder()
                     .impUid((String) paymentInfo.get("imp_uid"))
@@ -231,7 +236,7 @@ public class PaymentServiceImpl implements PaymentService {
 //                    .buyerAddr((String) paymentInfo.get("buyer_addr"))
 //                    .buyerPostcode((String) paymentInfo.get("buyer_postcode"))
                     .status((String) paymentInfo.get("status"))
-                    //.order(order)
+                    .order(order)
                     .build();
 
             Payment savedPayment = paymentRepository.save(payment);
