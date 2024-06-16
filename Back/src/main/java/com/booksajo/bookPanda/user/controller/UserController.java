@@ -192,8 +192,6 @@ public class UserController {
 
     @DeleteMapping("/delete-user")
     public void deleteUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, String> request) {
-        System.out.println(userDetails.getUsername());
-        System.out.println(request.get("password"));
         String password = request.get("password");
         User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
