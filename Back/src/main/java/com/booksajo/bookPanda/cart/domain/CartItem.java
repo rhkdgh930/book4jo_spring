@@ -21,7 +21,9 @@ public class CartItem {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-
     @Column(name = "quantity")
     private int quantity;
+
+    @Column(name = "checked")
+    private boolean checked;
 }
