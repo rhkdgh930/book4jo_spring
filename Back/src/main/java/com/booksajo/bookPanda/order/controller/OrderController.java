@@ -76,12 +76,12 @@ public class OrderController {
     }
 
     //현재 사용자의 주문 내역을 조회
-//    @GetMapping("/orders")
-//    public ResponseEntity<?> getOrdersMember(Principal principal) {
-//        Long userId = getUserIdFromPrincipal(principal);
-//        List<OrderResponseDto> orderHists = orderService.getOrderHist(userI);
-//        return ResponseEntity.ok(orderHists);
-//    }
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrdersMember(@AuthenticationPrincipal UserDetails userDetails) {
+        String userEmail = userDetails.getUsername();
+        List<OrderResponseDto> orderHists = orderService.getOrderHist(userEmail);
+        return ResponseEntity.ok(orderHists);
+    }
 
     @DeleteMapping("/cancel")
     public ResponseEntity<?> cancelOrder(@RequestParam("orderId") Long orderId){
@@ -103,10 +103,5 @@ public class OrderController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    private Long getUserIdFromPrincipal(Principal principal) {
-        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-        return user.getId();
     }
 }

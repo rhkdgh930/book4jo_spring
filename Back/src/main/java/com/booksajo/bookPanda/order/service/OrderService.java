@@ -110,6 +110,12 @@ public class OrderService {
     //주문 내역
     @Transactional
     public List<OrderResponseDto> getOrderHist(String userEmail){
+        System.out.println("OrderService.getOrderHist");
+        List<Order> orders = orderRepository.findAllByUserUserEmail(userEmail);
+        for(Order order : orders){
+            System.out.println(order.getId());
+            System.out.println(order.getAddress1());
+        }
         return orderRepository.findAllByUserUserEmail(userEmail).stream().map(OrderResponseDto::new).toList();
     }
 
@@ -117,7 +123,7 @@ public class OrderService {
     public OrderResponseDto updateOrderStatus(long orderId){
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 번호가 없습니다."));
-        order.setStatus(Status.PAYING);
+//        order.setStatus(Status.PAYING);
         orderRepository.save(order);
         return new OrderResponseDto(order);
     }
@@ -174,7 +180,7 @@ public class OrderService {
     }
 
 
-      //TODO : 아이템 재고 줄이고 CART 초기화
+      //TODO : 아이템 재고 줄이고 CART 초기화 check 된 것만 초기화
 //    private void decreaseItemStockAndRemoveCartItems(Long cartItemId, Long count) {
 //        CartItem cartItem = cartItemRepository.findById(cartItemId)
 //                .orElseThrow(() -> new IllegalArgumentException("장바구니 아이템을 찾을 수 없습니다."));
