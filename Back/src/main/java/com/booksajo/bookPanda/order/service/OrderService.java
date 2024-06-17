@@ -34,6 +34,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final BookSalesRepository bookSalesRepository;
     private final OrderItemRepository orderItemRepository;
+    private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
 
@@ -72,6 +73,7 @@ public class OrderService {
 
             return new OrderResponseDto(order);
         } else {
+            System.out.println("하이" + isStocked(book));
             throw new IllegalArgumentException("품절된 상품입니다.");
         }
     }
@@ -107,6 +109,7 @@ public class OrderService {
         List<OrderItem> orderItems = createOrderItemsFromCartItems(checkedCartItems, order);
 
         orderItemRepository.saveAll(orderItems);
+        decreaseItemStockAndRemoveCartItems(checkedCartItems);
 
         return new OrderResponseDto(order);
     }
@@ -155,16 +158,12 @@ public class OrderService {
         for (CartItem cartItem : cartItems) {
             BookSales book = cartItem.getBookSales();
 
-            if(isStocked(book)){
                 OrderItem orderItem = new OrderItem();
                 orderItem.setOrder(order);
                 orderItem.setBookSales(book);
                 orderItem.setQuantity(cartItem.getQuantity());
 
                 orderItems.add(orderItem);
-            } else {
-                throw new IllegalArgumentException(book.getBookInfo().getTitle() + "이 품절되었습니다.");
-            }
         }
         return orderItems;
     }
@@ -184,6 +183,7 @@ public class OrderService {
         boolean isStocked = false;
         int stock = 0;
         stock = bookSales.getStock();
+        System.out.println("stock = " + stock);
 
         if(stock > 0) {
             isStocked = true;
@@ -203,17 +203,18 @@ public class OrderService {
     }
 
 
-//      TODO : 아이템 재고 줄이고 CART 초기화 check 된 것만 초기화
-//    private void decreaseItemStockAndRemoveCartItems(Long cartItemId, Long count) {
-//        CartItem cartItem = cartItemRepository.findById(cartItemId)
-//                .orElseThrow(() -> new IllegalArgumentException("장바구니 아이템을 찾을 수 없습니다."));
-//
-//        BookSales book = cartItem.getBookSales();
-//        decreaseItemStock(book.getId(), count);
-//        cartItemRepository.delete(cartItem);
-//    }
+    //아이템 재고 줄이고 CART 초기화 check 된 것만 초기화
+    private void decreaseItemStockAndRemoveCartItems(List<CartItem> cartItems) {
+        for(CartItem cartItem : cartItems){
+            BookSales book = cartItem.getBookSales();
+            book.setStock(book.getStock() - cartItem.getQuantity());
+            bookSalesRepository.save(book);
+        }
 
-    //TODO : 책 재고 줄이기
+        cartItemRepository.deleteAll(cartItems);
+    }
+
+    //책 재고 줄이기
     public void decreaseItemStock(long itemId) {
         BookSales bookSales = bookSalesRepository.findById(itemId)
                 .orElseThrow(() ->new IllegalArgumentException("아이템 없음."));
