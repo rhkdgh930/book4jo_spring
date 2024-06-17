@@ -21,12 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class PaymentServiceImpl implements PaymentService {
+public class PortOnePaymentServiceImpl implements PaymentService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PortOnePaymentServiceImpl.class);
 
     private final RestTemplate restTemplate;
     private final PaymentRepository paymentRepository;
@@ -43,7 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private String accessToken = null;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate, OrderRepository orderRepository) {
+    public PortOnePaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.restTemplate = restTemplate;
         this.orderRepository = orderRepository;

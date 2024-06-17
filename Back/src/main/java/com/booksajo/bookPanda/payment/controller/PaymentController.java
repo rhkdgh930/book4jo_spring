@@ -3,7 +3,7 @@ package com.booksajo.bookPanda.payment.controller;
 import com.booksajo.bookPanda.payment.dto.PaymentRequestDto;
 import com.booksajo.bookPanda.payment.dto.PaymentResponseDto;
 import com.booksajo.bookPanda.payment.service.PaymentService;
-import com.booksajo.bookPanda.payment.service.PaymentServiceImpl;
+import com.booksajo.bookPanda.payment.service.PortOnePaymentServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PortOnePaymentServiceImpl.class);
 
     @GetMapping("/token")
     public ResponseEntity<String> getTokenEndpoint() {

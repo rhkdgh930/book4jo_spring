@@ -2,8 +2,8 @@
 INSERT INTO users(id,`user_email`,`user_name`, `user_password`, `resign`)
 VALUES(1,"admin@admin.com" , "admin" , "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK" , false);
 
-INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password, resign)
-VALUES('2', '제주특별자치도 제주시 첨단로 242', '111동 111호', '01012345678', '63309', 'rhkdgh930@naver.com', '명광호', '$2a$10$j1yzfovOP3vQMIVEmV2rX.BWYRIyfYnN.qxKlCF2cg0V2dRVB32ma', false
+INSERT INTO users(resign, id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password)
+VALUES('0', '1', '제주특별자치도 제주시 영평동 2181', '111동 111호', '01012345678', '63309', 'rhkdgh930@naver.com', '명광호', '$2a$10$hlR3wBkjlD8cdeDKffqNeuGownEvM1qvzTUlMGmEtcJ4Hd.AwcmB6'
 );
 
 INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password, resign)
