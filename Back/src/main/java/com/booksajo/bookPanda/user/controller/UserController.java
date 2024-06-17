@@ -147,13 +147,14 @@ public class UserController {
 
         Cookie newRefreshTokenCookie = new Cookie("refreshToken", newRefreshToken);
         newRefreshTokenCookie.setHttpOnly(true);
-        newRefreshTokenCookie.setSecure(true);
+        newRefreshTokenCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
         newRefreshTokenCookie.setPath("/");
         newRefreshTokenCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 유효기간
         response.addCookie(newRefreshTokenCookie);
 
         return ResponseEntity.ok(new JwtDto(newAccessToken, newRefreshToken));
     }
+
 
 
 
