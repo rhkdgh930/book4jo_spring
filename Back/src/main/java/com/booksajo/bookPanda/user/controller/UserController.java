@@ -35,6 +35,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -146,13 +147,14 @@ public class UserController {
 
         Cookie newRefreshTokenCookie = new Cookie("refreshToken", newRefreshToken);
         newRefreshTokenCookie.setHttpOnly(true);
-        newRefreshTokenCookie.setSecure(true);
+        newRefreshTokenCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
         newRefreshTokenCookie.setPath("/");
         newRefreshTokenCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 유효기간
         response.addCookie(newRefreshTokenCookie);
 
         return ResponseEntity.ok(new JwtDto(newAccessToken, newRefreshToken));
     }
+
 
 
 
@@ -188,4 +190,17 @@ public class UserController {
         response.put("isLoggedIn", isLoggedIn);
         return response;
     }
+
+    @DeleteMapping("/delete-user")
+    public void deleteUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, String> request) {
+        String password = request.get("password");
+        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (passwordEncoder.matches(password, user.getUserPassword())) {
+            userServiceImpl.deleteUser(user);
+        } else {
+            throw new IllegalArgumentException("Invalid password");
+        }
+    }
+
 }

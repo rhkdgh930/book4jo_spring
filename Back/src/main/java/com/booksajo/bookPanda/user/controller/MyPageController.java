@@ -3,11 +3,15 @@ package com.booksajo.bookPanda.user.controller;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.user.service.UserServiceImpl;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +22,19 @@ public class MyPageController {
 
     private final UserServiceImpl userServiceImpl;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @PostMapping("/checkingPassword")
+    public ResponseEntity<?> checkPassword(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, String> request) {
+        String password = request.get("password");
+        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (passwordEncoder.matches(password, user.getUserPassword())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+        }
+    }
 
     @GetMapping
     public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal UserDetails user) {

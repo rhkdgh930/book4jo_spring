@@ -98,6 +98,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    public void deleteUser(User user) {
+        userRepository.delete(user);
+    }
+
+    @Transactional
     public JwtToken refreshAccessToken(String refreshToken) {
         // 리프레시 토큰 유효성 검사
         if (!jwtTokenProvider.validateToken(refreshToken)) {
