@@ -68,6 +68,8 @@ public class OrderService {
 
             orderItemRepository.save(orderItem);
 
+            decreaseItemStock(bookId);
+
             return new OrderResponseDto(order);
         } else {
             throw new IllegalArgumentException("품절된 상품입니다.");
@@ -212,10 +214,10 @@ public class OrderService {
 //    }
 
     //TODO : 책 재고 줄이기
-//    public void decreaseItemStock(long itemId) {
-//        BookSales bookSales = bookSalesRepository.findById(itemId)
-//                .orElseThrow(() ->new IllegalArgumentException("아이템 없음."));
-//        bookSales.setStock(bookSales.getStock() - 1);
-//        bookSalesRepository.save(bookSales);
-//    }
+    public void decreaseItemStock(long itemId) {
+        BookSales bookSales = bookSalesRepository.findById(itemId)
+                .orElseThrow(() ->new IllegalArgumentException("아이템 없음."));
+        bookSales.setStock(bookSales.getStock() - 1);
+        bookSalesRepository.save(bookSales);
+    }
 }
