@@ -63,5 +63,9 @@ public class GlobalExceptionHandler {
         throw new NaverAPIException(NaverAPIErrorCode.INCORRECT_QUERY_REQ_ERROR);
     }
 
-
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<String> handleCustomException(UserException ex) {
+        ErrorCode errorCode = ex.getUserErrorCode();
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(errorCode.getMessage());
+    }
 }

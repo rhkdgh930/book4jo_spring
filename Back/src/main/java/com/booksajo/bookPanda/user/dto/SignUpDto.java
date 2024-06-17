@@ -24,6 +24,7 @@ public class SignUpDto {
     private String phoneNumber;
     private List<String> roles;
     private String authCode;
+    private Boolean resign = false;
 
     public User toEntity(String encodedPassword, List<String> roles) {
         return User.builder()
@@ -36,6 +37,7 @@ public class SignUpDto {
             .postCode(postCode)
             .phoneNumber(phoneNumber)
             .roles(roles)
+            .resign(resign)
             .build();
     }
 

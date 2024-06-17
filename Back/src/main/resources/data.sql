@@ -1,11 +1,14 @@
 
-INSERT INTO users(id,`user_email`,`user_name`, `user_password`)
-VALUES(1,"admin@admin.com" , "admin" , "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK");
+INSERT INTO users(id,`user_email`,`user_name`, `user_password`, `resign`)
+VALUES(1,"admin@admin.com" , "admin" , "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK" , false);
 
-INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password)
-VALUES('2', '제주특별자치도 제주시 첨단로 242', '111동 111호', '01012345678', '63309', 'rhkdgh930@naver.com', '명광호', '$2a$10$j1yzfovOP3vQMIVEmV2rX.BWYRIyfYnN.qxKlCF2cg0V2dRVB32ma'
+INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password, resign)
+VALUES('2', '제주특별자치도 제주시 첨단로 242', '111동 111호', '01012345678', '63309', 'rhkdgh930@naver.com', '명광호', '$2a$10$j1yzfovOP3vQMIVEmV2rX.BWYRIyfYnN.qxKlCF2cg0V2dRVB32ma', false
 );
 
+INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password, resign)
+VALUES('3', '서울시 종로 청와대로 1길', '파란지붕', '01012345678', '12345', '1257312@naver.com', '우문식', '$2a$10$k81xscRbABX7FRpVr5nBw.eboFvzpKr9FEOWYt98v7DlatM5pzBZy', false
+);
 
 INSERT INTO category(name) VALUES ("건강/취미");
 INSERT INTO category(name) VALUES ("경제경영");
