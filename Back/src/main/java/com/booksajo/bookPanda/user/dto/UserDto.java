@@ -21,6 +21,7 @@ public class UserDto {
     private String detailedAddress;
     private String postCode;
     private String phoneNumber;
+    private Boolean resign;
 
     static public UserDto toDto(User user) {
         return UserDto.builder()
@@ -31,6 +32,7 @@ public class UserDto {
             .detailedAddress(user.getDetailedAddress())
             .postCode(user.getPostCode())
             .phoneNumber(user.getPhoneNumber())
+            .resign(user.getResign())
             .build();
     }
 
@@ -43,6 +45,7 @@ public class UserDto {
             .detailedAddress(detailedAddress)
             .postCode(postCode)
             .phoneNumber(phoneNumber)
+            .resign(resign)
             .build();
     }
 }
