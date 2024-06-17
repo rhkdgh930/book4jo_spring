@@ -4,6 +4,7 @@ import com.booksajo.bookPanda.book.domain.BookSales;
 import com.booksajo.bookPanda.book.repository.BookSalesRepository;
 import com.booksajo.bookPanda.cart.domain.Cart;
 import com.booksajo.bookPanda.cart.domain.CartItem;
+import com.booksajo.bookPanda.cart.dto.CartItemDto;
 import com.booksajo.bookPanda.cart.repository.CartItemRepository;
 import com.booksajo.bookPanda.cart.repository.CartRepository;
 import com.booksajo.bookPanda.exception.errorCode.CartErrorCode;
@@ -86,13 +87,22 @@ public class OrderService {
 
         Cart cart = cartRepository.findByUserUserEmail(userEmail)
                 .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
+        List<CartItem> checkedCartItems = new ArrayList<>();
         List<CartItem> cartItems = cart.getCartItems();
 
+
+        for(CartItem cartItem : cartItems){
+            if(!isCartItemStocked(cartItem.getBookSales(), cartItem)){
+                checkedCartItems.add(cartItem);
+            } else {
+                throw new IllegalArgumentException(cartItem.getBookSales().getBookInfo().getTitle() + "이 재고가 부족합니다.");
+            }
+        }
         order.setTotalPrice(calculateTotalPrice(cartItems));
 
         orderRepository.save(order);
 
-        List<OrderItem> orderItems = createOrderItemsFromCartItems(cartItems, order);
+        List<OrderItem> orderItems = createOrderItemsFromCartItems(checkedCartItems, order);
 
         orderItemRepository.saveAll(orderItems);
 
@@ -179,8 +189,19 @@ public class OrderService {
         return isStocked;
     }
 
+    private boolean isCartItemStocked(BookSales bookSales, CartItem cartItem){
+        boolean isStocked = false;
+        int stock = 0;
+        stock = bookSales.getStock();
 
-      //TODO : 아이템 재고 줄이고 CART 초기화 check 된 것만 초기화
+        if(stock > cartItem.getQuantity()){
+            isStocked = true;
+        }
+        return isStocked;
+    }
+
+
+//      TODO : 아이템 재고 줄이고 CART 초기화 check 된 것만 초기화
 //    private void decreaseItemStockAndRemoveCartItems(Long cartItemId, Long count) {
 //        CartItem cartItem = cartItemRepository.findById(cartItemId)
 //                .orElseThrow(() -> new IllegalArgumentException("장바구니 아이템을 찾을 수 없습니다."));
@@ -191,15 +212,10 @@ public class OrderService {
 //    }
 
     //TODO : 책 재고 줄이기
-    public void decreaseItemStock(long itemId, long quantity) {
-        BookSales bookSales = bookSalesRepository.findById(itemId)
-                .orElseThrow(() ->new IllegalArgumentException("아이템 없음."));
-
-        if (bookSales.getStock() >= quantity) {
-            bookSales.setStock((int) (bookSales.getStock() - quantity));
-            bookSalesRepository.save(bookSales);
-        } else {
-            throw new IllegalArgumentException("재고 부족");//재고 부족 에러코드만들기
-        }
-    }
+//    public void decreaseItemStock(long itemId) {
+//        BookSales bookSales = bookSalesRepository.findById(itemId)
+//                .orElseThrow(() ->new IllegalArgumentException("아이템 없음."));
+//        bookSales.setStock(bookSales.getStock() - 1);
+//        bookSalesRepository.save(bookSales);
+//    }
 }
