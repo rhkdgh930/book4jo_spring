@@ -67,6 +67,9 @@ public class User implements UserDetails {
     @Pattern(regexp = "^[\\d ]*$", message = "하이픈, 띄어쓰기를 제외한 숫자만 입력하세요.")
     private String phoneNumber;
 
+    @Column
+    private Boolean resign;
+
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default

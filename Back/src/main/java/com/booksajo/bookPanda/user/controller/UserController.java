@@ -5,6 +5,7 @@ import com.booksajo.bookPanda.user.JWT.JwtToken;
 import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
 import com.booksajo.bookPanda.user.domain.UpdatePasswordRequest;
 import com.booksajo.bookPanda.user.domain.User;
+import com.booksajo.bookPanda.user.dto.DeleteUserDto;
 import com.booksajo.bookPanda.user.dto.JwtDto;
 import com.booksajo.bookPanda.user.dto.SignInDto;
 import com.booksajo.bookPanda.user.dto.SignUpDto;
@@ -38,6 +39,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -191,10 +193,19 @@ public class UserController {
         return response;
     }
 
-    @DeleteMapping("/delete-user")
-    public void deleteUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, String> request) {
-        String password = request.get("password");
-        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    @PutMapping("/delete-user")
+    public void deleteUser(@AuthenticationPrincipal UserDetails userDetails,
+        @RequestBody DeleteUserDto requestDto,
+        HttpServletRequest request,
+        HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+            tokenService.logoutToken(request, response);
+        }
+        String password = requestDto.getPassword();
+        User user = userRepository.findByUserEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (passwordEncoder.matches(password, user.getUserPassword())) {
             userServiceImpl.deleteUser(user);
@@ -202,5 +213,7 @@ public class UserController {
             throw new IllegalArgumentException("Invalid password");
         }
     }
+
+
 
 }

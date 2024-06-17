@@ -17,6 +17,7 @@ public class UserResponseDto {
     private String detailedAddress;
     private String postCode;
     private String phoneNumber;
+    private Boolean resign;
 
     public UserResponseDto(User user) {
     }
@@ -30,7 +31,8 @@ public class UserResponseDto {
             user.getAddress(),
             user.getDetailedAddress(),
             user.getPostCode(),
-            user.getPhoneNumber()
+            user.getPhoneNumber(),
+            user.getResign()
         );
     }
 }

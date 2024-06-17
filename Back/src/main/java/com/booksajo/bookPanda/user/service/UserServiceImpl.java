@@ -1,5 +1,7 @@
 package com.booksajo.bookPanda.user.service;
 
+import com.booksajo.bookPanda.exception.errorCode.UserErrorCode;
+import com.booksajo.bookPanda.exception.exception.UserException;
 import com.booksajo.bookPanda.user.JWT.JwtToken;
 import com.booksajo.bookPanda.user.JWT.JwtTokenProvider;
 import com.booksajo.bookPanda.user.domain.UpdatePasswordRequest;
@@ -39,6 +41,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public JwtToken signIn(String userEmail, String userPassword) {
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow();
+        if (user.getResign()) {
+            throw new UserException(UserErrorCode.USER_NOT_FOUND);
+        }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userEmail, userPassword);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
@@ -49,7 +55,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto signUp(SignUpDto signUpDto) {
         if (userRepository.existsByUserEmail(signUpDto.getUserEmail())) {
-            throw new IllegalArgumentException("이미 사용 중인 사용자 아이디입니다.");
+            User user = userRepository.findByUserEmail(signUpDto.getUserEmail()).orElseThrow();
+            if (user.getResign()) {
+                throw new UserException(UserErrorCode.EMAIL_RESIGN_IN_USE);
+            }
+            throw new UserException(UserErrorCode.EMAIL_ALREADY_IN_USE);
         }
 
         String encodedPassword = passwordEncoder.encode(signUpDto.getUserPassword());
@@ -57,20 +67,20 @@ public class UserServiceImpl implements UserService {
         if (signUpDto.getName().contains("BiGpAnDa")) {
             roles.add("ADMIN");
             System.out.println("어드민설정 완료!");
-        }
-        else {
+        } else {
             roles.add("USER");
         }
 
         User user = signUpDto.toEntity(encodedPassword, roles);
-
         return UserDto.toDto(userRepository.save(user));
     }
-
 
     @Transactional
     public void updatePassword(String userEmail, String newPassword) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
+        if (user.getResign()) {
+            throw new UserException(UserErrorCode.USER_NOT_FOUND);
+        }
         String encodedPassword = passwordEncoder.encode(newPassword);
         user.updatePassword(encodedPassword);
         userRepository.save(user);
@@ -99,7 +109,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void deleteUser(User user) {
-        userRepository.delete(user);
+        user.setResign(true);
+        userRepository.save(user);
     }
 
     @Transactional
