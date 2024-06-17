@@ -69,7 +69,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         try {
             logger.debug("액세스 토큰 요청을 보냄");
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<Map<String, Object>>() {});
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<Map<String, Object>>() {
+            });
             logger.debug("응답 받음: {}", response);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
@@ -130,49 +131,90 @@ public class PaymentServiceImpl implements PaymentService {
         return getPaymentInfo(impUid);
     }
 
-    @Override
-    public ResponseEntity<Map<String, Object>> cancelPayment(String impUid) {
-        String token = getToken();
-        if (token == null) {
-            logger.error("결제를 취소하는 동안 액세스 토큰을 가져오지 못함");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "액세스 토큰을 가져오지 못함"));
-        }
-        String url = apiUrl + "/payments/cancel";
+//    @Override
+//    public ResponseEntity<Map<String, Object>> cancelPayment(String impUid) {
+//        String token = getToken();
+//        if (token == null) {
+//            logger.error("결제를 취소하는 동안 액세스 토큰을 가져오지 못함");
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "액세스 토큰을 가져오지 못함"));
+//        }
+//        String url = apiUrl + "/payments/cancel";
+//
+//        Map<String, Object> request = new HashMap<>();
+//        request.put("imp_uid", impUid);
+//        request.put("reason", "requested by user");
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setBearerAuth(token);
+//
+//        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+//
+//        try {
+//            logger.debug("impUid: {}의 결제를 취소하는 요청을 보냄", impUid);
+//            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<>() {});
+//            logger.info("응답 상태 코드: {}", response.getStatusCode());
+//            logger.info("응답 본문: {}", response.getBody());
+//
+//            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+//                Map<String, Object> responseBody = response.getBody();
+//                if (responseBody.containsKey("response") && responseBody.get("response") != null) {
+//                    logger.info("impUid: {}의 결제 성공적으로 취소됨", impUid);
+//                    return ResponseEntity.ok(responseBody);
+//                } else {
+//                    logger.error("결제 취소 실패, 응답: {}", responseBody);
+//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", responseBody));
+//                }
+//            } else {
+//                logger.error("결제 취소 실패, 상태 코드: {}, 응답: {}", response.getStatusCode(), response.getBody());
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", response.getBody()));
+//            }
+//        } catch (Exception e) {
+//            logger.error("impUid: {}의 결제를 취소하는 동안 예외 발생", impUid, e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패"));
+//        }
+//    }
+@Override
+public void cancelPayment(String accessToken, String impUid, String merchantUid, double amount) {
+    String url = apiUrl + "/payments/cancel";
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("imp_uid", impUid);
-        request.put("reason", "requested by user");
+    Map<String, Object> request = new HashMap<>();
+    request.put("reason", "결제 검증 실패 또는 오류 발생으로 인한 자동 취소");
+    request.put("imp_uid", impUid);
+    request.put("merchant_uid", merchantUid);
+    request.put("amount", amount);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("Authorization", "Bearer " + accessToken);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
 
-        try {
-            logger.debug("impUid: {}의 결제를 취소하는 요청을 보냄", impUid);
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<>() {});
-            logger.info("응답 상태 코드: {}", response.getStatusCode());
-            logger.info("응답 본문: {}", response.getBody());
+    logger.info("결제 취소 요청 보냄. impUid: {}, merchantUid: {}, amount: {}, request: {}", impUid, merchantUid, amount, request);
 
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                Map<String, Object> responseBody = response.getBody();
-                if (responseBody.containsKey("response") && responseBody.get("response") != null) {
-                    logger.info("impUid: {}의 결제 성공적으로 취소됨", impUid);
-                    return ResponseEntity.ok(responseBody);
-                } else {
-                    logger.error("결제 취소 실패, 응답: {}", responseBody);
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", responseBody));
-                }
+    try {
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<Map<String, Object>>() {});
+
+        logger.info("결제 취소 응답 받음. response: {}", response);
+
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            Object codeObject = response.getBody().get("code");
+            if (codeObject instanceof Integer && (Integer) codeObject == 0) {
+                logger.info("impUid: {}의 결제가 성공적으로 취소됨", impUid);
             } else {
-                logger.error("결제 취소 실패, 상태 코드: {}, 응답: {}", response.getStatusCode(), response.getBody());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", response.getBody()));
+                logger.error("impUid: {}의 결제 취소 실패, 상태 코드: {}, 응답 본문: {}", impUid, response.getStatusCode(), response.getBody());
+                throw new RuntimeException("결제 취소 실패: 응답 코드가 0이 아님");
             }
-        } catch (Exception e) {
-            logger.error("impUid: {}의 결제를 취소하는 동안 예외 발생", impUid, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패"));
+        } else {
+            logger.error("impUid: {}의 결제 취소 실패, 상태 코드: {}, 응답 본문: {}", impUid, response.getStatusCode(), response.getBody());
+            throw new RuntimeException("결제 취소 실패: 응답이 없거나 상태 코드가 OK가 아님");
         }
+    } catch (Exception e) {
+        logger.error("impUid: {}의 결제를 취소하는 동안 예외 발생", impUid, e);
+        throw new RuntimeException("결제를 취소하는 동안 예외 발생", e);
     }
+}
 
     @Override
     public ResponseEntity<List<Map<String, Object>>> getAllPayments() {
@@ -190,7 +232,8 @@ public class PaymentServiceImpl implements PaymentService {
                     url,
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+                    new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                    }
             );
             logger.info("응답 상태 코드: {}", response.getStatusCode());
             logger.info("응답 본문: {}", response.getBody());
@@ -221,7 +264,7 @@ public class PaymentServiceImpl implements PaymentService {
             Map<String, Object> paymentInfo = (Map<String, Object>) responseBody.get("response");
 
             Optional<Order> orderOptional = orderRepository.findById(requestDto.getOrderId());
-            if(orderOptional.isEmpty()) {
+            if (orderOptional.isEmpty()) {
                 throw new RuntimeException("Order not found");
             }
 
@@ -246,6 +289,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+
 //    @Override
 //    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(String userEmail) {
 //        List<Payment> payments = paymentRepository.findByBuyerEmail(userEmail);
@@ -254,4 +298,6 @@ public class PaymentServiceImpl implements PaymentService {
 //                .collect(Collectors.toList());
 //        return ResponseEntity.ok(paymentResponseDtos);
 //    }
+
+
 }
