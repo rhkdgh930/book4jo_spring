@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.atn.SemanticContext.OR;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -51,7 +52,7 @@ public class OrderService {
                     .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));
 
             requestDto.setUser(user);
-            requestDto.setStatus(Status.NOT_PAID);
+            requestDto.setStatus(Status.PAY_DONE);
 
             List<OrderItem> orderItems = new ArrayList<>();
 
@@ -85,7 +86,7 @@ public class OrderService {
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(()-> new UsernameNotFoundException("User " + userEmail + " not found"));
         requestDto.setUser(user);
-        requestDto.setStatus(Status.NOT_PAID);
+        requestDto.setStatus(Status.PAY_DONE);
 
         Order order = new Order(requestDto);
 
@@ -96,12 +97,15 @@ public class OrderService {
 
 
         for(CartItem cartItem : cartItems){
-            if(!isCartItemStocked(cartItem.getBookSales(), cartItem)){
-                checkedCartItems.add(cartItem);
-            } else {
+            if(cartItem.isChecked()){
+                if(isCartItemStocked(cartItem.getBookSales(), cartItem)) {
+                    checkedCartItems.add(cartItem);
+                } else {
                 throw new IllegalArgumentException(cartItem.getBookSales().getBookInfo().getTitle() + "이 재고가 부족합니다.");
+                }
             }
         }
+
         order.setTotalPrice(calculateTotalPrice(cartItems));
 
         orderRepository.save(order);
@@ -109,6 +113,10 @@ public class OrderService {
         List<OrderItem> orderItems = createOrderItemsFromCartItems(checkedCartItems, order);
 
         orderItemRepository.saveAll(orderItems);
+
+        for(CartItem cartItem : checkedCartItems){
+            System.out.println(cartItem.getBookSales().getBookInfo().getTitle());
+        }
         decreaseItemStockAndRemoveCartItems(checkedCartItems);
 
         return new OrderResponseDto(order);
@@ -134,20 +142,39 @@ public class OrderService {
         return orderRepository.findAllByUserUserEmail(userEmail).stream().map(OrderResponseDto::new).toList();
     }
 
-    @Transactional
-    public OrderResponseDto updateOrderStatus(long orderId){
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문 번호가 없습니다."));
-//        order.setStatus(Status.PAYING);
-        orderRepository.save(order);
-        return new OrderResponseDto(order);
-    }
 
     //TODO : 주문 취소
     @Transactional
     public OrderResponseDto cancelOrder(long orderId){
         Order order = orderRepository.findById(orderId).orElseThrow(()->new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
-        orderRepository.delete(order);
+        order.setStatus(Status.CANCEL);
+
+        orderRepository.save(order);
+
+        return new OrderResponseDto(order);
+    }
+
+    //모든 주문 내역
+    @Transactional
+    public List<OrderResponseDto> getOrders(){
+        return orderRepository.findAll().stream().map(OrderResponseDto::new).toList();
+    }
+
+    //배송 상태 변경
+    @Transactional
+    public OrderResponseDto updateOrderStatus(long orderId, OrderRequestDto requestDto){
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("주문 정보가 없습니다."));
+        if(requestDto.getStatusLabel().equals("배송 중")){
+            order.setStatus(Status.SHIPPING);
+        } else if(requestDto.getStatusLabel().equals("배송 완료")) {
+            order.setStatus(Status.SHIPPING_DONE);
+        } else if(requestDto.getStatusLabel().equals("주문 완료")){
+            order.setStatus(Status.PAY_DONE);
+        } else {
+            order.setStatus(Status.CANCEL);
+        }
+
+        orderRepository.save(order);
 
         return new OrderResponseDto(order);
     }
@@ -195,6 +222,8 @@ public class OrderService {
         boolean isStocked = false;
         int stock = 0;
         stock = bookSales.getStock();
+        System.out.println("stock = " + stock);
+        System.out.println("cartItem.getQuantity() = " + cartItem.getQuantity());
 
         if(stock > cartItem.getQuantity()){
             isStocked = true;
@@ -204,14 +233,16 @@ public class OrderService {
 
 
     //아이템 재고 줄이고 CART 초기화 check 된 것만 초기화
-    private void decreaseItemStockAndRemoveCartItems(List<CartItem> cartItems) {
+    @Transactional
+    public void decreaseItemStockAndRemoveCartItems(List<CartItem> cartItems) {
         for(CartItem cartItem : cartItems){
             BookSales book = cartItem.getBookSales();
             book.setStock(book.getStock() - cartItem.getQuantity());
             bookSalesRepository.save(book);
         }
 
-        cartItemRepository.deleteAll(cartItems);
+        cartItemRepository.deleteAllInBatch(cartItems);
+        System.out.println("삭제 완료");
     }
 
     //책 재고 줄이기

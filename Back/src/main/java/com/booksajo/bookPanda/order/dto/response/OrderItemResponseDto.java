@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderItemResponseDto {
     private Long id;
+    private Long bookId;
     private int quantity;
     private String title;
     private String image;
@@ -17,6 +18,7 @@ public class OrderItemResponseDto {
 
     public OrderItemResponseDto(OrderItem entity){
         this.id = entity.getId();
+        this.bookId = entity.getBookSales().getId();
         this.quantity = entity.getQuantity();
         this.title = entity.getBookSales().getBookInfo().getTitle();
         this.image = entity.getBookSales().getBookInfo().getImage();

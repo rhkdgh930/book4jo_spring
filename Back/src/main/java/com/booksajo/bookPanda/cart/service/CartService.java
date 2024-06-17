@@ -101,6 +101,7 @@ public class CartService {
         cartItemRepository.save(cartItem);
     }
 
+    @Transactional
     public CartOrderResponseDto getCartOrder(String userEmail){
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(()-> new CartException(CartErrorCode.USER_NOT_FOUND));
@@ -117,6 +118,10 @@ public class CartService {
             if(itemDto.isChecked()){
                 checkedCartItems.add(itemDto);
             }
+        }
+
+        if(checkedCartItems.isEmpty()){
+            throw new IllegalArgumentException("1가지 이상의 책을 주문 해야 합니다!");
         }
 
         responseDto.setId(cart.getId());
