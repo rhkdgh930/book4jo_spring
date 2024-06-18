@@ -13,22 +13,12 @@ public class OrderResponseDto {
     private LocalDateTime orderDate;
     private int totalPrice;
     private String statusLabel;
-    private String userName;
-    private String address1;
-    private String address2;
-    private String postCode;
-    private String userPhoneNumber;
 
     public OrderResponseDto(Order entity){
         this.id = entity.getId();
         this.orderDate = entity.getOrderDate();
         this.totalPrice = entity.getTotalPrice();
         this.statusLabel = entity.getStatus().getlabel();
-        this.userName = entity.getShippingName();
-        this.address1 = entity.getAddress1();
-        this.address2 = entity.getAddress2();
-        this.postCode = entity.getPostCode();
-        this.userPhoneNumber = entity.getPhoneNumber();
     }
 
     @Override

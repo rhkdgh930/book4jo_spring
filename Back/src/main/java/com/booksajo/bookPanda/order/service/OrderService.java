@@ -107,7 +107,7 @@ public class OrderService {
             }
         }
 
-        order.setTotalPrice(calculateTotalPrice(cartItems));
+        order.setTotalPrice(calculateTotalPrice(checkedCartItems));
 
         orderRepository.save(order);
 
@@ -136,10 +136,6 @@ public class OrderService {
     public List<OrderResponseDto> getOrderHist(String userEmail){
         System.out.println("OrderService.getOrderHist");
         List<Order> orders = orderRepository.findAllByUserUserEmail(userEmail);
-        for(Order order : orders){
-            System.out.println(order.getId());
-            System.out.println(order.getAddress1());
-        }
         return orderRepository.findAllByUserUserEmail(userEmail).stream().map(OrderResponseDto::new).toList();
     }
 
