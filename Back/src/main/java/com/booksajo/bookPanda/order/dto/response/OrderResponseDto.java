@@ -24,11 +24,11 @@ public class OrderResponseDto {
         this.orderDate = entity.getOrderDate();
         this.totalPrice = entity.getTotalPrice();
         this.statusLabel = entity.getStatus().getlabel();
-        this.userName = entity.getUser().getName();
+        this.userName = entity.getShippingName();
         this.address1 = entity.getAddress1();
         this.address2 = entity.getAddress2();
         this.postCode = entity.getPostCode();
-        this.userPhoneNumber = entity.getUser().getPhoneNumber();
+        this.userPhoneNumber = entity.getPhoneNumber();
     }
 
     @Override

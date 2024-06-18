@@ -242,7 +242,6 @@ public class OrderService {
         }
 
         cartItemRepository.deleteAllInBatch(cartItems);
-        System.out.println("삭제 완료");
     }
 
     //책 재고 줄이기

@@ -18,7 +18,7 @@ public class CartOrderResponseDto {
     private String userPhoneNumber;
 
     public void setUser(User user) {
-        this.userName = user.getUsername();
+        this.userName = user.getName();
         this.userAddress1 = user.getAddress();
         this.userAddress2 = user.getDetailedAddress();
         this.userPostCode = user.getPostCode();
