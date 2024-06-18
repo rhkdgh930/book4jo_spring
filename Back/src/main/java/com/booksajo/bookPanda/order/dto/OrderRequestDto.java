@@ -24,8 +24,6 @@ public class OrderRequestDto {
 
     public void setUser(User user) {
         this.user = user;
-        this.shippingName = user.getName();
-        this.userPhoneNumber = user.getPhoneNumber();
     }
 
     public void setStatus(Status status){

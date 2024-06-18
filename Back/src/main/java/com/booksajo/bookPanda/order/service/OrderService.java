@@ -59,6 +59,7 @@ public class OrderService {
             requestDto.setTotalPrice(Integer.parseInt(book.getBookInfo().getDiscount()));
 
             Order order = new Order(requestDto);
+            System.out.println(order);
             orderRepository.save(order);
 
             OrderItem orderItem = new OrderItem();

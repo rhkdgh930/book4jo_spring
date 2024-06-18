@@ -89,6 +89,7 @@ public class Order {
                 ", totalPrice=" + totalPrice +
                 ", status=" + status +
                 ", user=" + user +
+                ", phoneNumber=" + phoneNumber +
                 ", orderItems=" + orderItems +
                 '}';
     }
