@@ -11,15 +11,18 @@ import com.booksajo.bookPanda.user.dto.SignUpDto;
 import com.booksajo.bookPanda.user.dto.UserDto;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -65,10 +68,10 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(signUpDto.getUserPassword());
         List<String> roles = new ArrayList<>();
         if (signUpDto.getName().contains("BiGpAnDa")) {
-            roles.add("ADMIN");
+            roles.add("ROLE_ADMIN");
             System.out.println("어드민설정 완료!");
         } else {
-            roles.add("USER");
+            roles.add("ROLE_USER");
         }
 
         User user = signUpDto.toEntity(encodedPassword, roles);
@@ -94,9 +97,9 @@ public class UserServiceImpl implements UserService {
      }
 
     @Transactional
-    public void updateAddress(String userEmail, String newAddress) {
+    public void updateAddress(String userEmail, String newAddress, String newDetailedAddress, String newPostCode) {
         User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("로그인 정보가 일치하지 않습니다."));
-        user.updateAddress(newAddress);
+        user.updateAddress(newAddress, newDetailedAddress, newPostCode);
         userRepository.save(user);
     }
 
@@ -115,23 +118,21 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public JwtToken refreshAccessToken(String refreshToken) {
-        // 리프레시 토큰 유효성 검사
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new IllegalArgumentException("Invalid refresh token");
-        }
-
         // 리프레시 토큰에서 사용자 정보 추출
         String userEmail = jwtTokenProvider.extractUserEmail(refreshToken);
         User user = userRepository.findByUserEmail(userEmail)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        // 새로운 액세스 토큰 및 리프레시 토큰 생성
+            .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다"));
+        // 사용자의 권한 가져오기
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        // 새로운 Authentication 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(
             user.getUserEmail(),
             null,
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+            authorities
         );
 
         return jwtTokenProvider.generateToken(authentication);
     }
+
+
 }

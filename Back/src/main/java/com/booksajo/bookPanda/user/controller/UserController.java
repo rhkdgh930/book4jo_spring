@@ -87,7 +87,7 @@ public class UserController {
         // 쿠키 설정
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(60 * 60 * 24); // 1시간 유효기간
+        accessTokenCookie.setMaxAge(60 * 60); // 1시간 유효기간
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
@@ -156,6 +156,7 @@ public class UserController {
 
         return ResponseEntity.ok(new JwtDto(newAccessToken, newRefreshToken));
     }
+
 
 
 

@@ -10,6 +10,9 @@ INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_e
 VALUES('3', '서울시 종로 청와대로 1길', '파란지붕', '01012345678', '12345', '1257312@naver.com', '우문식', '$2a$10$k81xscRbABX7FRpVr5nBw.eboFvzpKr9FEOWYt98v7DlatM5pzBZy', false
 );
 
+INSERT INTO user_roles(user_id, roles)
+VALUES('3', 'USER');
+
 INSERT INTO category(name) VALUES ("건강/취미");
 INSERT INTO category(name) VALUES ("경제경영");
 INSERT INTO category(name) VALUES ("공무원 수험서");
