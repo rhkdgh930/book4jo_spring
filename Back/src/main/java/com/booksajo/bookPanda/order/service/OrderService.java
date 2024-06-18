@@ -107,7 +107,7 @@ public class OrderService {
             }
         }
 
-        order.setTotalPrice(calculateTotalPrice(cartItems));
+        order.setTotalPrice(calculateTotalPrice(checkedCartItems));
 
         orderRepository.save(order);
 
