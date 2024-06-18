@@ -15,6 +15,9 @@ INSERT INTO users
 VALUES(false, 4, '청주', '용암동', '0101234567', '12345', 'tmdvy@naver.com', '홍승표', "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK"
 );
 
+INSERT INTO user_roles(user_id, roles)
+VALUES('3', 'USER');
+
 INSERT INTO category(name) VALUES ("건강/취미");
 INSERT INTO category(name) VALUES ("경제경영");
 INSERT INTO category(name) VALUES ("공무원 수험서");

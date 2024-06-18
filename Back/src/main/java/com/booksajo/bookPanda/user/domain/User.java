@@ -86,8 +86,10 @@ public class User implements UserDetails {
         this.userPassword = newPassword;
     }
 
-    public void updateAddress(String newAddress) {
+    public void updateAddress(String newAddress, String newDetailedAddress, String newPostCode) {
         this.address = newAddress;
+        this.detailedAddress = newDetailedAddress;
+        this.postCode = newPostCode;
     }
 
     public void updatePhoneNumber(String newPhoneNumber) {

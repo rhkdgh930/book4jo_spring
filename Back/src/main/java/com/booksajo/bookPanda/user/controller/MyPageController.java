@@ -1,6 +1,7 @@
 package com.booksajo.bookPanda.user.controller;
 
 import com.booksajo.bookPanda.user.domain.User;
+import com.booksajo.bookPanda.user.dto.AddressRequestDto;
 import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.booksajo.bookPanda.user.service.UserServiceImpl;
 import java.util.Map;
@@ -24,24 +25,11 @@ public class MyPageController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @PostMapping("/checkingPassword")
-    public ResponseEntity<?> checkPassword(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, String> request) {
-        String password = request.get("password");
-        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        if (passwordEncoder.matches(password, user.getUserPassword())) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
-        }
-    }
-
     @GetMapping
-    public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal UserDetails user) {
-        String userEmail = user.getUsername();
-        User userInfo = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
-        System.out.println(user.getAuthorities());
-        return ResponseEntity.ok(userInfo);
+    public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        String userEmail = userDetails.getUsername();
+        User user = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(user);
     }
 
 
@@ -54,9 +42,6 @@ public class MyPageController {
             case "name":
                 userServiceImpl.updateName(userEmail, value);
                 break;
-            case "address":
-                userServiceImpl.updateAddress(userEmail, value);
-                break;
             case "phoneNumber":
                 userServiceImpl.updatePhoneNumber(userEmail, value);
                 break;
@@ -66,11 +51,32 @@ public class MyPageController {
         return ResponseEntity.ok().body("수정 완료");
     }
 
+    @PutMapping("/address")
+    public ResponseEntity<?> updateAddress(
+        @AuthenticationPrincipal UserDetails user,
+        @RequestBody AddressRequestDto addressRequest) {
+        String userEmail = user.getUsername();
+        userServiceImpl.updateAddress(userEmail, addressRequest.getAddress(), addressRequest.getDetailedAddress(), addressRequest.getPostCode());
+        return ResponseEntity.ok().body("주소 변경에 성공했습니다.");
+    }
+
     @PutMapping("/change-password")
     public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserDetails user,
         @RequestParam("newPassword") String newPassword) {
         String userEmail = user.getUsername();
         userServiceImpl.updatePassword(userEmail, newPassword);
         return ResponseEntity.ok().body("비밀번호 변경에 성공했습니다.");
+    }
+
+    @PostMapping("/checkingPassword")
+    public ResponseEntity<?> checkPassword(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, String> request) {
+        String password = request.get("password");
+        User user = userRepository.findByUserEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (passwordEncoder.matches(password, user.getUserPassword())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+        }
     }
 }
