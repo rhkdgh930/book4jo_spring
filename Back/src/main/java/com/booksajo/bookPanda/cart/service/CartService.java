@@ -101,6 +101,7 @@ public class CartService {
         cartItemRepository.save(cartItem);
     }
 
+    @Transactional
     public CartOrderResponseDto getCartOrder(String userEmail){
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(()-> new CartException(CartErrorCode.USER_NOT_FOUND));
@@ -113,17 +114,20 @@ public class CartService {
         List<CartItemDto> checkedCartItems = new ArrayList<>();
         List<CartItemDto> cartItems = getCartItems(userId);
         for(CartItemDto itemDto : cartItems){
+            System.out.println(itemDto.isChecked());
             if(itemDto.isChecked()){
                 checkedCartItems.add(itemDto);
             }
         }
 
+        if(checkedCartItems.isEmpty()){
+            throw new IllegalArgumentException("1가지 이상의 책을 주문 해야 합니다!");
+        }
+
         responseDto.setId(cart.getId());
         responseDto.setCartItems(checkedCartItems);
         responseDto.setTotalPrice(calculationTotalPrice(checkedCartItems));
-        responseDto.setUserAddress1(cart.getUser().getAddress());
-        responseDto.setUserName(cart.getUser().getName());
-        responseDto.setUserPhoneNumber(cart.getUser().getPhoneNumber());
+        responseDto.setUser(user);
 
         return responseDto;
     }
@@ -141,6 +145,10 @@ public class CartService {
     public List<CartItemDto> getCartItems(Long userId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new CartException(CartErrorCode.USER_NOT_FOUND));
+        List<CartItem> cartItems = cart.getCartItems();
+        for(CartItem cartItem : cartItems){
+            System.out.println(cartItem.isChecked());
+        }
         return cart.getCartItems().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -187,7 +195,7 @@ public class CartService {
         cartItemDto.setQuantity(cartItem.getQuantity());
         cartItemDto.setPrice(cartItem.getBookSales().getBookInfo().getDiscount());
         cartItemDto.setStock(cartItem.getBookSales().getStock());
-        cartItemDto.setChecked(true);
+        cartItemDto.setChecked(cartItem.isChecked());
         return cartItemDto;
     }
 

@@ -1,6 +1,7 @@
 package com.booksajo.bookPanda.cart.dto;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class CartItemDto {

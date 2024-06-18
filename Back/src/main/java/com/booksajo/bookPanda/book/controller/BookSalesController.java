@@ -11,6 +11,7 @@ import com.booksajo.bookPanda.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Response;
 import org.springframework.data.domain.Page;
@@ -145,6 +146,7 @@ public class BookSalesController {
 
     }
 
+    @Transactional
     @GetMapping("/bookSales/order")
     public ResponseEntity<?> getBookSalesOrder(@RequestParam("bookId") long bookId, @AuthenticationPrincipal UserDetails userDetails){
         String userEmail = userDetails.getUsername();

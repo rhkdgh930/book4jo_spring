@@ -13,8 +13,9 @@ public class OrderRequestDto {
     private LocalDateTime orderDate;
     private int totalPrice;
     private Status status;
+    private String statusLabel;
     private User user;
-    private String userName;
+    private String shippingName;
     private String address1;
     private String address2;
     private String postCode;
@@ -23,7 +24,10 @@ public class OrderRequestDto {
 
     public void setUser(User user) {
         this.user = user;
-        this.userName = user.getUsername();
-        this.userPhoneNumber = user.getPhoneNumber();
+    }
+
+    public void setStatus(Status status){
+        this.status = status;
+        this.statusLabel = status.getlabel();
     }
 }

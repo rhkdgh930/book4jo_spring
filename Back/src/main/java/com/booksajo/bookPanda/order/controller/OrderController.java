@@ -76,14 +76,14 @@ public class OrderController {
     }
 
     //현재 사용자의 주문 내역을 조회
-    @GetMapping("/orders")
+    @GetMapping("/user/orders")
     public ResponseEntity<?> getOrdersMember(@AuthenticationPrincipal UserDetails userDetails) {
         String userEmail = userDetails.getUsername();
         List<OrderResponseDto> orderHists = orderService.getOrderHist(userEmail);
         return ResponseEntity.ok(orderHists);
     }
 
-    @DeleteMapping("/cancel")
+    @PostMapping("/cancel")
     public ResponseEntity<?> cancelOrder(@RequestParam("orderId") Long orderId){
         orderService.cancelOrder(orderId);
         return ResponseEntity.ok("주문 취소");
@@ -95,12 +95,22 @@ public class OrderController {
         return ResponseEntity.ok(orderItems);
     }
 
-    @PutMapping("/order/{orderId}")
-    public ResponseEntity<?> editPost(@RequestParam("orderId") Long orderId) {
+    @PutMapping("/order")
+    public ResponseEntity<?> editOrderStatus(@RequestParam("orderId") Long orderId, @RequestBody OrderRequestDto requestDto) {
         try {
-            OrderResponseDto responseDto = orderService.updateOrderStatus(orderId);
+            OrderResponseDto responseDto = orderService.updateOrderStatus(orderId, requestDto);
             return ResponseEntity.ok(responseDto);
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<?> getAllOrders(){
+        try{
+            List<OrderResponseDto> responseDto = orderService.getOrders();
+            return ResponseEntity.ok(responseDto);
+        } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
