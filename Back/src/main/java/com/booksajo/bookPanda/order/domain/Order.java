@@ -49,21 +49,6 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id", columnDefinition = "BIGINT", nullable = false)
     private User user;
 
-    @Column(name = "address", nullable = false)
-    private String address1;
-
-    @Column(name = "address2", nullable = false)
-    private String address2;
-
-    @Column(name = "post_code", nullable = false)
-    private String postCode;
-
-    @Column(name = "phoneNumber", nullable = false)
-    private String phoneNumber;
-
-    @Column(name = "shipping_name", nullable = false)
-    private String shippingName;
-
 
     @OneToMany(mappedBy="order", cascade= CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -72,11 +57,6 @@ public class Order {
     public Order(OrderRequestDto requestDto){
         this.orderDate = requestDto.getOrderDate();
         this.totalPrice = requestDto.getTotalPrice();
-        this.address1 = requestDto.getAddress1();
-        this.address2 = requestDto.getAddress2();
-        this.postCode = requestDto.getPostCode();
-        this.phoneNumber = requestDto.getUserPhoneNumber();
-        this.shippingName = requestDto.getShippingName();
         this.status = requestDto.getStatus();
         this.user = requestDto.getUser();
     }
@@ -89,7 +69,6 @@ public class Order {
                 ", totalPrice=" + totalPrice +
                 ", status=" + status +
                 ", user=" + user +
-                ", phoneNumber=" + phoneNumber +
                 ", orderItems=" + orderItems +
                 '}';
     }
