@@ -2,6 +2,7 @@ package com.booksajo.bookPanda.user.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -76,6 +77,7 @@ public class User implements UserDetails {
     private List<String> roles = new ArrayList<>();
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
