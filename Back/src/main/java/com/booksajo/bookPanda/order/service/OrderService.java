@@ -135,8 +135,7 @@ public class OrderService {
     @Transactional
     public List<OrderResponseDto> getOrderHist(String userEmail){
         System.out.println("OrderService.getOrderHist");
-        List<Order> orders = orderRepository.findAllByUserUserEmail(userEmail);
-        return orderRepository.findAllByUserUserEmail(userEmail).stream().map(OrderResponseDto::new).toList();
+        return orderRepository.findAllByUserUserEmailOrderByIdDesc(userEmail).stream().map(OrderResponseDto::new).toList();
     }
 
 
