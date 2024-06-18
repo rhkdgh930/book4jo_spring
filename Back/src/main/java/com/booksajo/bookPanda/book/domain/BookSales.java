@@ -33,7 +33,7 @@ public class BookSales {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "description", column = @Column(name = "description", length = 1000))
+            @AttributeOverride(name = "description", column = @Column(name = "description", length = 1000 , columnDefinition = "TEXT"))
     })
     @Column(name = "book_info", nullable = false)
     private BookInfo bookInfo;
