@@ -39,7 +39,7 @@ public class SecurityConfig {
 //                .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
 //                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
                 .requestMatchers("/api/cart/**").hasRole("USER")
-                .requestMatchers("/api/mypage/**").hasRole("USER")
+                .requestMatchers("/api/mypage/**").hasRole("ADMIN")
                 .requestMatchers("/api/payment/**").hasRole("USER")
 //                // 관리자는 관리자 페이지로 접근
 //                .requestMatchers("/api/admin/**").hasRole("ADMIN")

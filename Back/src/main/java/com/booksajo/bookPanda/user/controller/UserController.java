@@ -17,7 +17,6 @@ import com.booksajo.bookPanda.user.service.UserServiceImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +35,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -215,6 +213,14 @@ public class UserController {
         }
     }
 
-
+    @GetMapping("is-user")
+    public Boolean isUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails.getAuthorities().equals("USER")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 }
