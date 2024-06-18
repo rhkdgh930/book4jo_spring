@@ -37,8 +37,7 @@ public class BookSalesService {
     private static final String BOOKSALES_VISITCOUNT_KEY = "visitcount";
 
 
-
-
+    @Transactional
     public ResponseBookSales getBookSales(Long id)
     {
         incrementViewCount(id);
@@ -100,7 +99,7 @@ public class BookSalesService {
     }
 
 
-
+    @Transactional
     private BookInfo getBookInfo(BookSalesRequest bookSalesRequest) {
         BookInfo newBookInfo = new BookInfo();
 
@@ -137,6 +136,7 @@ public class BookSalesService {
         bookSalesRepository.deleteById(id);
     }
 
+    @Transactional
     public void incrementViewCount(Long postId) {
 
         String redisKey = BOOKSALES_VISITCOUNT_KEY + postId;

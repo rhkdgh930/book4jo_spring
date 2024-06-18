@@ -77,6 +77,7 @@ public class User implements UserDetails {
     private List<String> roles = new ArrayList<>();
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
