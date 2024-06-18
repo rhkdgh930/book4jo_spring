@@ -12,7 +12,7 @@ public class OrderResponseDto {
     private Long id;
     private LocalDateTime orderDate;
     private int totalPrice;
-    private Status status;
+    private String statusLabel;
     private String userName;
     private String address1;
     private String address2;
@@ -23,12 +23,12 @@ public class OrderResponseDto {
         this.id = entity.getId();
         this.orderDate = entity.getOrderDate();
         this.totalPrice = entity.getTotalPrice();
-        this.status = entity.getStatus();
-        this.userName = entity.getUser().getName();
+        this.statusLabel = entity.getStatus().getlabel();
+        this.userName = entity.getShippingName();
         this.address1 = entity.getAddress1();
         this.address2 = entity.getAddress2();
         this.postCode = entity.getPostCode();
-        this.userPhoneNumber = entity.getUser().getPhoneNumber();
+        this.userPhoneNumber = entity.getPhoneNumber();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class OrderResponseDto {
                 "id=" + id +
                 ", orderDate=" + orderDate +
                 ", totalPrice=" + totalPrice +
-                ", status=" + status +
+                ", status=" + statusLabel +
                 '}';
     }
 }

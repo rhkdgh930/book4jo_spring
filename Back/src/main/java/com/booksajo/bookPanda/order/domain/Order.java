@@ -58,6 +58,12 @@ public class Order {
     @Column(name = "post_code", nullable = false)
     private String postCode;
 
+    @Column(name = "phoneNumber", nullable = false)
+    private String phoneNumber;
+
+    @Column(name = "shipping_name", nullable = false)
+    private String shippingName;
+
 
     @OneToMany(mappedBy="order", cascade= CascadeType.ALL, orphanRemoval = true, fetch= FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -69,6 +75,8 @@ public class Order {
         this.address1 = requestDto.getAddress1();
         this.address2 = requestDto.getAddress2();
         this.postCode = requestDto.getPostCode();
+        this.phoneNumber = requestDto.getUserPhoneNumber();
+        this.shippingName = requestDto.getShippingName();
         this.status = requestDto.getStatus();
         this.user = requestDto.getUser();
     }
