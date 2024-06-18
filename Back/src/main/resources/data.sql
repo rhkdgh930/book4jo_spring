@@ -1,18 +1,21 @@
 
 INSERT INTO users(id,`user_email`,`user_name`, `user_password`, `resign`)
-VALUES(1,"admin@admin.com" , "admin" , "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK" , false);
+VALUES(1,"admin@admin.com" , "BiGpAnDaadmin" , "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK" , false);
 
-INSERT INTO `user_roles`(`user_id`,roles) VALUES(1,"ROLE_ADMIN");
+INSERT INTO `user_roles`(`user_id`,roles) VALUES(1,"ADMIN");
 
 INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password, resign)
 VALUES(2, '제주특별자치도 제주시 영평동 2181', '111동 111호', '01012345678', '63309', 'rhkdgh930@naver.com', '명광호', '$2a$10$hlR3wBkjlD8cdeDKffqNeuGownEvM1qvzTUlMGmEtcJ4Hd.AwcmB6', false);
 
 INSERT INTO users(id, address, detailed_address, phone_number, post_code, user_email, user_name, user_password, resign)
-VALUES(3, '서울시 종로 청와대로 1길', '파란지붕', '01012345678', '12345', '1257312@naver.com', '우문식', '$2a$10$k81xscRbABX7FRpVr5nBw.eboFvzpKr9FEOWYt98v7DlatM5pzBZy', false);
+VALUES(3, '서울시 종로 청와대로 1길', '파란지붕', '01012345678', '12345', '1257312@naver.com', 'BiGpAnDa우문식', '$2a$10$k81xscRbABX7FRpVr5nBw.eboFvzpKr9FEOWYt98v7DlatM5pzBZy', false);
 
 INSERT INTO users
 VALUES(false, 4, '청주', '용암동', '0101234567', '12345', 'tmdvy@naver.com', '홍승표', "$2a$10$FJJqIgvfeCYuU4h9SW.Ac.Sqrxt4FDztE33sYA5e62gqGput6QceK"
 );
+
+INSERT INTO user_roles(user_id, roles)
+VALUES('3', 'ADMIN');
 
 INSERT INTO category(name) VALUES ("건강/취미");
 INSERT INTO category(name) VALUES ("경제경영");

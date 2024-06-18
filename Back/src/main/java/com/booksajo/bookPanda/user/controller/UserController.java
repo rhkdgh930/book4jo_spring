@@ -17,11 +17,12 @@ import com.booksajo.bookPanda.user.service.UserServiceImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -36,7 +37,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -87,7 +87,7 @@ public class UserController {
         // 쿠키 설정
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(60 * 60 * 24); // 1시간 유효기간
+        accessTokenCookie.setMaxAge(60 * 60); // 1시간 유효기간
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
@@ -160,6 +160,7 @@ public class UserController {
 
 
 
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -214,6 +215,24 @@ public class UserController {
         }
     }
 
+    @GetMapping("is-user")
+    public Boolean isUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails.getAuthorities().equals("USER")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<?> getUserRoles(@AuthenticationPrincipal UserDetails user){
+        if(user == null){
+            return ResponseEntity.ok(null);
+        }
+
+        return ResponseEntity.ok(user.getAuthorities().stream().collect(Collectors.toList()).get(0).getAuthority());
+    }
 
 
 }

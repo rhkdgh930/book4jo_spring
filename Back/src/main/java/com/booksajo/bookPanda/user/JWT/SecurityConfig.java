@@ -34,13 +34,9 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-//                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
-//                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
-//                .requestMatchers(HttpMethod.PATCH, "/api/**").authenticated()
-//                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
-                .requestMatchers("/api/cart/**").hasRole("USER")
-                .requestMatchers("/api/mypage/**").hasRole("USER")
-                .requestMatchers("/api/payment/**").hasRole("USER")
+                .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
 //                // 관리자는 관리자 페이지로 접근
 //                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 // 그 외의 요청은 모두가 접근 가능

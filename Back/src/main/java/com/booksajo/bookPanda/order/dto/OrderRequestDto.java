@@ -15,11 +15,6 @@ public class OrderRequestDto {
     private Status status;
     private String statusLabel;
     private User user;
-    private String shippingName;
-    private String address1;
-    private String address2;
-    private String postCode;
-    private String userPhoneNumber;
 
 
     public void setUser(User user) {

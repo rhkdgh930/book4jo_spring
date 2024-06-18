@@ -83,8 +83,9 @@ public class OrderController {
         return ResponseEntity.ok(orderHists);
     }
 
-    @PostMapping("/cancel")
+    @PostMapping("/order/cancel")
     public ResponseEntity<?> cancelOrder(@RequestParam("orderId") Long orderId){
+        System.out.println("OrderController.cancelOrder");
         orderService.cancelOrder(orderId);
         return ResponseEntity.ok("주문 취소");
     }
