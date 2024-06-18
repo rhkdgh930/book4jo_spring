@@ -21,6 +21,8 @@ import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -222,5 +224,15 @@ public class UserController {
             return false;
         }
     }
+
+    @GetMapping("/role")
+    public ResponseEntity<?> getUserRoles(@AuthenticationPrincipal UserDetails user){
+        if(user == null){
+            return ResponseEntity.ok(null);
+        }
+
+        return ResponseEntity.ok(user.getAuthorities().stream().collect(Collectors.toList()).get(0).getAuthority());
+    }
+
 
 }

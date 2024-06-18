@@ -23,10 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,6 +45,7 @@ public class BookSalesController {
     @GetMapping("/getBookSales")
     public ResponseEntity<ResponseBookSales> getBookSales(@RequestParam("id") Long bookSalesId)
     {
+
         System.out.println(bookSalesId);
         return ResponseEntity.ok(bookSalesService.getBookSales(bookSalesId));
     }
@@ -156,5 +154,20 @@ public class BookSalesController {
         System.out.println(responseDto.getUserName());
         System.out.println(responseDto.getTitle());
         return ResponseEntity.ok(responseDto);
+    }
+
+
+
+    @PatchMapping("/bookSales/price/{discount}")
+    public ResponseEntity<?> modifyBookSalesPrice(@PathVariable("discount") String discount ,@RequestBody Map<String, Object> param){
+         BookSales bookSales =  bookSalesService.modifyBookDiscount(Long.parseLong(param.get("id").toString()),discount);
+         return ResponseEntity.ok(bookSales);
+    }
+
+
+    @PatchMapping("/bookSales/stock/{stock}")
+    public ResponseEntity<?> modifyBookSalesStock(@PathVariable("stock") int stock,@RequestBody Map<String, Object> param){
+        BookSales bookSales =  bookSalesService.modifyBookStock(Long.parseLong(param.get("id").toString()),stock);
+        return ResponseEntity.ok(bookSales);
     }
 }
