@@ -260,6 +260,27 @@ public class BookSalesService {
         return dto;
     }
 
+    @Transactional
+    public BookSales modifyBookDiscount(Long id,String discount){
+      BookSales bookSales = bookSalesRepository.findById(id)
+              .orElseThrow(()->new BookSalesException(BookSalesErrorCode.BOOK_SALES_NOT_FOUND));
+
+      bookSales.getBookInfo().setDiscount(discount);
+
+
+      return bookSales;
+    }
+
+
+    @Transactional
+    public BookSales modifyBookStock(Long id, int stock){
+        BookSales bookSales = bookSalesRepository.findById(id)
+                .orElseThrow(()-> new BookSalesException(BookSalesErrorCode.BOOK_SALES_NOT_FOUND));
+        bookSales.setStock(stock);
+
+        return bookSales;
+    }
+
 
     public List<BookSalesDto> getBookSalesOrderBySellCount(){
         List<BookSales> bookSales = bookSalesRepository.findTop5ByOrderBySellCountDesc();
