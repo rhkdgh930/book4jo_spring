@@ -52,9 +52,12 @@ public class ShippingService {
         } else if(requestDto.getStatusLabel().equals("배송 완료")){
             shipping.setShippingDoneDate(requestDto.getDate());
             shipping.setStatus(Status.SHIPPING_DONE);
-        } else {
+        } else if(requestDto.getStatusLabel().equals("주문 취소")){
             shipping.setCancelDate(requestDto.getDate());
             shipping.setStatus(Status.CANCEL);
+        } else {
+            shipping.setPayDoneDate(requestDto.getDate());
+            shipping.setStatus(Status.PAY_DONE);
         }
 
         shippingRepository.save(shipping);
