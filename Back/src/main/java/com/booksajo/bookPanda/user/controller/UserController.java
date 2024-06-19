@@ -30,6 +30,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -213,14 +214,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("is-user")
+    @PostMapping("/is-user")
     public Boolean isUser(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails.getAuthorities().equals("USER")) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        System.out.println(userDetails.getAuthorities()); // 추가된 로그: 사용자 권한 확인
+        return userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
 }
