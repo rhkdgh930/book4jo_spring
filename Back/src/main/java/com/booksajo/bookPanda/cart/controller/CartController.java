@@ -20,7 +20,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/api/cart")
 public class CartController {
     private final CartService cartService;
     private final UserRepository userRepository;

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/shipping")
+@RequestMapping("/api/shipping")
 public class ShippingController {
     private final ShippingService shippingService;
 
