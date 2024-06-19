@@ -22,37 +22,40 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                    .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/users/change-password").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/users/delete-user").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/users/is-user").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
 //                // 관리자는 관리자 페이지로 접근
 //                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                // 그 외의 요청은 모두가 접근 가능
-                                .anyRequest().permitAll()
-                )
-                .addFilterBefore(new JwtAuthenticationFilterNew(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .build();
+                    // 그 외의 요청은 모두가 접근 가능
+                    .anyRequest().permitAll()
+            )
+            .addFilterBefore(new JwtAuthenticationFilterNew(jwtTokenProvider),
+                UsernamePasswordAuthenticationFilter.class)
+            .build();
     }
 
-    // 추가
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
