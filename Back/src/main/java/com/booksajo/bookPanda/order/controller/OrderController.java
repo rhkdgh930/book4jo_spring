@@ -5,6 +5,7 @@ import com.booksajo.bookPanda.order.dto.response.OrderItemResponseDto;
 import com.booksajo.bookPanda.order.dto.response.OrderResponseDto;
 import com.booksajo.bookPanda.order.service.OrderItemService;
 import com.booksajo.bookPanda.order.service.OrderService;
+import com.booksajo.bookPanda.payment.service.PaymentService;
 import com.booksajo.bookPanda.user.domain.User;
 import com.booksajo.bookPanda.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final UserDetailsService userDetailsService;
+    //private final PaymentService paymentService; // 이 부분 추가
 
     //바로주문
     @PostMapping("/order")
@@ -87,6 +89,7 @@ public class OrderController {
     public ResponseEntity<?> cancelOrder(@RequestParam("orderId") Long orderId){
         System.out.println("OrderController.cancelOrder");
         orderService.cancelOrder(orderId);
+        //paymentService.cancelPaymentAndOrder(orderId); // 이 부분 추가했습니다.
         return ResponseEntity.ok("주문 취소");
     }
 

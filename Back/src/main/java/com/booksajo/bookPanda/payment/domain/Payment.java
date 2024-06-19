@@ -2,13 +2,11 @@ package com.booksajo.bookPanda.payment.domain;
 
 import com.booksajo.bookPanda.order.domain.Order;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,10 +19,6 @@ public class Payment {
     private String impUid;
     private String merchantUid;
     private int amount;
-//    private String buyerName;
-//    private String buyerEmail;
-//    private String buyerAddr;
-//    private String buyerPostcode;
     private String status;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -11,12 +11,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +44,13 @@ public class PortOnePaymentServiceImpl implements PaymentService {
     @Value("${iamport.api_url}")
     private String apiUrl;
 
-    private String accessToken = null;
+    private String accessToken;
 
     public PortOnePaymentServiceImpl(PaymentRepository paymentRepository, RestTemplate restTemplate, OrderRepository orderRepository) {
         this.paymentRepository = paymentRepository;
         this.restTemplate = restTemplate;
         this.orderRepository = orderRepository;
+
     }
 
     @Override
@@ -104,7 +109,9 @@ public class PortOnePaymentServiceImpl implements PaymentService {
         String url = apiUrl + "/payments/" + impUid;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + getToken());
+        String accessToken = getToken();
+        //headers.set("Authorization", "Bearer " + getToken());
+        headers.setBearerAuth(accessToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -130,90 +137,92 @@ public class PortOnePaymentServiceImpl implements PaymentService {
         return getPaymentInfo(impUid);
     }
 
-//    @Override
-//    public ResponseEntity<Map<String, Object>> cancelPayment(String impUid) {
-//        String token = getToken();
-//        if (token == null) {
-//            logger.error("결제를 취소하는 동안 액세스 토큰을 가져오지 못함");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "액세스 토큰을 가져오지 못함"));
-//        }
-//        String url = apiUrl + "/payments/cancel";
-//
-//        Map<String, Object> request = new HashMap<>();
-//        request.put("imp_uid", impUid);
-//        request.put("reason", "requested by user");
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.setBearerAuth(token);
-//
-//        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
-//
-//        try {
-//            logger.debug("impUid: {}의 결제를 취소하는 요청을 보냄", impUid);
-//            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<>() {});
-//            logger.info("응답 상태 코드: {}", response.getStatusCode());
-//            logger.info("응답 본문: {}", response.getBody());
-//
-//            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-//                Map<String, Object> responseBody = response.getBody();
-//                if (responseBody.containsKey("response") && responseBody.get("response") != null) {
-//                    logger.info("impUid: {}의 결제 성공적으로 취소됨", impUid);
-//                    return ResponseEntity.ok(responseBody);
-//                } else {
-//                    logger.error("결제 취소 실패, 응답: {}", responseBody);
-//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", responseBody));
-//                }
-//            } else {
-//                logger.error("결제 취소 실패, 상태 코드: {}, 응답: {}", response.getStatusCode(), response.getBody());
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "response", response.getBody()));
-//            }
-//        } catch (Exception e) {
-//            logger.error("impUid: {}의 결제를 취소하는 동안 예외 발생", impUid, e);
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패"));
-//        }
-//    }
-@Override
-public void cancelPayment(String accessToken, String impUid, String merchantUid, double amount) {
-    String url = apiUrl + "/payments/cancel";
+    @Override
+    @Transactional
+    public ResponseEntity<Map<String, Object>> cancelPaymentAndOrder(Long orderId) {
+        String token = getToken();
+        if (token == null) {
+            logger.error("결제를 취소하는 동안 액세스 토큰을 가져오지 못함");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "액세스 토큰을 가져오지 못함"));
+        }
 
-    Map<String, Object> request = new HashMap<>();
-    request.put("reason", "결제 검증 실패 또는 오류 발생으로 인한 자동 취소");
-    request.put("imp_uid", impUid);
-    request.put("merchant_uid", merchantUid);
-    request.put("amount", amount);
+        Optional<Payment> paymentOptional = paymentRepository.findByOrderId(orderId);
+        if (paymentOptional.isEmpty()) {
+            logger.error("해당 주문에 대한 결제 정보가 존재하지 않음. OrderId: {}", orderId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "해당 주문에 대한 결제 정보가 존재하지 않음"));
+        }
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.set("Authorization", "Bearer " + accessToken);
+        Payment payment = paymentOptional.get();
+        String impUid = payment.getImpUid();
+        payment.setStatus("canceled");
+        paymentRepository.save(payment);
 
-    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+        ResponseEntity<Map> paymentResponse = getPaymentInfo(impUid);
+        if (paymentResponse.getStatusCode() != HttpStatus.OK || paymentResponse.getBody() == null) {
+            logger.error("결제 정보를 가져오지 못함. impUid: {}", impUid);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 정보를 가져오지 못함"));
+        }
 
-    logger.info("결제 취소 요청 보냄. impUid: {}, merchantUid: {}, amount: {}, request: {}", impUid, merchantUid, amount, request);
+        Map<String, Object> paymentInfo = (Map<String, Object>) paymentResponse.getBody().get("response");
+        if (paymentInfo == null) {
+            logger.error("결제 정보가 유효하지 않음. impUid: {}", impUid);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 정보가 유효하지 않음"));
+        }
 
-    try {
-        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<Map<String, Object>>() {});
-
-        logger.info("결제 취소 응답 받음. response: {}", response);
+        try {
+            cancelPayment(token, impUid, (String) paymentInfo.get("merchant_uid"), (Double) paymentInfo.get("amount"));
+//            payment.setStatus("canceled");
+//            paymentRepository.save(payment);
+            return ResponseEntity.ok(Map.of("message", "결제와 주문이 성공적으로 취소되었습니다."));
+        } catch (Exception e) {
+            logger.error("결제 취소 실패. impUid: {}", impUid, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "message", e.getMessage()));
+        }
+    }
 
 
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            Object codeObject = response.getBody().get("code");
-            if (codeObject instanceof Integer && (Integer) codeObject == 0) {
-                logger.info("impUid: {}의 결제가 성공적으로 취소됨", impUid);
+    @Override
+    public void cancelPayment(String accessToken, String impUid, String merchantUid, double amount) {
+        String url = apiUrl + "/payments/cancel";
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("reason", "결제 검증 실패 또는 오류 발생으로 인한 자동 취소");
+        request.put("imp_uid", impUid);
+        request.put("merchant_uid", merchantUid);
+        request.put("amount", amount);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + accessToken);
+        //headers.setBearerAuth(accessToken);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+
+        logger.info("결제 취소 요청 보냄. impUid: {}, merchantUid: {}, amount: {}, request: {}", impUid, merchantUid, amount, request);
+
+        try {
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<Map<String, Object>>() {
+            });
+
+            logger.info("결제 취소 응답 받음. response: {}", response);
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                Object codeObject = response.getBody().get("code");
+                if (codeObject instanceof Integer && (Integer) codeObject == 0) {
+                    logger.info("impUid: {}의 결제가 성공적으로 취소됨", impUid);
+                } else {
+                    logger.error("impUid: {}의 결제 취소 실패, 상태 코드: {}, 응답 본문: {}", impUid, response.getStatusCode(), response.getBody());
+                    throw new RuntimeException("결제 취소 실패: 응답 코드가 0이 아님");
+                }
             } else {
                 logger.error("impUid: {}의 결제 취소 실패, 상태 코드: {}, 응답 본문: {}", impUid, response.getStatusCode(), response.getBody());
-                throw new RuntimeException("결제 취소 실패: 응답 코드가 0이 아님");
+                throw new RuntimeException("결제 취소 실패: 응답이 없거나 상태 코드가 OK가 아님");
             }
-        } else {
-            logger.error("impUid: {}의 결제 취소 실패, 상태 코드: {}, 응답 본문: {}", impUid, response.getStatusCode(), response.getBody());
-            throw new RuntimeException("결제 취소 실패: 응답이 없거나 상태 코드가 OK가 아님");
+        } catch (Exception e) {
+            logger.error("impUid: {}의 결제를 취소하는 동안 예외 발생", impUid, e);
+            throw new RuntimeException("결제를 취소하는 동안 예외 발생", e);
         }
-    } catch (Exception e) {
-        logger.error("impUid: {}의 결제를 취소하는 동안 예외 발생", impUid, e);
-        throw new RuntimeException("결제를 취소하는 동안 예외 발생", e);
     }
-}
 
     @Override
     public ResponseEntity<List<Map<String, Object>>> getAllPayments() {
@@ -273,10 +282,6 @@ public void cancelPayment(String accessToken, String impUid, String merchantUid,
                     .impUid((String) paymentInfo.get("imp_uid"))
                     .merchantUid((String) paymentInfo.get("merchant_uid"))
                     .amount((Integer) paymentInfo.get("amount"))
-//                    .buyerName((String) paymentInfo.get("buyer_name"))
-//                    .buyerEmail((String) paymentInfo.get("buyer_email"))
-//                    .buyerAddr((String) paymentInfo.get("buyer_addr"))
-//                    .buyerPostcode((String) paymentInfo.get("buyer_postcode"))
                     .status((String) paymentInfo.get("status"))
                     .order(order)
                     .build();
@@ -287,16 +292,5 @@ public void cancelPayment(String accessToken, String impUid, String merchantUid,
             throw new RuntimeException("Iamport로부터 잘못된 응답");
         }
     }
-
-
-//    @Override
-//    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(String userEmail) {
-//        List<Payment> payments = paymentRepository.findByBuyerEmail(userEmail);
-//        List<PaymentResponseDto> paymentResponseDtos = payments.stream()
-//                .map(PaymentResponseDto::new)
-//                .collect(Collectors.toList());
-//        return ResponseEntity.ok(paymentResponseDtos);
-//    }
-
 
 }

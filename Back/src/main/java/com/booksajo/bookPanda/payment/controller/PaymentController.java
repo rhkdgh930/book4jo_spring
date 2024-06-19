@@ -67,15 +67,16 @@ public class PaymentController {
         }
     }
 
-//    @PostMapping("/cancel/{impUid}")
-//    public ResponseEntity<?> cancelPayment(@PathVariable("impUid") String impUid) {
-//        return paymentService.cancelPayment(impUid);
-//    }
-//    @PostMapping("/cancel")
-//    public ResponseEntity<Map<String, Object>> cancelPayment(@RequestBody Map<String, Object> cancelData) {
-//        String impUid = (String) cancelData.get("imp_uid");
-//        return paymentService.cancelPayment(impUid);
-//    }
+    @PostMapping("/cancelPayment")
+    public ResponseEntity<?> cancelOrder(@RequestParam("orderId") Long orderId){
+        try {
+            paymentService.cancelPaymentAndOrder(orderId);
+            return ResponseEntity.ok("결제 취소가 완료되었습니다.");
+        } catch (Exception e) {
+            logger.error("결제 취소 중 오류 발생:", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 취소 중 오류가 발생했습니다.");
+        }
+    }
 
     @PostMapping("/cancel")
     public ResponseEntity<String> cancelPayment(@RequestBody Map<String, Object> request) {
@@ -83,7 +84,6 @@ public class PaymentController {
         String impUid = (String) request.get("imp_uid");
         String merchantUid = (String) request.get("merchant_uid");
 
-        // amount 값을 명시적으로 Double로 변환하여 처리
         Double amount = null;
         try {
             Number amountNumber = (Number) request.get("amount");
@@ -105,18 +105,6 @@ public class PaymentController {
         }
     }
 
-
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllPayments() {
-        ResponseEntity<List<Map<String, Object>>> response = paymentService.getAllPayments();
-        List<Map<String, Object>> responseBody = response.getBody();
-        if (responseBody != null && !responseBody.isEmpty()) {
-            return ResponseEntity.ok(responseBody);
-        } else {
-            return ResponseEntity.noContent().build();
-        }
-    }
-
     @PostMapping("/save")
     public ResponseEntity<PaymentResponseDto> savePayment(@RequestBody PaymentRequestDto requestDto) {
         try {
@@ -127,8 +115,4 @@ public class PaymentController {
         }
     }
 
-//    @GetMapping("/user/{email}")
-//    public ResponseEntity<List<PaymentResponseDto>> getAllPaymentsByUser(@PathVariable("email") String userEmail) {
-//        return paymentService.getAllPaymentsByUser(userEmail);
-//    }
 }
