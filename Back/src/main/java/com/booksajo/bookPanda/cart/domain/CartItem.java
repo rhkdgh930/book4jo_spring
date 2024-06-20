@@ -13,7 +13,7 @@ public class CartItem {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "booksales_id")
     private BookSales bookSales;
 
