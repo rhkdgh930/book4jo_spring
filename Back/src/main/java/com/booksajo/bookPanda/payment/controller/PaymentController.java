@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,7 +40,6 @@ public class PaymentController {
         }
     }
     //-----------------------------------------------
-
 
     @GetMapping("/info/{impUid}")
     public ResponseEntity<?> getPaymentInfo(@PathVariable("impUid") String impUid) {

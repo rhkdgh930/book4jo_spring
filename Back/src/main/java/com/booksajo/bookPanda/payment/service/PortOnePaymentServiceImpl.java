@@ -11,16 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +107,6 @@ public class PortOnePaymentServiceImpl implements PaymentService {
 
         HttpHeaders headers = new HttpHeaders();
         String accessToken = getToken();
-        //headers.set("Authorization", "Bearer " + getToken());
         headers.setBearerAuth(accessToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -157,27 +153,14 @@ public class PortOnePaymentServiceImpl implements PaymentService {
         payment.setStatus("canceled");
         paymentRepository.save(payment);
 
-        ResponseEntity<Map> paymentResponse = getPaymentInfo(impUid);
-        if (paymentResponse.getStatusCode() != HttpStatus.OK || paymentResponse.getBody() == null) {
-            logger.error("결제 정보를 가져오지 못함. impUid: {}", impUid);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 정보를 가져오지 못함"));
-        }
-
-        Map<String, Object> paymentInfo = (Map<String, Object>) paymentResponse.getBody().get("response");
-        if (paymentInfo == null) {
-            logger.error("결제 정보가 유효하지 않음. impUid: {}", impUid);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 정보가 유효하지 않음"));
-        }
-
         try {
-            cancelPayment(token, impUid, (String) paymentInfo.get("merchant_uid"), (Double) paymentInfo.get("amount"));
-//            payment.setStatus("canceled");
-//            paymentRepository.save(payment);
+            cancelPayment(token, impUid, payment.getMerchantUid(), payment.getAmount());
             return ResponseEntity.ok(Map.of("message", "결제와 주문이 성공적으로 취소되었습니다."));
         } catch (Exception e) {
             logger.error("결제 취소 실패. impUid: {}", impUid, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "결제 취소 실패", "message", e.getMessage()));
         }
+
     }
 
 
@@ -194,7 +177,6 @@ public class PortOnePaymentServiceImpl implements PaymentService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + accessToken);
-        //headers.setBearerAuth(accessToken);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
 
