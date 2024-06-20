@@ -3,6 +3,7 @@ package com.booksajo.bookPanda.user.JWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,18 +36,21 @@ public class SecurityConfig {
             .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/users/change-password").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/users/delete-user").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/users/is-user").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/order/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("api/user/orders").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("api/shipping/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().permitAll()
+                    .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/users/change-password").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/users/delete-user").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/users/is-user").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/order/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("api/user/orders").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("api/shipping/**").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers(HttpMethod.POST, "/api/category/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/category/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/api/category/**").hasRole("ADMIN")
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                    .anyRequest().permitAll()
             )
             .addFilterBefore(new JwtAuthenticationFilterNew(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter.class)
