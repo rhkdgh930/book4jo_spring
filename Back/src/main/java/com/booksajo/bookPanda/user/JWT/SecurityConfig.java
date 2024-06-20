@@ -3,6 +3,7 @@ package com.booksajo.bookPanda.user.JWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,6 +46,9 @@ public class SecurityConfig {
                     .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "USER")
                     .requestMatchers("api/user/orders").hasAnyRole("ADMIN", "USER")
                     .requestMatchers("api/shipping/**").hasAnyRole("ADMIN", "USER")
+                            .requestMatchers(HttpMethod.POST, "/api/category/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/api/category/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/category/**").hasRole("ADMIN")
 //                // 관리자는 관리자 페이지로 접근
 //                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     // 그 외의 요청은 모두가 접근 가능
