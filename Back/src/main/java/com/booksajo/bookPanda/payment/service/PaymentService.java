@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public interface PaymentService {
     String getToken();
-    //Optional<String> findImpUidByOrderId(Long orderId);
     ResponseEntity<Map> getPaymentInfo(String impUid);
     ResponseEntity<Map> verifyPayment(String impUid);
     void cancelPayment(String accessToken, String impUid, String merchantUid, double amount);
