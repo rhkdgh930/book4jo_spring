@@ -145,6 +145,17 @@ public class OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(()->new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
         order.setStatus(Status.CANCEL);
 
+        List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId());
+
+        for(OrderItem orderItem : orderItems){
+            int quantity = orderItem.getQuantity();
+            BookSales book = orderItem.getBookSales();
+
+            book.setStock(book.getStock() + quantity);
+
+            bookSalesRepository.save(book);
+        }
+
         orderRepository.save(order);
 
         return new OrderResponseDto(order);
