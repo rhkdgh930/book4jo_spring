@@ -6,9 +6,11 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface PaymentService {
     String getToken();
+    //Optional<String> findImpUidByOrderId(Long orderId);
     ResponseEntity<Map> getPaymentInfo(String impUid);
     ResponseEntity<Map> verifyPayment(String impUid);
     void cancelPayment(String accessToken, String impUid, String merchantUid, double amount);

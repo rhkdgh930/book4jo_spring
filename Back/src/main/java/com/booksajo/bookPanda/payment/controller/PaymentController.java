@@ -41,7 +41,13 @@ public class PaymentController {
         }
     }
     //-----------------------------------------------
-
+//    @GetMapping("/impUid")
+//    public ResponseEntity<Map<String, String>> getImpUid(@RequestParam Long orderId) {
+//        return paymentService.findImpUidByOrderId(orderId)
+//                .map(impUid -> ResponseEntity.ok(Map.of("impUid", impUid)))
+//                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(Map.of("error", "ImpUid not found for orderId: " + orderId)));
+//    }
 
     @GetMapping("/info/{impUid}")
     public ResponseEntity<?> getPaymentInfo(@PathVariable("impUid") String impUid) {

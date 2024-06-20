@@ -103,6 +103,11 @@ public class PortOnePaymentServiceImpl implements PaymentService {
             throw new RuntimeException("액세스 토큰을 가져오는 동안 예외 발생", e);
         }
     }
+//    @Override
+//    public Optional<String> findImpUidByOrderId(Long orderId) {
+//        return paymentRepository.findByOrderId(orderId)
+//                .map(Payment::getImpUid);
+//    }
 
     @Override
     public ResponseEntity<Map> getPaymentInfo(String impUid) {
