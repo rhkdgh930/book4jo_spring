@@ -35,20 +35,18 @@ public class SecurityConfig {
             .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                    .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("/api/users/change-password").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("/api/users/delete-user").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("/api/users/is-user").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("/api/order/**").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("api/user/orders").hasAnyRole("ADMIN", "USER")
-                    .requestMatchers("api/shipping/**").hasAnyRole("ADMIN", "USER")
-//                // 관리자는 관리자 페이지로 접근
-//                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                    // 그 외의 요청은 모두가 접근 가능
-                    .anyRequest().permitAll()
+                .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/users/change-password").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/users/delete-user").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/users/is-user").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/order/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("api/user/orders").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("api/shipping/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().permitAll()
             )
             .addFilterBefore(new JwtAuthenticationFilterNew(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter.class)
