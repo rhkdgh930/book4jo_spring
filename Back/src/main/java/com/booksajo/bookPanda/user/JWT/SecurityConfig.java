@@ -38,9 +38,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers("/api/cart/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/mypage/**").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/users/change-password").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/users/delete-user").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/users/is-user").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/payment/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/order/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "USER")
