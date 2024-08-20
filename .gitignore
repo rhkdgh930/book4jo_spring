@@ -168,4 +168,5 @@ gradle-app.setting
 *.hprof
 application.properties
 application.yml
+*.jar
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,gradle
